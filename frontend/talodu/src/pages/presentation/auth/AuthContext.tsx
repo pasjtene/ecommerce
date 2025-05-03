@@ -131,7 +131,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setLoading(false);
             //axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
             axios.defaults.headers.common['Authorization'] = `${access_token}`;
-            //handleOnAuth();
+            console.log("The access token is: ",access_token);
 
             return user;
         } catch (error) {
