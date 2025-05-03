@@ -39,7 +39,9 @@ const api = axios.create({
   },
 });
 
-const API_BASE_URL = 'http://127.0.0.1:8888';
+const API_BASE_URL = 'http://162.19.227.240:8888';
+//const API_BASE_URL = 'http://127.0.0.1:8888';
+
 
 export const updateUser = async (userId: number, userData: EditFormData): Promise<UserResponse> => {
   try {
