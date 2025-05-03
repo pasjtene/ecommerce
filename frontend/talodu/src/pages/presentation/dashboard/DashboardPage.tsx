@@ -36,11 +36,12 @@ const DashboardPage = () => {
 
 	useEffect(()=>{
 		if(user?.username) {
-			navigate('pages-login/login')
+			//navigate('pages-login/login')
 			console.log("The iser is:", user)
 		}
 	},[]);
 
+/** 
 	useEffect(() => {
 		if (!loading && !user) {
 		  // Redirect if not logged in
@@ -57,7 +58,7 @@ const DashboardPage = () => {
 
 		}
 	  }, [user, loading, navigate]);
-
+*/
 
 	/**
 	 * Tour Start
