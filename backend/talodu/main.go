@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"math"
 	"net/http"
@@ -44,7 +45,9 @@ func main() {
 
 	r := gin.Default()
 	//r.Use(cors.Default())
-	allowedOrigin := "http://localhost:3000"
+	allowedOrigin := "http://162.19.227.240:3000"
+	//allowedOrigin := "http://localhost:3000"
+	fmt.Println("The origin is ", allowedOrigin)
 	r.Use(func(c *gin.Context) {
 		origin := c.Request.Header.Get("Origin")
 		if origin == allowedOrigin {
