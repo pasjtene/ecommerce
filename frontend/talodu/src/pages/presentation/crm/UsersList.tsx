@@ -178,7 +178,9 @@ const UsersList = () => {
     const [editModalStatus, setEditModalStatus] = useState<boolean>(false);
     const fetchUsers = async (page = 1, limit = 10, search = ''):Promise<void> => {
         try {
-          const response = await axios.get<ApiResponse>('http://127.0.0.1:8888/users',{
+          //const response = await axios.get<ApiResponse>('http://127.0.0.1:8888/users',{
+            const response = await axios.get<ApiResponse>('http://162.19.227.240:8888/users',{
+            
             params: { 
                 page,
                 limit,
