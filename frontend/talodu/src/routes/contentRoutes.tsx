@@ -386,7 +386,7 @@ const presentation: RouteProps[] = [
 	},
 	{
 		path: demoPagesMenu.crm.subMenu.usersList.path,
-		element: <APP.CRM.USERS />,
+		element: <ProtectedRoute allowedRoles={['Admin', 'SuperAdmin']}><APP.CRM.USERS /></ProtectedRoute>,
 	},
 	{
 		path: `${demoPagesMenu.crm.subMenu.customerID.path}/:id`,
