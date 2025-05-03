@@ -102,6 +102,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const loaddata = (): void => {
         //localStorage.removeItem('j_auth_token')
         //localStorage.removeItem('j_user')
+        console.log("Loading data in load data...")
             const storedToken = localStorage.getItem('j_auth_token');
             const storedUser = localStorage.getItem('j_user');
             if (storedToken && storedUser) {
