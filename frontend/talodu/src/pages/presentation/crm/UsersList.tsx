@@ -193,7 +193,8 @@ const UsersList = () => {
             formik.values.payment.includes(f.payout),
     );
     
-    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+    //const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+    const API_BASE_URL = process.env.REACT_APP_API_PRODUCTION_BASE_URL;
     const [editModalStatus, setEditModalStatus] = useState<boolean>(false);
     const [createModalStatus, setCreateModalStatus] = useState<boolean>(false);
     const fetchUsers = async (page = 1, limit = 10, search = ''):Promise<void> => {
