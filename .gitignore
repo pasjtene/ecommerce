@@ -1,2 +1,4 @@
 frontend/talodu/node_modules/
 .frontend/talodu/node_modules/
+.backend/talodu/.env
+backend/talodu/.env
