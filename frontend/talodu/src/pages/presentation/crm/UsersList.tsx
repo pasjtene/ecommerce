@@ -36,7 +36,7 @@ import { getColorNameWithIndex } from '../../../common/data/enumColors';
 import useDarkMode from '../../../hooks/useDarkMode';
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
-import { updateUser } from '../auth/api'
+import { updateUser, API_BASE_URL } from '../auth/api'
 import { User, Role } from '../auth/types'
 
 
@@ -194,7 +194,7 @@ const UsersList = () => {
     );
     
     //const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-    const API_BASE_URL = process.env.REACT_APP_API_PRODUCTION_BASE_URL;
+    //const API_BASE_URL = process.env.REACT_APP_API_PRODUCTION_BASE_URL;
     const [editModalStatus, setEditModalStatus] = useState<boolean>(false);
     const [createModalStatus, setCreateModalStatus] = useState<boolean>(false);
     const fetchUsers = async (page = 1, limit = 10, search = ''):Promise<void> => {
