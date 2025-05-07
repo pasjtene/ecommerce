@@ -114,7 +114,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const login = async (email: string, password: string): Promise<User> => {
        // const login = async (username: string, password: string): Promise<User> => {
-        const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+        const API_BASE_URL = process.env.REACT_APP_API_PRODUCTION_BASE_URL;
         console.log("The API base URL is: ",API_BASE_URL);
         try {
             const response = await axios.post<{
