@@ -339,15 +339,17 @@ useEffect(() => {
 													</div>
 												)}
 												<div className='mt-3'>
+
+												<div style={{ position: 'relative' }}>
 												<FormGroup
 													id='loginPassword'
 													isFloating
-													//label='Your Password'
+													label='Your Password'
 													className={classNames({
 														'd-none1': !signInPassword,
 														
 													})}>
-														<div style={{ position: 'relative' }}>
+														
 													<Input
 														//type='password' 
 														type={showPassword ? 'text' : 'password'}
@@ -364,6 +366,8 @@ useEffect(() => {
 														onBlur={formik.handleBlur}
 														
 													/>
+
+													{/** 
 													<button
 														type="button"
 														onClick={() => setShowPassword(!showPassword)}
@@ -380,8 +384,10 @@ useEffect(() => {
 													>
 														{showPassword ? <FaEyeSlash /> : <FaEye />}
 													</button>
-													</div>
+													*/}
+													 
 												</FormGroup>
+												</div>
 												
 												<div 
 													onClick={() => setShowPassword(!showPassword)}
