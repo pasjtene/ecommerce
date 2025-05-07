@@ -1,6 +1,7 @@
 import React, {createContext, useCallback, useContext, useState, useEffect, ReactNode } from "react";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from '../auth/api'
 //axios.defaults.withCredentials = true;
 
 //Type definitions
@@ -114,7 +115,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const login = async (email: string, password: string): Promise<User> => {
        // const login = async (username: string, password: string): Promise<User> => {
-        const API_BASE_URL = process.env.REACT_APP_API_PRODUCTION_BASE_URL;
+       // const API_BASE_URL = process.env.REACT_APP_API_PRODUCTION_BASE_URL;
         console.log("The API base URL is: ",API_BASE_URL);
         try {
             const response = await axios.post<{
@@ -154,7 +155,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           const refreshToken = localStorage.getItem('j_refresh_token');
           if (!refreshToken) throw new Error('No refresh token');
           
-          const response = await axios.post('http://127.0.0.1:8888/refresh', { refresh_token: refreshToken });
+          const response = await axios.post(API_BASE_URL+'/refresh', { refresh_token: refreshToken });
           const { access_token, refresh_token } = response.data;
           
           localStorage.setItem('j_auth_token', access_token);
