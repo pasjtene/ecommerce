@@ -56,15 +56,25 @@ func main() {
 	//allowedOrigin := "http://localhost:3000"
 	fmt.Println("The origin is ", allowedOrigin)
 	r.Use(func(c *gin.Context) {
+		allowedOrigins := []string{
+			"http://162.19.227.240",      // Nginx port 80
+			"http://162.19.227.240:3000", // React dev server
+			"https://talodu.com",
+			"https://www.talodu.com", // Add other domains as needed
+		}
 		origin := c.Request.Header.Get("Origin")
-		if origin == allowedOrigin {
-			c.Writer.Header().Set("Access-Control-Allow-Origin", allowedOrigin)
-			c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-			c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		for _, allowedOrigin := range allowedOrigins {
+			if origin == allowedOrigin {
+				c.Writer.Header().Set("Access-Control-Allow-Origin", allowedOrigin)
+				c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+				c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+				c.Writer.Header().Set("Access-Control-Allow-Credentials", "true") // If using cookies
 
-			if c.Request.Method == "OPTIONS" {
-				c.AbortWithStatus(http.StatusNoContent)
-				return
+				if c.Request.Method == "OPTIONS" {
+					c.AbortWithStatus(http.StatusNoContent)
+					return
+				}
+				break
 			}
 		}
 		c.Next()
