@@ -406,7 +406,8 @@ func CheckPassword(password, hash string) bool {
 func RegisterUser(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		type RegisterInput struct {
-			Username  string   `json:"username" binding:"required"`
+			//Username  string   `json:"username" binding:"required"`
+			Username  string
 			Email     string   `json:"email" binding:"required,email"`
 			FirstName string   `json:"first_name" binding:"required"`
 			LastName  string   `json:"last_name" binding:"required"`
@@ -439,7 +440,7 @@ func RegisterUser(db *gorm.DB) gin.HandlerFunc {
 		// Create user
 		hashedPassword, _ := HashPassword(input.Password)
 		user := User{
-			Username:  input.Username,
+			Username:  input.Email,
 			Email:     input.Email,
 			FirstName: input.FirstName,
 			LastName:  input.LastName,
@@ -464,6 +465,7 @@ func RegisterUser(db *gorm.DB) gin.HandlerFunc {
 		db.Create(&user)
 
 		// Return user data (excluding password)
+		/**
 		c.JSON(http.StatusCreated, UserResponse{
 			ID:        user.ID,
 			Username:  user.Username,
@@ -472,6 +474,91 @@ func RegisterUser(db *gorm.DB) gin.HandlerFunc {
 			LastName:  user.LastName,
 			Roles:     user.Roles,
 		})
+
+		*/
+
+		//
+		frontendUser := user.ToFrontend()
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": "User updated successfully",
+			"user":    frontendUser,
+		})
+
+	}
+}
+
+func CreateUser(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		type RegisterInput struct {
+			//Username  string `json:"username" binding:"required"`
+			Username  string
+			Email     string `json:"email" binding:"required,email"`
+			FirstName string `json:"first_name" binding:"required"`
+			LastName  string `json:"last_name" binding:"required"`
+			//Password  string `json:"password" binding:"required"`
+			Password string
+			//Roles     []string `json:"roles"` // e.g., ["Admin", "Sales"]
+			Roles []int `json:"roles"` // e.g., ["Admin", "Sales"]
+		}
+
+		var input RegisterInput
+		if err := c.ShouldBindJSON(&input); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		// Check if assigning restricted roles (e.g., SuperAdmin)
+		currentUserRoles, _ := c.Get("roles")
+		for _, roleName := range input.Roles {
+			//if roleName == "SuperAdmin" {
+			if roleName == 1 {
+				isSuperAdmin := false
+				for _, r := range currentUserRoles.([]interface{}) {
+					if r.(string) == "SuperAdmin" {
+						isSuperAdmin = true
+						break
+					}
+				}
+				if !isSuperAdmin {
+					c.JSON(http.StatusForbidden, gin.H{"error": "Only SuperAdmin can assign SuperAdmin role"})
+					return
+				}
+			}
+		}
+		// Create user
+		hashedPassword, _ := HashPassword("Jt.pas123")
+		user := User{
+			//Username:  input.Username,
+			Username:  input.Email,
+			Email:     input.Email,
+			FirstName: input.FirstName,
+			LastName:  input.LastName,
+			Password:  hashedPassword,
+		}
+
+		// Assign roles
+		var roles []Role
+		for _, roleId := range input.Roles {
+			var role Role
+			if err := db.Where("id = ?", roleId).First(&role).Error; err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Role not found is %d ", roleId)})
+				return
+			}
+
+			roles = append(roles, role)
+		}
+		user.Roles = roles
+
+		db.Create(&user)
+
+		// Return user data (excluding password)
+		frontendUser := user.ToFrontend()
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": "User updated successfully",
+			"user":    frontendUser,
+		})
+
 	}
 }
 

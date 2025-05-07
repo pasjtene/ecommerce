@@ -114,6 +114,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const login = async (email: string, password: string): Promise<User> => {
        // const login = async (username: string, password: string): Promise<User> => {
+        const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+        console.log("The API base URL is: ",API_BASE_URL);
         try {
             const response = await axios.post<{
                 access_token: string;
@@ -121,7 +123,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 user: User,
                 token: string
            // }>('http://127.0.0.1:8888/login',{ email, password }); 
-            }>('http://162.19.227.240:8888/login',{ email, password }); 
+            }>(API_BASE_URL+'/login',{ email, password }); 
 
             const { access_token, refresh_token, user } = response.data;
             

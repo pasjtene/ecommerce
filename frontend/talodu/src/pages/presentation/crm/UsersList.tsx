@@ -31,6 +31,7 @@ import InputGroup, { InputGroupText } from '../../../components/bootstrap/forms/
 import Popovers from '../../../components/bootstrap/Popovers';
 import CustomerEditModal from './CustomerEditModal';
 import UserEditModal from './UserEditModal';
+import UserCreateModal from './UserCreateModal';
 import { getColorNameWithIndex } from '../../../common/data/enumColors';
 import useDarkMode from '../../../hooks/useDarkMode';
 import axios from 'axios'
@@ -140,14 +141,32 @@ const UsersList = () => {
     // Function to handle after user is updated
     const handleUserUpdated = (updatedUser: User) => {
         console.log('Updated user received:', updatedUser);
-        console.log('Current users before update:', users);
-        setUsers(prevUsers => 
-          prevUsers.map(user => 
-            user.id === updatedUser.id ? updatedUser : user
-          )
-        );
+        //console.log('Current users before update:', users);
+       setUsers(prevUsers => prevUsers.map(user => user.id === updatedUser.id ? updatedUser : user) );
         setEditingUser(null);
       };
+
+       // Function to handle after user is created
+    const handleUserCreated = (CreatedUser: User) => {
+     console.log('Updated user received:', CreatedUser);
+     //setUsers(prevUsers => [...prevUsers, CreatedUser]);
+
+     setUsers(prev => [
+      ...prev.slice(0, 1),
+      CreatedUser,
+      ...prev.slice(1)
+    ]);
+
+      setEditingUser(null);
+    };
+
+    const insertUser = (newUser: User, index: number) => {
+      setUsers(prev => [
+        ...prev.slice(0, index),
+        newUser,
+        ...prev.slice(index)
+      ]);
+    };
 
 
     const formik = useFormik({
@@ -174,12 +193,13 @@ const UsersList = () => {
             formik.values.payment.includes(f.payout),
     );
     
-
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     const [editModalStatus, setEditModalStatus] = useState<boolean>(false);
+    const [createModalStatus, setCreateModalStatus] = useState<boolean>(false);
     const fetchUsers = async (page = 1, limit = 10, search = ''):Promise<void> => {
         try {
           //const response = await axios.get<ApiResponse>('http://127.0.0.1:8888/users',{
-            const response = await axios.get<ApiResponse>('http://162.19.227.240:8888/users',{
+            const response = await axios.get<ApiResponse>(API_BASE_URL+'/users',{
             
             params: { 
                 page,
@@ -574,7 +594,7 @@ const handleEditUser = (user: User) => {
                         icon='PersonAdd'
                         color='primary'
                         isLight
-                        onClick={() => {setEditModalStatus(true); setisNewUser(true)}}>
+                        onClick={() => {setCreateModalStatus(true); setisNewUser(true);}}>
                         Add New user
                     </Button>
                 </SubHeaderRight>
@@ -692,6 +712,22 @@ const handleEditUser = (user: User) => {
 
             isNewUser={isNewUser}
             onUserUpdated={handleUserUpdated}
+            />
+
+          <UserCreateModal 
+            setIsOpen={setCreateModalStatus}
+            isOpen={createModalStatus}
+            id={editingUserId || 'new-user'}
+            formData={editFormData}
+            formData2={editFormData2}
+            availableRoles={availableRoles}
+            onFormChange={setEditFormData}
+            onFormChange2={setEditFormData2}
+            onSave={handleSaveUser}
+
+            isNewUser={isNewUser}
+            onUserUpdated={handleUserCreated}
+            
             />
 
            {/* Pagination Footer */}

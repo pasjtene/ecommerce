@@ -1,12 +1,12 @@
 import axios from 'axios';
 import { User } from './types'
 
+
 export type Role = {
   id: number;
   name: string;
   description?: string;
 };
-
 
 
 export type UpdateUserData = {
@@ -39,8 +39,21 @@ const api = axios.create({
   },
 });
 
-const API_BASE_URL = 'http://162.19.227.240:8888';
+
 //const API_BASE_URL = 'http://127.0.0.1:8888';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+console.log("The API base URL is: ",API_BASE_URL);
+
+
+  if(process.env.REACT_APP_API_DEVELOPMENT_ENV) {
+  console.log("This is dev env")
+  //API_BASE_URL = 'http://127.0.0.1:8888';
+} else if(process.env.REACT_APP_API_PRODUCTION_ENV) {
+  console.log ("we are in prod env");
+  //const API_BASE_URL = 'http://162.19.227.240:8888';
+}
+
+
 
 
 export const updateUser = async (userId: number, userData: EditFormData): Promise<UserResponse> => {
@@ -48,6 +61,26 @@ export const updateUser = async (userId: number, userData: EditFormData): Promis
     const token = localStorage.getItem('j_auth_token');
     const response = await axios.put<UserResponse>(
       `${API_BASE_URL}/users/${userId}`,
+      userData,
+      {
+        headers: {
+          'Authorization': `${token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error updating user:', error);
+    throw error;
+  }
+};
+
+export const createUser = async (userData: EditFormData): Promise<UserResponse> => {
+  try {
+    const token = localStorage.getItem('j_auth_token');
+    const response = await axios.post<UserResponse>(
+      `${API_BASE_URL}/user`,
       userData,
       {
         headers: {

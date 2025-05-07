@@ -5,6 +5,7 @@ import (
 	"log"
 	"math"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 
@@ -18,6 +19,7 @@ import (
 	//_ "talodu/models"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"gorm.io/gorm"
 )
 
@@ -35,6 +37,11 @@ func main() {
 		return
 	}
 
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+
 	s.DB.AutoMigrate(&Shop{}, &models.User{}, &Role{}, &models.Product{})
 
 	// Seed initial data
@@ -44,8 +51,8 @@ func main() {
 	auth.SeedSuperAdmin(s.DB)
 
 	r := gin.Default()
-	//r.Use(cors.Default())
-	allowedOrigin := "http://162.19.227.240:3000"
+	allowedOrigin := os.Getenv("allowedOrigin")
+	//allowedOrigin := "http://162.19.227.240:3000"
 	//allowedOrigin := "http://localhost:3000"
 	fmt.Println("The origin is ", allowedOrigin)
 	r.Use(func(c *gin.Context) {
@@ -65,6 +72,7 @@ func main() {
 
 	// Auth routes
 	r.POST("/register", auth.RegisterUser(s.DB))
+	r.POST("/user", auth.CreateUser(s.DB))
 	r.POST("/login", auth.Login2(s.DB))
 	r.POST("/logout", auth.AuthMiddleware(), auth.Logout(s.DB))
 	r.POST("/refresh", auth.RefreshToken(s.DB))

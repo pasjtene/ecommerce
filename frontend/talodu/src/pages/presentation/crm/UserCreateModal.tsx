@@ -22,7 +22,7 @@ import Button from '../../../components/bootstrap/Button';
 import Label from '../../../components/bootstrap/forms/Label';
 import Checks, { ChecksGroup } from '../../../components/bootstrap/forms/Checks';
 import PAYMENTS from '../../../common/data/enumPaymentMethod';
-import { updateUser } from '../auth/api';
+import { updateUser, createUser } from '../auth/api';
 import { User, Role } from '../auth/types'
 
 
@@ -57,7 +57,7 @@ interface UserFormData {
     last_name: string;
     roles: number[];
   }
-const UserEditModal: FC<ICustomerEditModalProps> = ({
+const UserCreateModal: FC<ICustomerEditModalProps> = ({
    id,
     isOpen,
     setIsOpen,
@@ -164,11 +164,12 @@ const UserEditModal: FC<ICustomerEditModalProps> = ({
        // setError(null);
         
         try {
-          const response = await updateUser(formData2.id, formData2);
+          const response = await createUser(formData2);
           console.log("The data", formData2)
           console.log("The updated user response data", response.user)
-          //onUserUpdated(response.user);
+
           onUserUpdated(response.user);
+
           setIsOpen(false);
 
         } catch (err) {
@@ -193,8 +194,7 @@ const UserEditModal: FC<ICustomerEditModalProps> = ({
                     <div className='row g-4'>
                         
                         <FormGroup id='first_name' label='First Name' className='col-md-3'>
-                        {isNewUser? (<Input name='first_name' value="" placeholder='First Name' onChange={handleInputChange}  />):
-                        (<Input name='first_name' onChange={handleInputChange} value={formData.first_name}  />)}       
+                        <Input name='first_name' onChange={handleInputChange} value={formData.first_name}  />      
                         </FormGroup>
                         
                         <FormGroup id='last_name' label='Last Name' className='col-md-3'>
@@ -389,4 +389,4 @@ const UserEditModal: FC<ICustomerEditModalProps> = ({
     return null;
 };
 
-export default UserEditModal;
+export default UserCreateModal;

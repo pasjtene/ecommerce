@@ -12,6 +12,14 @@ import (
 
 type User = models.User
 type Role = models.Role
+type UserResponse struct {
+	ID        uint          `json:"id"`
+	Username  string        `json:"username"`
+	Email     string        `json:"email"`
+	FirstName string        `json:"first_name"`
+	LastName  string        `json:"last_name"`
+	Roles     []models.Role `json:"roles"`
+}
 
 // PUT - Update /users/:id
 func UpdateUser2(db *gorm.DB) gin.HandlerFunc {
