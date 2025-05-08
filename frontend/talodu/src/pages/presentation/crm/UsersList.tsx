@@ -199,8 +199,8 @@ const UsersList = () => {
     const [createModalStatus, setCreateModalStatus] = useState<boolean>(false);
     const fetchUsers = async (page = 1, limit = 10, search = ''):Promise<void> => {
         try {
-          //const response = await axios.get<ApiResponse>('http://127.0.0.1:8888/users',{
-            const response = await axios.get<ApiResponse>(API_BASE_URL+'/users',{
+            const response = await axios.get<ApiResponse>('/users',{
+            //const response = await axios.get<ApiResponse>(API_BASE_URL+'/users',{
             
             params: { 
                 page,

@@ -64,7 +64,8 @@ export const updateUser = async (userId: number, userData: EditFormData): Promis
   try {
     const token = localStorage.getItem('j_auth_token');
     const response = await axios.put<UserResponse>(
-      `${API_BASE_URL}/users/${userId}`,
+      //`${API_BASE_URL}/users/${userId}`,
+      `/users/${userId}`,
       userData,
       {
         headers: {
@@ -84,7 +85,8 @@ export const createUser = async (userData: EditFormData): Promise<UserResponse> 
   try {
     const token = localStorage.getItem('j_auth_token');
     const response = await axios.post<UserResponse>(
-      `${API_BASE_URL}/user`,
+      //`${API_BASE_URL}/user`,
+      `/user`,
       userData,
       {
         headers: {
