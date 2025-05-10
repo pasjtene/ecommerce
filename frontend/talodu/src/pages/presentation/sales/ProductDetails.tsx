@@ -35,8 +35,8 @@ import showNotification from '../../../components/extras/showNotification';
 import useDarkMode from '../../../hooks/useDarkMode';
 import { User, Product, ProductImage } from '../auth/types';
 import axios  from 'axios';
-import { updateUser, API_BASE_URL } from '../auth/api'
-import ProductImageGallery from './ProductImageGallery2'
+import { API_IMAGES, API_BASE_URL } from '../auth/api'
+import ProductImageGallery from './ProductImageGallery'
 
 interface IValues {
     name: string;
@@ -173,7 +173,10 @@ const ProductDetails = () => {
         );
   
         alert('Images uploaded successfully!');
-        console.log(response.data);
+        //console.log(response.data);
+        // Update the images state with the new images
+        setImages(prevImages => [...prevImages, ...response.data.images]);
+        setFiles([]);
       } catch (error) {
         console.error('Upload failed:', error);
         alert('Upload failed. Please try again.');

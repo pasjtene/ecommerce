@@ -1,35 +1,58 @@
-import { useState } from 'react';
-import { User, Product, ProductImage } from '../auth/types';
+import { useState, useRef } from 'react';
+import './ProductImageGallery.css'; // We'll create this CSS file
+import { ProductImage } from '../auth/types';
+import { API_IMAGES, API_BASE_URL } from '../auth/api'
 
 
 
 const ProductImageGallery = ({ images }: { images: ProductImage[] }) => {
   const [selectedImage, setSelectedImage] = useState<ProductImage | null>(images[0] || null);
-  const [hoveredImage, setHoveredImage] = useState<ProductImage | null>(null);
+  const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
+  const [isHovering, setIsHovering] = useState(false);
+  const imageRef = useRef<HTMLDivElement>(null);
 
-  // Display either the hovered image or the selected image
-  const displayImage = hoveredImage || selectedImage;
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!imageRef.current) return;
+    
+    const { left, top, width, height } = imageRef.current.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    setHoverPosition({ x, y });
+  };
 
   return (
     <div className="container mt-4">
       <div className="row">
         {/* Main Image Display Area - Left Side */}
         <div className="col-lg-8">
-          <div className="card mb-4 shadow-sm">
-            {displayImage ? (
-              <img
-                src={displayImage.url}
-                alt={displayImage.altText || 'Product image'}
-                className="card-img-top"
-                style={{ 
-                  height: '500px', 
-                  objectFit: 'contain',
-                  backgroundColor: '#f8f9fa'
-                }}
-              />
+          <div 
+            className="card mb-4 shadow-sm main-image-container"
+            ref={imageRef}
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => setIsHovering(false)}
+            onMouseMove={handleMouseMove}
+          >
+            {selectedImage ? (
+              <>
+                <img
+                  src={API_IMAGES+selectedImage.url}
+                  alt={selectedImage.altText || 'Product image'}
+                  className="main-product-image"
+                />
+                {/* Magnifying glass lens */}
+                {isHovering && (
+                  <div 
+                    className="magnifier-lens"
+                    style={{
+                      left: `${hoverPosition.x}%`,
+                      top: `${hoverPosition.y}%`,
+                      transform: 'translate(-50%, -50%)',
+                    }}
+                  />
+                )}
+              </>
             ) : (
-              <div className="d-flex justify-content-center align-items-center" 
-                   style={{ height: '500px', backgroundColor: '#f8f9fa' }}>
+              <div className="no-image-placeholder">
                 <span className="text-muted">No image selected</span>
               </div>
             )}
@@ -44,20 +67,13 @@ const ProductImageGallery = ({ images }: { images: ProductImage[] }) => {
                   <div 
                     key={image.ID} 
                     className="thumbnail-container me-2"
-                    onMouseEnter={() => setHoveredImage(image)}
-                    onMouseLeave={() => setHoveredImage(null)}
                     onClick={() => setSelectedImage(image)}
+                    onMouseEnter={() => setSelectedImage(image)}
                   >
                     <img
-                      src={image.url}
+                      src={API_IMAGES+image.url}
                       alt={image.altText || 'Product thumbnail'}
                       className={`img-thumbnail ${selectedImage?.ID === image.ID ? 'active-thumbnail' : ''}`}
-                      style={{
-                        width: '100px',
-                        height: '100px',
-                        objectFit: 'cover',
-                        cursor: 'pointer'
-                      }}
                     />
                     {image.isPrimary && (
                       <span className="badge bg-primary position-absolute top-0 start-0">
@@ -75,21 +91,33 @@ const ProductImageGallery = ({ images }: { images: ProductImage[] }) => {
           </div>
         </div>
 
-        {/* Product Details - Right Side */}
-        <div className="col-lg-4">
-          <div className="card shadow-sm sticky-top" style={{ top: '20px' }}>
+        {/* Right Side - Product Details + Magnified Image */}
+        <div className="col-lg-4 position-relative">
+          {/* Magnified Image Preview (appears on hover) */}
+          {isHovering && selectedImage && (
+            <div 
+              className="magnified-preview"
+              style={{
+                backgroundImage: `url(${API_IMAGES+selectedImage.url})`,
+                backgroundPosition: `${hoverPosition.x}% ${hoverPosition.y}%`,
+              }}
+            />
+          )}
+
+          {/* Product Details Card */}
+          <div className="card shadow-sm product-details-card">
             <div className="card-body">
               <h4 className="card-title">Product Details</h4>
               
-              {displayImage ? (
+              {selectedImage ? (
                 <>
                   <div className="mb-3">
                     <h6>Image Information</h6>
                     <p className="text-muted small mb-1">
-                      {displayImage.altText || 'No description available'}
+                      {selectedImage.altText || 'No description available'}
                     </p>
                     <p className="small">
-                      {displayImage.url.split('/').pop()}
+                      {selectedImage.url.split('/').pop()}
                     </p>
                   </div>
 
@@ -97,8 +125,8 @@ const ProductImageGallery = ({ images }: { images: ProductImage[] }) => {
 
                   <div className="mb-3">
                     <h6>Pricing</h6>
-                    {displayImage.price ? (
-                      <h5 className="text-primary">${displayImage.price.toFixed(2)}</h5>
+                    {selectedImage.price ? (
+                      <h5 className="text-primary">${selectedImage.price.toFixed(2)}</h5>
                     ) : (
                       <p className="text-muted">Price not available</p>
                     )}
@@ -107,7 +135,7 @@ const ProductImageGallery = ({ images }: { images: ProductImage[] }) => {
                   <div className="mb-3">
                     <h6>SKU</h6>
                     <p className="text-muted small">
-                      {displayImage.sku || 'Not specified'}
+                      {selectedImage.sku || 'Not specified'}
                     </p>
                   </div>
 
@@ -122,7 +150,7 @@ const ProductImageGallery = ({ images }: { images: ProductImage[] }) => {
                 </>
               ) : (
                 <div className="text-center text-muted py-4">
-                  Hover over an image to see details
+                  Select an image to see details
                 </div>
               )}
             </div>
