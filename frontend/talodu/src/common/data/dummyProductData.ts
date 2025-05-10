@@ -215,5 +215,57 @@ const data: {
 		store: 'Company B',
 		file: 'Figma',
 	},
+	{
+		id: 73,
+		image: Cylinder,
+		name: 'Cylinder',
+		category: '3D Shapes',
+		series: [
+			{
+				data: [18, 32, 26, 15, 34],
+			},
+		],
+		color: String(process.env.REACT_APP_SUCCESS_COLOR),
+		stock: 219,
+		price: 16,
+		store: 'Company B',
+		file: 'Figma',
+	},
+
+	{
+		id: 74,
+		image: Cylinder,
+		name: 'Cylinder',
+		category: '3D Shapes',
+		series: [
+			{
+				data: [18, 32, 26, 15, 34],
+			},
+		],
+		color: String(process.env.REACT_APP_SUCCESS_COLOR),
+		stock: 219,
+		price: 16,
+		store: 'Company B',
+		file: 'Figma',
+	},
+
+	{
+		id: 75,
+		image: Cylinder,
+		name: 'Cylinder',
+		category: '3D Shapes',
+		series: [
+			{
+				data: [18, 32, 26, 15, 34],
+			},
+		],
+		color: String(process.env.REACT_APP_SUCCESS_COLOR),
+		stock: 219,
+		price: 16,
+		store: 'Company B',
+		file: 'Figma',
+	},
+
+
 ];
 export default data;
