@@ -349,18 +349,13 @@ const ProductDetails = () => {
 
 
 
-
-
-
-
-
                 <div className='row h-100'>
                     <div className='col-lg-4'>
                         <Card stretch>
                             <CardBody isScrollable>
                                 <div className='row g-3'>
                                     <div className='col-12'>
-                                        <img src={data.image} alt='' width='100%' className='p-5' />
+                                        <img src={images[0]?.url} alt='' width='100%' className='p-5' />
                                     </div>
                                     <div className='col-12'>
                                         <Button
@@ -477,8 +472,9 @@ const ProductDetails = () => {
                                                             </CardTitle>
                                                         </CardLabel>
                                                     </CardHeader>
-                                                    <CardBody className='py-0'>
-                                                        <Chart
+                                                    {/**
+                                                     *  <CardBody className='py-0'>
+                                                    <Chart
                                                             className='mx-n4'
                                                             series={data.series}
                                                             options={chartOptions}
@@ -486,7 +482,10 @@ const ProductDetails = () => {
                                                             height={chartOptions.chart?.height}
                                                             width={chartOptions.chart?.width}
                                                         />
+                                                        
                                                     </CardBody>
+                                                     */}
+                                                   
                                                 </Card>
                                             </div>
                                             <div className='col-lg-6'>
@@ -512,7 +511,8 @@ const ProductDetails = () => {
                                                             </div>
                                                             <div className='flex-grow-1 ms-3'>
                                                                 <div className='fw-bold fs-3 mb-0'>
-                                                                    {data.category}
+                                                                    
+                                                                    data category
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -542,7 +542,8 @@ const ProductDetails = () => {
                                                             </div>
                                                             <div className='flex-grow-1 ms-3'>
                                                                 <div className='fw-bold fs-3 mb-0'>
-                                                                    {data.file}
+                                                                   
+                                                                    data file
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -712,6 +713,8 @@ const ProductDetails = () => {
                                                             />
                                                         )}
                                                     </div>
+
+
                                                     <div className='col-lg-8'>
                                                         <div className='row g-4'>
                                                             <div className='col-12'>
