@@ -90,7 +90,7 @@ func main() {
 	r.POST("/refresh", auth.RefreshToken(s.DB))
 
 	// Protected routes
-	products := r.Group("/api/products")
+	products := r.Group("/products")
 	{
 		products.GET("", handlers.ListProducts(s.DB))
 		products.POST("", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.CreateProduct(s.DB))
