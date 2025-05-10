@@ -100,6 +100,7 @@ func main() {
 	}
 
 	//images routes
+	// https://talodu.com:8888/uploads/products/80/679d3551-7857-4b85-b648-cc84335e61a1.png
 
 	handlers.SetupProductImageRoutes(r, s.DB)
 

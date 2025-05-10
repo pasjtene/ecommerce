@@ -43,6 +43,7 @@ const api = axios.create({
 //const API_BASE_URL = 'http://127.0.0.1:8888';
 //const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 export const API_BASE_URL = process.env.REACT_APP_API_PRODUCTION_BASE_URL;
+export const API_IMAGES = process.env.REACT_APP_API_IMAGES
 
 console.log("The API base URL is: ",API_BASE_URL);
 console.log("The API base URL from env is: ",process.env.REACT_APP_API_PRODUCTION_BASE_URL);

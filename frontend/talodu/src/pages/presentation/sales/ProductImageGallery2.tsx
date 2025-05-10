@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import './ProductImageGallery.css'; // We'll create this CSS file
 import { ProductImage } from '../auth/types';
+import { API_IMAGES, API_BASE_URL } from '../auth/api'
 
 
 
@@ -34,7 +35,7 @@ const ProductImageGallery = ({ images }: { images: ProductImage[] }) => {
             {selectedImage ? (
               <>
                 <img
-                  src={selectedImage.url}
+                  src={API_IMAGES+selectedImage.url}
                   alt={selectedImage.altText || 'Product image'}
                   className="main-product-image"
                 />
@@ -70,7 +71,7 @@ const ProductImageGallery = ({ images }: { images: ProductImage[] }) => {
                     onMouseEnter={() => setSelectedImage(image)}
                   >
                     <img
-                      src={image.url}
+                      src={API_IMAGES+image.url}
                       alt={image.altText || 'Product thumbnail'}
                       className={`img-thumbnail ${selectedImage?.ID === image.ID ? 'active-thumbnail' : ''}`}
                     />
@@ -97,7 +98,7 @@ const ProductImageGallery = ({ images }: { images: ProductImage[] }) => {
             <div 
               className="magnified-preview"
               style={{
-                backgroundImage: `url(${selectedImage.url})`,
+                backgroundImage: `url(${API_IMAGES+selectedImage.url})`,
                 backgroundPosition: `${hoverPosition.x}% ${hoverPosition.y}%`,
               }}
             />
