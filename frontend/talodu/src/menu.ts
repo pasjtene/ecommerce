@@ -342,9 +342,15 @@ export const demoPagesMenu = {
 			},
 			usersList: {
 				id: 'usersList',
-				text: 'UsersList-23',
+				text: 'Users List',
 				path: 'crm/users',
 				icon: 'PersonSearch',
+			},
+			productsList: {
+				id: 'productsList',
+				text: 'Products list',
+				path: 'crm/products',
+				icon: 'Dvr',
 			},
 			customerID: {
 				id: 'customerID',
@@ -356,6 +362,12 @@ export const demoPagesMenu = {
 				id: 'userID',
 				text: 'userID',
 				path: 'crm/user',
+				hide: true,
+			},
+			productID: {
+				id: 'productID',
+				text: 'productID',
+				path: 'crm/product',
 				hide: true,
 			},
 			customer: {

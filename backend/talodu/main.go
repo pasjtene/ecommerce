@@ -42,10 +42,11 @@ func main() {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
 
-	s.DB.AutoMigrate(&Shop{}, &models.User{}, &Role{}, &models.Product{})
+	s.DB.AutoMigrate(&Shop{}, &models.User{}, &Role{}, &models.Product{}, &models.Category{}, &models.ProductImage{})
 
 	// Seed initial data
-	handlers.SeedProducts(s.DB)
+	//handlers.SeedProducts(s.DB)
+	handlers.SeedShopsProductsAndCategories(s.DB)
 	// Seed Roles
 	auth.SeedRoles(s.DB)
 	auth.SeedSuperAdmin(s.DB)
@@ -60,7 +61,8 @@ func main() {
 			"http://162.19.227.240",      // Nginx port 80
 			"http://162.19.227.240:3000", // React dev server
 			"https://talodu.com",
-			"https://www.talodu.com", // Add other domains as needed
+			"https://www.talodu.com",
+			"http://localhost:3000", // Add other domains as needed
 		}
 		origin := c.Request.Header.Get("Origin")
 		for _, allowedOrigin := range allowedOrigins {
@@ -88,7 +90,7 @@ func main() {
 	r.POST("/refresh", auth.RefreshToken(s.DB))
 
 	// Protected routes
-	products := r.Group("/products")
+	products := r.Group("/api/products")
 	{
 		products.GET("", handlers.ListProducts(s.DB))
 		products.POST("", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.CreateProduct(s.DB))
@@ -96,6 +98,10 @@ func main() {
 		products.GET(":id", handlers.GetProduct(s.DB))                                                         // Get single product
 		products.PUT(":id", auth.AuthMiddleware("Sales", "Admin", "SuperAdmin"), handlers.UpdateProduct(s.DB)) // Update
 	}
+
+	//images routes
+
+	handlers.SetupProductImageRoutes(r, s.DB)
 
 	shops := r.Group("/shops")
 	{

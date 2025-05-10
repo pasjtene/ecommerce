@@ -8,6 +8,28 @@
     roles: Role[];
   }
 
+  export interface Product {
+    ID: number;
+    name: string;
+    price: number;
+    stock: number;
+    description: string;
+    //roles: Role[];
+  }
+
+
+
+  export interface ProductImage {
+    ID: string;
+    url: string;
+    altText?: string;
+    isPrimary?: boolean;
+    // Add any additional product details you want to display
+    description?: string;
+    price?: number;
+    sku?: string;
+  }
+
 
   export interface User2 {
     ID: number;

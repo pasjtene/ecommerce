@@ -62,8 +62,8 @@ export const randomColor = () => {
 	return colors[color];
 };
 
-export const priceFormat = (price: number) => {
-	return price.toLocaleString('en-US', {
+export const priceFormat = (price: number | undefined) => {
+	return price?.toLocaleString('en-US', {
 		style: 'currency',
 		currency: 'USD',
 	});

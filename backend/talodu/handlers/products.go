@@ -1,16 +1,22 @@
 package handlers
 
 import (
+	"fmt"
 	"math"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 	"talodu/models"
+
+	"github.com/google/uuid"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 type Product = models.Product
+type ProductImage = models.ProductImage
 
 // GET /products?search=query&sort=price&page=1&limit=10
 func ListProducts(db *gorm.DB) gin.HandlerFunc {
@@ -67,10 +73,10 @@ func ListProducts(db *gorm.DB) gin.HandlerFunc {
 
 		// Return response
 		c.JSON(http.StatusOK, gin.H{
-			"data":       products,
+			"products":   products,
 			"page":       page,
 			"limit":      limit,
-			"totalCount": totalCount,
+			"totalItems": totalCount,
 			"totalPages": totalPages,
 		})
 	}
@@ -191,12 +197,184 @@ func UpdateProduct(db *gorm.DB) gin.HandlerFunc {
 // Seed initial data
 func SeedProducts(db *gorm.DB) {
 	products := []Product{
-		{Name: "Laptop", Price: 999.99, Description: "Del inspiron laptop", Stock: 15},
-		{Name: "Phone", Price: 699.99, Description: "iPhone 16 pro 128 GB", Stock: 15},
-		{Name: "Tablet", Price: 399.99, Description: "samsung table", Stock: 15},
-		{Name: "Headphone", Price: 39.99, Description: "Noise cancelling headphone", Stock: 5},
+		{Name: "Laptop", Price: 999.99, Description: "Del inspiron laptop", Stock: 15, ShopID: 1},
+		{Name: "Phone", Price: 699.99, Description: "iPhone 16 pro 128 GB", Stock: 15, ShopID: 1},
+		{Name: "Tablet", Price: 399.99, Description: "samsung table", Stock: 15, ShopID: 1},
+		{Name: "Headphone", Price: 39.99, Description: "Noise cancelling headphone", Stock: 5, ShopID: 1},
 	}
 	for _, p := range products {
 		db.Create(&p)
 	}
+}
+
+//######
+
+func SetupProductImageRoutes(r *gin.Engine, db *gorm.DB) {
+	productImageRoutes := r.Group("/api/images/product")
+	{
+		// Single image upload
+		productImageRoutes.POST("/:productId", func(c *gin.Context) {
+			UploadProductImage(c, db)
+		})
+
+		// Multiple image uploads
+		productImageRoutes.POST("/:productId/batch", func(c *gin.Context) {
+			UploadProductImagesBatch(c, db)
+		})
+
+		// Get all images for a product
+		productImageRoutes.GET("/:productId", func(c *gin.Context) {
+			GetProductImages(c, db)
+		})
+	}
+}
+
+// Upload single image
+func UploadProductImage(c *gin.Context, db *gorm.DB) {
+	productID := c.Param("productId")
+	file, err := c.FormFile("image")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Create upload directory
+	uploadPath := filepath.Join("uploads", "products", productID)
+	if err := os.MkdirAll(uploadPath, 0755); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create upload directory"})
+		return
+	}
+
+	// Generate unique filename
+	fileExt := filepath.Ext(file.Filename)
+	filename := uuid.New().String() + fileExt
+	dst := filepath.Join(uploadPath, filename)
+
+	// Save file
+	if err := c.SaveUploadedFile(file, dst); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save file"})
+		return
+	}
+
+	// Save to database
+	image := ProductImage{
+		ProductID: parseUint(productID),
+		URL:       "/" + filepath.ToSlash(dst),
+		AltText:   c.PostForm("alt_text"),
+	}
+
+	if err := db.Create(&image).Error; err != nil {
+		_ = os.Remove(dst)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save image record"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Image uploaded successfully",
+		"image":   image,
+	})
+}
+
+// Upload multiple images
+func UploadProductImagesBatch(c *gin.Context, db *gorm.DB) {
+	productID := c.Param("productId")
+	form, err := c.MultipartForm()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	files := form.File["images"]
+	if len(files) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No images provided"})
+		return
+	}
+
+	// Create upload directory
+	uploadPath := filepath.Join("uploads", "products", productID)
+	if err := os.MkdirAll(uploadPath, 0755); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create upload directory"})
+		return
+	}
+
+	var uploadedImages []ProductImage
+	for _, file := range files {
+		// Generate unique filename
+		fileExt := filepath.Ext(file.Filename)
+		filename := uuid.New().String() + fileExt
+		dst := filepath.Join(uploadPath, filename)
+
+		// Save file
+		if err := c.SaveUploadedFile(file, dst); err != nil {
+			continue // Skip failed files
+		}
+
+		// Create image record
+		image := ProductImage{
+			ProductID: parseUint(productID),
+			URL:       "/" + filepath.ToSlash(dst),
+			AltText:   c.PostForm("alt_text"),
+		}
+
+		if err := db.Create(&image).Error; err != nil {
+			_ = os.Remove(dst)
+			continue
+		}
+
+		uploadedImages = append(uploadedImages, image)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Batch upload completed",
+		"count":   len(uploadedImages),
+		"images":  uploadedImages,
+	})
+}
+
+// Get all images for a product
+func GetProductImages(c *gin.Context, db *gorm.DB) {
+	productID := c.Param("productId")
+	var images []ProductImage
+
+	if err := db.Where("product_id = ?", productID).Find(&images).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch images"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"count":  len(images),
+		"images": images,
+	})
+}
+
+func GetProductImages_2(c *gin.Context, db *gorm.DB) {
+	productID := c.Param("productId")
+	var images []ProductImage
+	if err := db.Where("product_id = ?", productID).Find(&images).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch images"})
+		return
+	}
+
+	// Add full URL to each image
+	for i := range images {
+		//images[i].URL = fmt.Sprintf("%s/uploads/products/%s/%s",
+		images[i].URL = fmt.Sprintf("%s%s",
+			c.Request.Host,
+			//productID,
+			images[i].URL)
+	}
+
+	//c.JSON(200, gin.H{"images": images})
+	c.JSON(http.StatusOK, gin.H{
+		"count":  len(images),
+		"images": images,
+	})
+}
+
+func parseUint(s string) uint {
+	i, err := strconv.ParseUint(s, 10, 32)
+	if err != nil {
+		return 0
+	}
+	return uint(i)
 }

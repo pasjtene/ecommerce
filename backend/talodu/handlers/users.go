@@ -126,6 +126,7 @@ func UpdateUser(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		frontendUser := user.ToFrontend()
+		
 		c.JSON(http.StatusOK, gin.H{
 			"message": "User updated successfully",
 			"user":    frontendUser,

@@ -60,7 +60,7 @@ const APP = {
 		TRANSACTIONS: lazy(() => import('../pages/presentation/sales/TransActionsPage')),
 		PRODUCTS: lazy(() => import('../pages/presentation/sales/SalesListPage')),
 		PRODUCTS_GRID: lazy(() => import('../pages/presentation/sales/ProductsGridPage')),
-		PRODUCTS_VIEW: lazy(() => import('../pages/presentation/sales/ProductViewPage')),
+		PRODUCTS_VIEW: lazy(() => import('../pages/presentation/sales/ProductDetails')),
 	},
 	APPOINTMENT: {
 		CALENDAR: lazy(() => import('../pages/presentation/appointment/CalendarPage')),
@@ -72,6 +72,8 @@ const APP = {
 		CRM_DASHBOARD: lazy(() => import('../pages/presentation/crm/CrmDashboard')),
 		CUSTOMERS: lazy(() => import('../pages/presentation/crm/CustomersList')),
 		USERS: lazy(() => import('../pages/presentation/crm/UsersList')),
+		PRODUCTS: lazy(() => import('../pages/presentation/crm/ProductsList')),
+		PRODUCT: lazy(() => import('../pages/presentation/crm/ProductDetails')),
 		USER: lazy(() => import('../pages/presentation/crm/UserDetails')),
 		CUSTOMER: lazy(() => import('../pages/presentation/crm/Customer')),
 	},
@@ -387,6 +389,14 @@ const presentation: RouteProps[] = [
 	{
 		path: demoPagesMenu.crm.subMenu.usersList.path,
 		element: <ProtectedRoute allowedRoles={['Admin','SuperAdmin']}><APP.CRM.USERS /></ProtectedRoute>,
+	},
+	{
+		path: demoPagesMenu.crm.subMenu.productsList.path,
+		element: <ProtectedRoute allowedRoles={['Admin','SuperAdmin']}><APP.CRM.PRODUCTS /></ProtectedRoute>,
+	},
+	{
+		path: `${demoPagesMenu.crm.subMenu.productID.path}/:id`,
+		element: <APP.CRM.PRODUCT />,
 	},
 	{
 		path: `${demoPagesMenu.crm.subMenu.customerID.path}/:id`,

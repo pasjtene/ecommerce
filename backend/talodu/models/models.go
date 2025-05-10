@@ -6,16 +6,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type Product struct {
-	gorm.Model
-	Name        string  `json:"name"`
-	Description string  `json:"description"`
-	Price       float64 `json:"price"`
-	Stock       int     `json:"stock"`
-	ShopID      uint    `json:"shop_id"`
-	Shop        Shop    `json:"shop" gorm:"foreignKey:ShopID"`
-}
-
 type Role struct {
 	gorm.Model
 	Name        string `gorm:"unique"`
@@ -93,8 +83,35 @@ type Shop struct {
 	gorm.Model
 	Name        string    `gorm:"name"`
 	Description string    `json:"description"`
+	Moto        string    `json:"moto" binding:"max=100"`
 	OwnerID     uint      `json:"owner_id"`
 	Owner       User      `json:"owner" gorm:"foreignKey:OwnerID"`
 	Employees   []User    `json:"employees" gorm:"many2many:shop_employees;"`
 	Products    []Product `json:"products" gorm:"foreignKey:ShopID"`
+}
+
+type Product struct {
+	gorm.Model
+	Name        string         `json:"name"`
+	Description string         `json:"description"`
+	Price       float64        `json:"price"`
+	Stock       int            `json:"stock"`
+	ShopID      uint           `json:"shop_id"`
+	Shop        Shop           `json:"shop" gorm:"foreignKey:ShopID"`
+	Categories  []Category     `json:"categories" gorm:"many2many:product_categories;"`
+	Images      []ProductImage `json:"images" gorm:"foreignKey:ProductID"`
+}
+
+type Category struct {
+	gorm.Model
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	Products    []Product `json:"products" gorm:"many2many:product_categories;"`
+}
+
+type ProductImage struct {
+	gorm.Model
+	ProductID uint   `json:"product_id"`
+	URL       string `json:"url" gorm:"size:500"`
+	AltText   string `json:"alt_text" gorm:"size:100"`
 }

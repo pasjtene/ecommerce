@@ -123,8 +123,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 refresh_token: string;
                 user: User,
                 token: string
-            }>('/login',{ email, password }); 
-            //}>(API_BASE_URL+'/login',{ email, password }); 
+           // }>('/login',{ email, password }); 
+            }>(API_BASE_URL+'/login',{ email, password }); 
 
             const { access_token, refresh_token, user } = response.data;
             

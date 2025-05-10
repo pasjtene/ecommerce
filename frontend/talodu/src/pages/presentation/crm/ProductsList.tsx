@@ -37,12 +37,20 @@ import useDarkMode from '../../../hooks/useDarkMode';
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
 import { updateUser, API_BASE_URL } from '../auth/api'
-import { User, Role } from '../auth/types'
+import { User, Role, Product } from '../auth/types'
 
 
 
   interface ApiResponse {
     users: User[];
+    page: number;
+    limit: number;
+    totalItems: number;
+    totalPages: number;
+  }
+
+  interface ProductsResponse {
+    products: Product[];
     page: number;
     limit: number;
     totalItems: number;
@@ -68,7 +76,7 @@ import { User, Role } from '../auth/types'
   }
   
 
-const UsersList = () => {
+const ProductsList = () => {
     const { darkModeStatus } = useDarkMode();
 
     const navigate = useNavigate();
@@ -128,6 +136,8 @@ const UsersList = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [users, setUsers] = useState<User[]>([]);
+    const [products, setProducts] = useState<Product[]>([]);
+
     const [pagination, setPagination] = useState({
         page: 1,
         limit: 10,
@@ -199,8 +209,8 @@ const UsersList = () => {
     const [createModalStatus, setCreateModalStatus] = useState<boolean>(false);
     const fetchUsers = async (page = 1, limit = 10, search = ''):Promise<void> => {
         try {
-            //const response = await axios.get<ApiResponse>('/users',{
-            const response = await axios.get<ApiResponse>(API_BASE_URL+'/users',{
+            // const response = await axios.get<ApiResponse>('/api/products',{
+            const response = await axios.get<ProductsResponse>(API_BASE_URL+'/products',{
             
             params: { 
                 page,
@@ -212,8 +222,8 @@ const UsersList = () => {
               Authorization: `${jwtToken}`, // Include the JWT token in the Authorization header
             },
           });
-          //const { users } = response.data;
-          setUsers(response.data.users);
+          console.log("The response producsts: ",response.data);
+          setProducts(response.data.products);
           setPagination({
               page: response.data.page,
               limit: response.data.limit,
@@ -376,7 +386,7 @@ const UsersList = () => {
 return buttons;
 };
 
-    const renderActionDropdown = (user: User) => {
+    const renderActionDropdown = (product: Product) => {
     return (
         <td>
         <Dropdown
@@ -394,7 +404,7 @@ return buttons;
             <DropdownItem>
             <div 
                 className="dropdown-item d-flex align-items-center"
-                onClick={(e) => handleActionClick(e, () => handleViewDetails(user))}
+                onClick={(e) => handleActionClick(e, () => handleViewDetails(product))}
                 >
                 <Icon icon="Eye" className="me-2" />
                 View Details
@@ -403,7 +413,7 @@ return buttons;
             <DropdownItem>
                 <Button
                 icon="Pencil"
-                onClick={() => handleEditUser(user)}
+               // onClick={() => handleEditUser(product)}
                 className="dropdown-item"
             >
                 Edit
@@ -412,7 +422,7 @@ return buttons;
             <DropdownItem>
             <Button
                 icon="Trash"
-                onClick={() => handleDelete(user.id)}
+                onClick={() => handleDelete(product.ID)}
                 className="dropdown-item text-danger"
             >
                 Delete
@@ -425,9 +435,10 @@ return buttons;
     }
 
    // Handle view details
-   const handleViewDetails = (user: User) => {
-    console.log("The user is",user);
-    navigate(`../${demoPagesMenu.crm.subMenu.userID.path}/${user.id}`, { state: { user } })
+   const handleViewDetails = (product: Product) => {
+    console.log("The product is",product);
+   // navigate(`../${demoPagesMenu.crm.subMenu.productID.path}/${product.ID}`, { state: { product } })
+    navigate(`../${demoPagesMenu.sales.subMenu.productID.path}/${product.ID}`, { state: { product } })
     //navigate(`/users/${userId}`);
   };
 
@@ -606,7 +617,7 @@ const handleEditUser = (user: User) => {
                         <Card stretch>
 
     <div>
-      <h1>User List</h1>  
+      <h3>Products List</h3>  
     </div>
     <div className="col-md-4">
 <div className="input-group">
@@ -647,7 +658,7 @@ const handleEditUser = (user: User) => {
               
               <span className="text-muted">
                 Showing {(pagination.page - 1) * pagination.limit + 1}-
-                {Math.min(pagination.page * pagination.limit, pagination.totalItems)} of {pagination.totalItems} users
+                {Math.min(pagination.page * pagination.limit, pagination.totalItems)} of {pagination.totalItems} products
               </span>
             </div>
 
@@ -660,37 +671,45 @@ const handleEditUser = (user: User) => {
             </div>
      
      <div className="table-responsive ms-4 me-4">
-     {users?.length > 0 ? (
+     {products?.length > 0 ? (
             <table className="table table-striped table-hover">
               <thead>
                 <tr>
                   <th scope="col">ID</th>
-                  <th scope="col">Username</th>
-                  <th scope="col">Email</th>
-                  <th scope="col">First Name</th>
-                  <th scope="col">Last Name</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Stock</th>
+                  <th scope="col">Description</th>
                   <th scope="col">Roles</th>
                   <th scope="col">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {users.map(u => (
-                  <tr key={u.id}>
-                    <td>{u.id}</td>
-                    <td>{u.username}</td>
-                    <td>{u.email}</td>
-                    <td>{u.first_name}</td>
-                    <td>{u.last_name}</td>
+                {products.map(p => (
+                  <tr key={p.ID}>
+                    <td>{p.ID}</td>
+                    <td>{p.name}</td>
+                    <td>{p.price}</td>
+                    <td>{p.stock}</td>
+                    <td>{p.description}</td>
                     <td>
-                      <div className="d-flex flex-wrap gap-1">
+                      Categories
+                      {/** 
+                       * <div className="d-flex flex-wrap gap-1">
                         {u.roles && u.roles.map(role => (
                           <span key={role.ID} className="badge bg-secondary">
                             {role.Name}
                           </span>
                         ))}
                       </div>
+                       */}
+                      
                     </td>
-                    {renderActionDropdown(u)}
+                   
+                    
+                      {renderActionDropdown(p)}
+                     
+                    
                   </tr>
                 ))}
               </tbody>
@@ -754,4 +773,4 @@ const handleEditUser = (user: User) => {
     );
 };
 
-export default UsersList;
+export default ProductsList;
