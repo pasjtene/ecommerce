@@ -210,7 +210,7 @@ func SeedProducts(db *gorm.DB) {
 //######
 
 func SetupProductImageRoutes(r *gin.Engine, db *gorm.DB) {
-	productImageRoutes := r.Group("/api/images/product")
+	productImageRoutes := r.Group("/images/product")
 	{
 		// Single image upload
 		productImageRoutes.POST("/:productId", func(c *gin.Context) {
