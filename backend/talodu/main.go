@@ -110,6 +110,8 @@ func main() {
 		shops.GET("", handlers.ListShops(s.DB))
 	}
 
+	r.Static("/uploads", "./uploads")
+
 	users := r.Group("/users")
 	{
 		users.POST("", auth.AuthMiddleware("SuperAdmin"), auth.RegisterUser(s.DB)) // Only SuperAdmin
