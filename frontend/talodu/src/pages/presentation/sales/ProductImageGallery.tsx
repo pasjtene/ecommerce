@@ -35,7 +35,7 @@ const ProductImageGallery = ({ images }: { images: ProductImage[] }) => {
             {selectedImage ? (
               <>
                 <img
-                  src={API_IMAGES+selectedImage.url}
+                  src={API_BASE_URL+selectedImage.url}
                   alt={selectedImage.altText || 'Product image'}
                   className="main-product-image"
                 />
@@ -58,6 +58,8 @@ const ProductImageGallery = ({ images }: { images: ProductImage[] }) => {
             )}
           </div>
 
+        
+
           {/* Thumbnail Gallery */}
           <div className="thumbnail-gallery">
             <h5 className="mb-3">Product Images</h5>
@@ -71,7 +73,7 @@ const ProductImageGallery = ({ images }: { images: ProductImage[] }) => {
                     onMouseEnter={() => setSelectedImage(image)}
                   >
                     <img
-                      src={API_IMAGES+image.url}
+                      src={API_BASE_URL+image.url}
                       alt={image.altText || 'Product thumbnail'}
                       className={`img-thumbnail ${selectedImage?.ID === image.ID ? 'active-thumbnail' : ''}`}
                     />
@@ -98,7 +100,7 @@ const ProductImageGallery = ({ images }: { images: ProductImage[] }) => {
             <div 
               className="magnified-preview"
               style={{
-                backgroundImage: `url(${API_IMAGES+selectedImage.url})`,
+                backgroundImage: `url(${API_BASE_URL+selectedImage.url})`,
                 backgroundPosition: `${hoverPosition.x}% ${hoverPosition.y}%`,
               }}
             />

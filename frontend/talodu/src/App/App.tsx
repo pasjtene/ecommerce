@@ -17,6 +17,7 @@ import steps, { styles } from '../steps';
 import AsideRoutes from '../layout/Aside/AsideRoutes';
 import { ToastCloseButton } from '../components/bootstrap/Toasts';
 import { useAuth, AuthProvider } from '../pages/presentation/auth/AuthContext';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 //import {AuthProvider } 
 
 
@@ -82,7 +83,9 @@ const App = () => {
 
 	return (
 		
+		<HelmetProvider>
 
+		
 		<AuthProvider>
 
 		
@@ -107,6 +110,7 @@ const App = () => {
 			</TourProvider>
 		</ThemeProvider>
 		</AuthProvider>
+		</HelmetProvider>
 		
 	);
 };

@@ -37,6 +37,7 @@ import { User, Product, ProductImage } from '../auth/types';
 import axios  from 'axios';
 import { API_IMAGES, API_BASE_URL } from '../auth/api'
 import ProductImageGallery from './ProductImageGallery'
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 interface IValues {
     name: string;
@@ -314,7 +315,20 @@ const ProductDetails = () => {
     if (!product) return <div>Product not found</div>;
 
     return (
+       
         <PageWrapper title={demoPagesMenu.sales.subMenu.product.text}>
+             <Helmet>
+                <title>{product.name} | Your Store</title>
+                <meta name="description" content={product.description} />
+                <meta property="og:title" content={product.name} />
+                <meta property="og:description" content={product.description} />
+                {/** Rmove comments once slug is added
+                 * <meta property="og:url" content={`https://yourstore.com/products/${product.slug}`} />
+                <link rel="canonical" href={`https://yourstore.com/products/${product.slug}`} />
+                 */}
+                
+
+            </Helmet>
             <SubHeader>
                 <SubHeaderLeft>
                     <Button color='info' isLink icon='ArrowBack' onClick={() => navigate(-1)}>
