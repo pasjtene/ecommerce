@@ -120,9 +120,13 @@ const ProductDetails = () => {
           try {
             const stateProduct = state?.product;
             const productId = product?.Slug?.split('-').pop();
+            console.log("The product id is: ",productId)
+            console.log("The id is is: ",id)
+            console.log("The slud is is: ",slug)
+            const prodid = id?.split('-').pop();
             const response = await axios.get<{ images: ProductImage[] }>(
               //API_BASE_URL+`/images/product/${product?.ID}`
-              API_BASE_URL+`/images/product/${stateProduct.ID}`
+              API_BASE_URL+`/images/product/${prodid}`
 
             );
             setImages(response.data.images);
@@ -149,31 +153,25 @@ const ProductDetails = () => {
             // Check if product was passed in state
             const state = location.state as LocationState;
              const stateProduct = state?.product;
-           // const stateProduct = state?.product as Product | undefined;
-
-           // Extract ID from slug (last part)
-            //const productId = slug?.split('-').pop();
-    
-    // Check if product was passed in state
-           // const stateProduct = (location.state as { product?: Product })?.product;
-            
             if (stateProduct) {
-           // if (stateProduct && stateProduct.Slug === slug) {
-           console.log("The product is: ",stateProduct)
+            // if (stateProduct && stateProduct.Slug === slug) {
+            console.log("The product is: ",stateProduct)
               setProduct(stateProduct);
               setLoading(false);
             } else {
                 const productId = slug?.split('-').pop();
-                if (!productId) {
+                const prodid = id?.split('-').pop();
+                if (!prodid) {
                 setError('Invalid product URL');
                 return;
                 }
               // Fetch product if not in state
               //fetchProduct();
-              fetchProduct(productId);
+              fetchProduct(prodid);
             }
           }, [id, location.state, slug]);
 
+          
           const fetchProduct = async (id: string) => {
             try {
               setLoading(true);
