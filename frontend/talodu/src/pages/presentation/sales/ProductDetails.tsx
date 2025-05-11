@@ -87,16 +87,21 @@ interface ITabs {
     [key: string]: TTabs;
 }
 
+interface LocationState {
+    product?: Product;
+  }
+
 const ProductDetails = () => {
     const { darkModeStatus } = useDarkMode();
     const [images, setImages] = useState<ProductImage[]>([])
 
     const { state } = useLocation();
     const navigate = useNavigate();
-    const product = state?.product as Product | undefined;
+    //const product = state?.product as Product | undefined;
 
     const { id } = useParams();
    // const navigate = useNavigate();
+   const location = useLocation();
 
     const [files, setFiles] = useState<File[]>([]);
     const [uploading, setUploading] = useState(false);
@@ -104,6 +109,8 @@ const ProductDetails = () => {
     //const [error, setError] = useState(null);
     const [error, setError] = useState<string | null>(null);
     const [refresh, setRefresh] = useState(false);
+    const [product, setProduct] = useState<Product | null>(null);
+    const [loading, setLoading] = useState(true);
 
     // Fetch images
     useEffect(() => {
@@ -130,6 +137,38 @@ const ProductDetails = () => {
         
           fetchImages();
         }, [product?.ID, refresh]);
+
+        useEffect(() => {
+            // Check if product was passed in state
+            const state = location.state as LocationState;
+             const stateProduct = state?.product;
+           // const stateProduct = state?.product as Product | undefined;
+            
+            if (stateProduct) {
+              setProduct(stateProduct);
+              setLoading(false);
+            } else {
+              // Fetch product if not in state
+              fetchProduct();
+            }
+          }, [id, location.state]);
+
+          const fetchProduct = async () => {
+            try {
+              setLoading(true);
+              const response = await axios.get<Product>(
+                API_BASE_URL+`/products/${id}`
+              );
+              console.log("The product response is: ",response.data)
+              setProduct(response.data);
+              setError(null);
+            } catch (err) {
+              setError('Failed to load product details');
+              console.error('Error fetching product:', err);
+            } finally {
+              setLoading(false);
+            }
+          };
 
 
 
@@ -269,6 +308,10 @@ const ProductDetails = () => {
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [editItem]);
+
+    if (loading) return <div>Loading product details...</div>;
+    if (error) return <div>Error: {error}</div>;
+    if (!product) return <div>Product not found</div>;
 
     return (
         <PageWrapper title={demoPagesMenu.sales.subMenu.product.text}>

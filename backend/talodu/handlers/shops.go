@@ -203,7 +203,9 @@ func SeedShopsProductsAndCategories(db *gorm.DB) error {
 	// Check if shops already exist to avoid duplicate seeding
 	var count int64
 	db.Model(&Shop{}).Count(&count)
-	//if count > 0 { return nil } // already seeded
+	if count > 0 {
+		return nil
+	} // already seeded
 
 	// Create a local random source
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
