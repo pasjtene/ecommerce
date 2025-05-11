@@ -14,6 +14,7 @@
     price: number;
     stock: number;
     description: string;
+    Slug: string;
     //roles: Role[];
   }
 

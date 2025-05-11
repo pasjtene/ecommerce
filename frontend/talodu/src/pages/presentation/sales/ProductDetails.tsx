@@ -100,7 +100,8 @@ const ProductDetails = () => {
     const navigate = useNavigate();
     //const product = state?.product as Product | undefined;
 
-    const { id } = useParams();
+    const { id } = useParams<{ id: string }>();
+    const { slug } = useParams<{ slug: string }>();
    // const navigate = useNavigate();
    const location = useLocation();
 
@@ -117,8 +118,12 @@ const ProductDetails = () => {
     useEffect(() => {
         const fetchImages = async () => {
           try {
+            const stateProduct = state?.product;
+            const productId = product?.Slug?.split('-').pop();
             const response = await axios.get<{ images: ProductImage[] }>(
-              API_BASE_URL+`/images/product/${product?.ID}`
+              //API_BASE_URL+`/images/product/${product?.ID}`
+              API_BASE_URL+`/images/product/${stateProduct.ID}`
+
             );
             setImages(response.data.images);
             setError(null);
@@ -139,22 +144,37 @@ const ProductDetails = () => {
           fetchImages();
         }, [product?.ID, refresh]);
 
+
         useEffect(() => {
             // Check if product was passed in state
             const state = location.state as LocationState;
              const stateProduct = state?.product;
            // const stateProduct = state?.product as Product | undefined;
+
+           // Extract ID from slug (last part)
+            //const productId = slug?.split('-').pop();
+    
+    // Check if product was passed in state
+           // const stateProduct = (location.state as { product?: Product })?.product;
             
             if (stateProduct) {
+           // if (stateProduct && stateProduct.Slug === slug) {
+           console.log("The product is: ",stateProduct)
               setProduct(stateProduct);
               setLoading(false);
             } else {
+                const productId = slug?.split('-').pop();
+                if (!productId) {
+                setError('Invalid product URL');
+                return;
+                }
               // Fetch product if not in state
-              fetchProduct();
+              //fetchProduct();
+              fetchProduct(productId);
             }
-          }, [id, location.state]);
+          }, [id, location.state, slug]);
 
-          const fetchProduct = async () => {
+          const fetchProduct = async (id: string) => {
             try {
               setLoading(true);
               const response = await axios.get<Product>(
@@ -315,20 +335,22 @@ const ProductDetails = () => {
     if (!product) return <div>Product not found</div>;
 
     return (
-       
-        <PageWrapper title={demoPagesMenu.sales.subMenu.product.text}>
-             <Helmet>
+        <>
+         <Helmet>
                 <title>{product.name} | Your Store</title>
                 <meta name="description" content={product.description} />
                 <meta property="og:title" content={product.name} />
                 <meta property="og:description" content={product.description} />
-                {/** Rmove comments once slug is added
-                 * <meta property="og:url" content={`https://yourstore.com/products/${product.slug}`} />
-                <link rel="canonical" href={`https://yourstore.com/products/${product.slug}`} />
-                 */}
                 
-
+                <meta property="og:url" content={`https://yourstore.com/products/${product.Slug}`} />
+                <link rel="canonical" href={`https://yourstore.com/products/${product.Slug}`} />
             </Helmet>
+         
+            {/**
+             * <PageWrapper title={demoPagesMenu.sales.subMenu.product.text}>
+             */}
+            <PageWrapper title={product.description} >
+            
             <SubHeader>
                 <SubHeaderLeft>
                     <Button color='info' isLink icon='ArrowBack' onClick={() => navigate(-1)}>
@@ -869,11 +891,6 @@ const ProductDetails = () => {
     {/**  End Image galery */}
 
 
-
-
-
-
-
                                                         </div>
                                                     </div>
                                                 </div>
@@ -984,6 +1001,10 @@ const ProductDetails = () => {
                 </div>
             </Page>
         </PageWrapper>
+
+        </>
+       
+       
     );
 };
 

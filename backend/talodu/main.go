@@ -104,6 +104,28 @@ func main() {
 
 	handlers.SetupProductImageRoutes(r, s.DB)
 
+	// In your routes
+	r.GET("/products/ps/:slug", func(c *gin.Context) {
+		slug := c.Param("slug")
+
+		// Extract ID from slug (last part after last hyphen)
+		parts := strings.Split(slug, "-")
+		productID := parts[len(parts)-1]
+
+		var product Product
+		if err := s.DB.Where("id = ?", productID).First(&product).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
+			return
+		}
+		// Verify the slug matches (redirect if not)
+		if product.Slug != slug {
+			c.Redirect(http.StatusMovedPermanently, "/products/"+product.Slug)
+			return
+		}
+
+		c.JSON(http.StatusOK, product)
+	})
+
 	shops := r.Group("/shops")
 	{
 		shops.POST("", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.CreateShop(s.DB))

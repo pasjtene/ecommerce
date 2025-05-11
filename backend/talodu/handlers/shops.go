@@ -4,7 +4,9 @@ package handlers
 import (
 	"math/rand"
 	"net/http"
+	"regexp"
 	"strconv"
+	"strings"
 	"talodu/auth"
 	"talodu/models"
 	"time"
@@ -203,9 +205,7 @@ func SeedShopsProductsAndCategories(db *gorm.DB) error {
 	// Check if shops already exist to avoid duplicate seeding
 	var count int64
 	db.Model(&Shop{}).Count(&count)
-	if count > 0 {
-		return nil
-	} // already seeded
+	//if count > 0 { return nil} // already seeded
 
 	// Create a local random source
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
@@ -303,6 +303,8 @@ func SeedShopsProductsAndCategories(db *gorm.DB) error {
 			// Format product name and description with the product type
 			product.Name = product.Name + " " + productType
 			product.Description = product.Description + " " + productType
+			product.Name = product.Description
+			//product.Slug = generateSlug(product.Name) + "-" + fmt.Sprint(product.ID)
 
 			if err := db.Create(&product).Error; err != nil {
 				return err
@@ -345,6 +347,20 @@ func SeedShopsProductsAndCategories(db *gorm.DB) error {
 	//}
 
 	return nil
+}
+
+func generateSlug(s string) string {
+	// Convert to lowercase
+	s = strings.ToLower(s)
+	// Replace spaces with hyphens
+	s = strings.ReplaceAll(s, " ", "-")
+	// Remove all non-alphanumeric characters except hyphens
+	reg := regexp.MustCompile("[^a-z0-9-]+")
+	s = reg.ReplaceAllString(s, "")
+	// Remove consecutive hyphens
+	reg = regexp.MustCompile("-+")
+	s = reg.ReplaceAllString(s, "-")
+	return strings.Trim(s, "-")
 }
 
 func uniqueUints(input []uint) []uint {

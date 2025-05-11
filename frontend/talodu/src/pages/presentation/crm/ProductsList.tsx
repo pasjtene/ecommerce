@@ -35,7 +35,7 @@ import UserCreateModal from './UserCreateModal';
 import { getColorNameWithIndex } from '../../../common/data/enumColors';
 import useDarkMode from '../../../hooks/useDarkMode';
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { updateUser, API_BASE_URL } from '../auth/api'
 import { User, Role, Product } from '../auth/types'
 
@@ -404,7 +404,7 @@ return buttons;
             <DropdownItem>
             <div 
                 className="dropdown-item d-flex align-items-center"
-                onClick={(e) => handleActionClick(e, () => handleViewDetails(product))}
+                onClick={(e) => handleActionClick(e, () => handleViewDetailsLug(product))}
                 >
                 <Icon icon="Eye" className="me-2" />
                 View Details
@@ -437,9 +437,15 @@ return buttons;
    // Handle view details
    const handleViewDetails = (product: Product) => {
     console.log("The product is",product);
-   // navigate(`../${demoPagesMenu.crm.subMenu.productID.path}/${product.ID}`, { state: { product } })
     navigate(`../${demoPagesMenu.sales.subMenu.productID.path}/${product.ID}`, { state: { product } })
-    //navigate(`/users/${userId}`);
+    
+  };
+
+  // Handle view details
+  const handleViewDetailsLug = (product: Product) => {
+    console.log("The product is",product);
+    navigate(`../${demoPagesMenu.sales.subMenu.productID.path}/${product.Slug}`, { state: { product } })
+    
   };
 
   // Handle delete user
@@ -688,7 +694,19 @@ const handleEditUser = (user: User) => {
                 {products.map(p => (
                   <tr key={p.ID}>
                     <td>{p.ID}</td>
-                    <td>{p.name}</td>
+                    <td>
+                     
+
+                      <Link 
+                        key={p.ID} 
+                        to={`/products/${p.Slug}`}
+                        state={{ p }} // Still pass product for instant loading
+                      >
+                        {p.name}
+                      </Link>
+                      
+                      
+                    </td>
                     <td>{p.price}</td>
                     <td>{p.stock}</td>
                     <td>{p.description}</td>
