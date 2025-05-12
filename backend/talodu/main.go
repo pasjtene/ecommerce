@@ -46,14 +46,13 @@ func main() {
 
 	// Seed initial data
 	//handlers.SeedProducts(s.DB)
-	handlers.SeedShopsProductsAndCategories(s.DB)
+	// handlers.SeedShopsProductsAndCategories(s.DB)
 	// Seed Roles
 	auth.SeedRoles(s.DB)
 	auth.SeedSuperAdmin(s.DB)
 
 	r := gin.Default()
 	allowedOrigin := os.Getenv("allowedOrigin")
-	//allowedOrigin := "http://162.19.227.240:3000"
 	//allowedOrigin := "http://localhost:3000"
 	fmt.Println("The origin is ", allowedOrigin)
 	r.Use(func(c *gin.Context) {
@@ -95,6 +94,7 @@ func main() {
 		products.GET("", handlers.ListProducts(s.DB))
 		products.POST("", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.CreateProduct(s.DB))
 		products.DELETE(":id", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.DeleteProduct(s.DB))
+		products.DELETE("/delete/batch", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.DeleteProductBatch(s.DB))
 		products.GET(":id", handlers.GetProduct(s.DB))                                                         // Get single product
 		products.PUT(":id", auth.AuthMiddleware("Sales", "Admin", "SuperAdmin"), handlers.UpdateProduct(s.DB)) // Update
 	}

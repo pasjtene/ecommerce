@@ -38,6 +38,7 @@ import axios from 'axios'
 import { useNavigate, Link } from 'react-router-dom';
 import { updateUser, API_BASE_URL } from '../auth/api'
 import { User, Role, Product } from '../auth/types'
+import { toast } from 'react-toastify';
 
 
 
@@ -114,6 +115,7 @@ const ProductsList = () => {
 
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingUserId, setEditingUserId] = useState<string | null>(null);
+    const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
 
     //const [dropdownOpen, setDropdownOpen] = useState<Record<number, boolean>>({});
     const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
@@ -131,6 +133,51 @@ const ProductsList = () => {
   
     return { handleActionClick };
   };
+
+  // Toggle product selection
+  const toggleProductSelection = (productId: number) => {
+    setSelectedProducts(prev => 
+      prev.includes(productId)
+        ? prev.filter(id => id !== productId)
+        : [...prev, productId]
+    );
+  };
+
+  // Select all/none
+  const toggleSelectAll = () => {
+    if (selectedProducts.length === products.length) {
+      setSelectedProducts([]);
+    } else {
+      setSelectedProducts(products.map(p => p.ID));
+    }
+  };
+
+   // Handle bulk delete
+   const handleDeleteProducts2 = () => {
+    if (selectedProducts.length > 0) {
+      //onDeleteProducts(selectedProducts);
+      setSelectedProducts([]);
+    }
+  };  
+  
+  const handleDeleteProducts = async (productIds: number[]) => {
+    try {
+      await axios.delete(API_BASE_URL+'/products/delete/batch', {
+        data: { ids: productIds }
+      });
+      
+      // Update local state
+      setProducts(prev => prev.filter(p => !productIds.includes(p.ID)));
+      
+      // Show success message
+      toast.success(`${productIds.length} products deleted successfully`);
+    } catch (error) {
+      toast.error('Failed to delete products');
+      setProducts(prev => prev.filter(p => !productIds.includes(p.ID)));
+    }
+  };
+
+
 
     const { handleActionClick } = useDropdownActions();
     const [loading, setLoading] = useState<boolean>(true);
@@ -408,7 +455,7 @@ return buttons;
                 >
                 <Icon icon="Eye" className="me-2" />
                 View Details
-                </div>
+            </div>
             </DropdownItem>
             <DropdownItem>
                 <Button
@@ -644,7 +691,7 @@ const handleEditUser = (user: User) => {
             </div>
             </div>
 
-     {/* User Table */}
+     {/* Product list Table */}
      <div className="d-flex pe-4 ps-4
      justify-content-between align-items-center mb-4 ms-2 me-8">
         <div className="d-flex align-items-center gap-2">
@@ -675,12 +722,39 @@ const handleEditUser = (user: User) => {
               </ul>
             </nav>
             </div>
+
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                      {selectedProducts.length > 0 && (
+                        <button 
+                          onClick={() => handleDeleteProducts(selectedProducts)}
+                          className="btn btn-danger me-2"
+                        >
+                          Delete {selectedProducts.length} selected
+                        </button>
+                      )}
+                    </div>
+                    <div>
+                      <span className="text-muted">
+                        {selectedProducts.length} of {products.length} selected
+                      </span>
+                    </div>
+                  </div>
      
      <div className="table-responsive ms-4 me-4">
      {products?.length > 0 ? (
             <table className="table table-striped table-hover">
+                
               <thead>
                 <tr>
+                <th>
+                  <input
+                    type="checkbox"
+                    checked={selectedProducts.length === products.length && products.length > 0}
+                    onChange={toggleSelectAll}
+                    className="form-check-input"
+                  />
+                </th>
                   <th scope="col">ID</th>
                   <th scope="col">Name</th>
                   <th scope="col">Price</th>
@@ -692,18 +766,25 @@ const handleEditUser = (user: User) => {
               </thead>
               <tbody>
                 {products.map(p => (
-                  <tr key={p.ID}>
+                  <tr key={p.ID} className={selectedProducts.includes(p.ID) ? 'table-active' : ''}>
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={selectedProducts.includes(p.ID)}
+                        onChange={() => toggleProductSelection(p.ID)}
+                        className="form-check-input"
+                      />
+                    </td>
                     <td>{p.ID}</td>
                     <td>
                      
-
-                      <Link 
-                        key={p.ID} 
-                        to={`/products/${p.Slug}`}
-                        state={{ p }} // Still pass product for instant loading
-                      >
+                      <div 
+                        className="dropdown-item d-flex align-items-center"
+                        onClick={(e) => handleActionClick(e, () => handleViewDetailsLug(p))}
+                        >
+                        <Icon icon="Eye" className="me-2" />
                         {p.name}
-                      </Link>
+                      </div>
                       
                       
                     </td>
@@ -712,22 +793,8 @@ const handleEditUser = (user: User) => {
                     <td>{p.description}</td>
                     <td>
                       Categories
-                      {/** 
-                       * <div className="d-flex flex-wrap gap-1">
-                        {u.roles && u.roles.map(role => (
-                          <span key={role.ID} className="badge bg-secondary">
-                            {role.Name}
-                          </span>
-                        ))}
-                      </div>
-                       */}
-                      
                     </td>
-                   
-                    
                       {renderActionDropdown(p)}
-                     
-                    
                   </tr>
                 ))}
               </tbody>

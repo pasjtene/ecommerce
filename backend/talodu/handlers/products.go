@@ -194,6 +194,42 @@ func UpdateProduct(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+func DeleteProductBatch(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var request struct {
+			IDs []uint `json:"ids"`
+		}
+
+		if err := c.ShouldBindJSON(&request); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+			return
+		}
+
+		if len(request.IDs) == 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "No products selected"})
+			return
+		}
+
+		// Delete products in transaction
+		err := db.Transaction(func(tx *gorm.DB) error {
+			// First delete related records if needed (e.g., product_images)
+			if err := tx.Where("product_id IN ?", request.IDs).Delete(&ProductImage{}).Error; err != nil {
+				return err
+			}
+
+			// Then delete products
+			return tx.Where("id IN ?", request.IDs).Delete(&Product{}).Error
+		})
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Delete failed"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("%d products deleted", len(request.IDs))})
+	}
+}
+
 // Seed initial data
 func SeedProducts(db *gorm.DB) {
 	products := []Product{
