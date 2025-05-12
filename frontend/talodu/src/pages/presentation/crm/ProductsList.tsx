@@ -712,7 +712,7 @@ const handleEditUser = (user: User) => {
               
               <span className="text-muted">
                 Showing {(pagination.page - 1) * pagination.limit + 1}-
-                {Math.min(pagination.page * pagination.limit, pagination.totalItems)} of {pagination.totalItems} products
+                {Math.min(pagination.page * pagination.limit, pagination.totalItems)} of {pagination.totalItems} now {products.length} products
               </span>
             </div>
 
