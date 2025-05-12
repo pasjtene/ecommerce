@@ -168,12 +168,13 @@ const ProductsList = () => {
       
       // Update local state
       setProducts(prev => prev.filter(p => !productIds.includes(p.ID)));
+      setSelectedProducts([]);
       
       // Show success message
       toast.success(`${productIds.length} products deleted successfully`);
     } catch (error) {
       toast.error('Failed to delete products');
-      setProducts(prev => prev.filter(p => !productIds.includes(p.ID)));
+      //setProducts(prev => prev.filter(p => !productIds.includes(p.ID)));
     }
   };
 
