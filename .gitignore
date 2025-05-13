@@ -6,3 +6,5 @@ backend/talodu/.env
 frontend/talodu/.env
 **/.env
 **/node_modules/
+backend/talodu/uploads
+./backend/talodu/uploads

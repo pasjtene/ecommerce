@@ -335,7 +335,7 @@ const ProductDetails = () => {
     return (
         <>
          <Helmet>
-                <title>{product.name} | Your Store</title>
+                <title>{product.name} | Otantic Packaging</title>
                 <meta name="description" content={product.description} />
                 <meta property="og:title" content={product.name} />
                 <meta property="og:description" content={product.description} />
