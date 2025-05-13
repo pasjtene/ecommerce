@@ -165,32 +165,134 @@ func DeleteProduct(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// PUT - Update /products/:id
 func UpdateProduct(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var product Product
-		id := c.Param("id")
+		productID := c.Param("id")
+		fmt.Printf("Updating product...1")
 
-		if err := db.First(&product, id).Error; err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
-			return
+		// Request payload structure
+		var request struct {
+			Name        string            `json:"name" binding:"required"`
+			Price       float64           `json:"price" binding:"required"`
+			Stock       int               `json:"stock" binding:"required"`
+			Description string            `json:"description"`
+			Shop        models.Shop       `json:"shop" binding:"required"`
+			Categories  []models.Category `json:"categories"`
 		}
 
-		var input struct {
-			Name        string  `json:"name"`
-			Description string  `json:"description"`
-			Price       float64 `json:"price"`
-			Stock       int     `json:"stock"`
-			ShopID      uint    `json:"shop_id" binding:"required"`
-		}
-
-		if err := c.ShouldBindJSON(&input); err != nil {
+		// Bind JSON payload
+		if err := c.ShouldBindJSON(&request); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
-		db.Model(&product).Updates(input)
-		c.JSON(http.StatusOK, product)
+		// 1. Handle shop update/create
+		var shop models.Shop
+		if request.Shop.ID == 0 {
+			// New shop - validate required fields
+			if request.Shop.OwnerID == 0 {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "new shop must have an owner_id"})
+				return
+			}
+			if err := db.Create(&request.Shop).Error; err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create shop: " + err.Error()})
+				return
+			}
+			shop = request.Shop
+		} else {
+			// Existing shop
+			if err := db.First(&shop, request.Shop.ID).Error; err != nil {
+				c.JSON(http.StatusNotFound, gin.H{"error": "shop not found"})
+				return
+			}
+			// Update shop fields
+			if err := db.Model(&shop).Updates(request.Shop).Error; err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update shop: " + err.Error()})
+				return
+			}
+		}
+
+		// 2. Get existing product
+		var existingProduct models.Product
+		if err := db.First(&existingProduct, productID).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "product not found"})
+			return
+		}
+
+		// 3. Prepare product updates
+		product := models.Product{
+			Name:        request.Name,
+			Price:       request.Price,
+			Stock:       request.Stock,
+			Description: request.Description,
+			ShopID:      shop.ID,
+		}
+
+		// Generate new slug if name changed
+		if existingProduct.Name != request.Name {
+			product.Slug = generateSlug(request.Name) + "-" + productID
+		}
+
+		// 4. Update product
+		if err := db.Model(&models.Product{}).Where("id = ?", productID).Updates(&product).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update product: " + err.Error()})
+			return
+		}
+
+		// 5. Handle categories
+		var categoryIDs []uint
+		for _, category := range request.Categories {
+			var cat models.Category
+			if category.ID == 0 {
+				// New category
+				if err := db.Create(&category).Error; err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create category: " + err.Error()})
+					return
+				}
+				cat = category
+			} else {
+				// Existing category
+				if err := db.First(&cat, category.ID).Error; err != nil {
+					c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("category %d not found", category.ID)})
+					return
+				}
+				// Update category fields if needed
+				if err := db.Model(&cat).Updates(category).Error; err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("failed to update category %d: %v", category.ID, err)})
+					return
+				}
+			}
+			categoryIDs = append(categoryIDs, cat.ID)
+		}
+
+		// Clear existing associations first (sometimes helps with constraint issues)
+		if err := db.Model(&existingProduct).Association("Categories").Clear(); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to clear existing categories: " + err.Error()})
+			return
+		}
+
+		// Add new associations
+		if len(categoryIDs) > 0 {
+			categories := make([]models.Category, len(categoryIDs))
+			for i, id := range categoryIDs {
+				categories[i] = models.Category{Model: gorm.Model{ID: id}}
+			}
+
+			if err := db.Model(&existingProduct).Association("Categories").Append(categories); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to add new categories: " + err.Error()})
+				return
+			}
+		}
+
+		// Fetch and return the fully updated product
+		var updatedProduct models.Product
+		if err := db.Preload("Categories").Preload("Shop").
+			First(&updatedProduct, productID).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch updated product"})
+			return
+		}
+
+		c.JSON(http.StatusOK, updatedProduct)
 	}
 }
 

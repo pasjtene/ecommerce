@@ -24,10 +24,11 @@ import (
 )
 
 type (
-	Product = models.Product
-	User    = models.User
-	Role    = models.Role
-	Shop    = models.Shop
+	Product  = models.Product
+	User     = models.User
+	Role     = models.Role
+	Shop     = models.Shop
+	Category = models.Category
 )
 
 func main() {
@@ -98,6 +99,16 @@ func main() {
 		products.GET(":id", handlers.GetProduct(s.DB))                                                         // Get single product
 		products.PUT(":id", auth.AuthMiddleware("Sales", "Admin", "SuperAdmin"), handlers.UpdateProduct(s.DB)) // Update
 	}
+
+	// Get product categories
+	r.GET("/categories", func(c *gin.Context) {
+		var categories []Category
+		if err := s.DB.Find(&categories).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch categories"})
+			return
+		}
+		c.JSON(http.StatusOK, categories)
+	})
 
 	//images routes
 	// https://talodu.com:8888/uploads/products/80/679d3551-7857-4b85-b648-cc84335e61a1.png

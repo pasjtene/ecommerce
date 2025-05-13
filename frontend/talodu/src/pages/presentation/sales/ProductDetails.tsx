@@ -171,7 +171,7 @@ const ProductDetails = () => {
             }
           }, [id, location.state, slug]);
 
-          
+
           const fetchProduct = async (id: string) => {
             try {
               setLoading(true);
@@ -347,7 +347,7 @@ const ProductDetails = () => {
             {/**
              * <PageWrapper title={demoPagesMenu.sales.subMenu.product.text}>
              */}
-            <PageWrapper title={product.description} >
+            <PageWrapper title={product.name} description={product.description} >
             
             <SubHeader>
                 <SubHeaderLeft>
@@ -376,7 +376,7 @@ const ProductDetails = () => {
 
                 <div className="container py-4">
                 {images?.length > 0 ? (
-                    <ProductImageGallery images={images} />
+                    <ProductImageGallery images={images} product={product} />
                 ):(<div>No images</div>)}
                 </div>
 

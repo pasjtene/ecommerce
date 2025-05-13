@@ -191,7 +191,7 @@ func ListShops(db *gorm.DB) gin.HandlerFunc {
 		query.Model(&models.Shop{}).Count(&totalCount)
 
 		c.JSON(http.StatusOK, gin.H{
-			"data":       shops,
+			"shops":      shops,
 			"page":       page,
 			"limit":      limit,
 			"totalItems": totalCount,

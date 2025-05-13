@@ -15,7 +15,21 @@
     stock: number;
     description: string;
     Slug: string;
-    //roles: Role[];
+    categories?: ProductCategory[];
+    shop: Shop;
+  }
+
+  export interface ProductCategory {
+    ID: number;
+    name: string;
+    description?: string;
+  }
+
+  export interface Shop {
+    ID: number;
+    Name: string;
+    description?: string;
+    
   }
 
 
