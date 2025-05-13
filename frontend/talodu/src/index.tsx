@@ -8,9 +8,11 @@ import reportWebVitals from './reportWebVitals';
 import { ThemeContextProvider } from './contexts/themeContext';
 import { AuthContextProvider } from './contexts/authContext';
 import './i18n';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 const children = (
-	<AuthContextProvider>
+	<HelmetProvider>
+		<AuthContextProvider>
 		<ThemeContextProvider>
 			<Router>
 				<React.StrictMode>
@@ -19,6 +21,8 @@ const children = (
 			</Router>
 		</ThemeContextProvider>
 	</AuthContextProvider>
+	</HelmetProvider>
+	
 );
 
 const container = document.getElementById('root');
