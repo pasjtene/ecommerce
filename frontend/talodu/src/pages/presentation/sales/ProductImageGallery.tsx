@@ -31,7 +31,7 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[], prod
     try {
       const response = await axios.put(API_BASE_URL+`/products/${product.ID}`, updatedProduct);
       setCurrentProduct(response.data);
-      console.log("The updated prduct ...: ", response.data)
+      //console.log("The updated prduct ...: ", response.data)
       setIsEditing(false);
       // Show success toast
           toast.success(`Product updated savedsuccessfully`);
@@ -43,7 +43,7 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[], prod
 
   return (
     <div className="container mt-4">
-      <div>{currentProduct.name} {currentProduct.Slug} </div>
+      <div>{currentProduct.name}</div>
 
       <div className="container mt-4">
         {isEditing ? (
@@ -218,7 +218,7 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[], prod
                   <div className="mb-3">
                     <h6>Stock</h6>
                     {product.stock ? (
-                      <h5 className="text-primary">En Stock</h5>
+                      <h5 className="text-primary">En Stock: {product.stock} disponible</h5>
                     ) : (
                       <p className="text-muted">Ce produit n'est pas disponible</p>
                     )}

@@ -372,7 +372,9 @@ const ProductDetails = () => {
                 </SubHeaderRight>
             </SubHeader>
             <Page>
-                <div className='display-4 fw-bold py-3'>{product?.description}</div>
+
+                <div className='display-4 fw-bold py-3'>The shop {product?.shop.Name}</div>
+                <div className='display-4 fw-bold py-3'>The {product?.name}</div>
 
                 <div className="container py-4">
                 {images?.length > 0 ? (
