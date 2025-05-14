@@ -199,6 +199,28 @@ func ListShops(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// GET /shops/:id
+func GetShop(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var shop models.Shop
+		id := c.Param("id")
+
+		if err := db.First(&shop, id).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Shop not found"})
+			return
+		}
+
+		// Fetch and return the fully updated product
+
+		//c.JSON(http.StatusOK, product)
+		// Return response
+		c.JSON(http.StatusOK, gin.H{
+
+			"shop": shop,
+		})
+	}
+}
+
 //##################
 
 func SeedShopsProductsAndCategories(db *gorm.DB) error {

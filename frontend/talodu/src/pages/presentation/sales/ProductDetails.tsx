@@ -33,7 +33,7 @@ import Input from '../../../components/bootstrap/forms/Input';
 import FormGroup from '../../../components/bootstrap/forms/FormGroup';
 import showNotification from '../../../components/extras/showNotification';
 import useDarkMode from '../../../hooks/useDarkMode';
-import { User, Product, ProductImage } from '../auth/types';
+import { User, Product, ProductImage, Shop} from '../auth/types';
 import axios  from 'axios';
 import { API_IMAGES, API_BASE_URL } from '../auth/api'
 import ProductImageGallery from './ProductImageGallery'
@@ -112,6 +112,7 @@ const ProductDetails = () => {
     const [error, setError] = useState<string | null>(null);
     const [refresh, setRefresh] = useState(false);
     const [product, setProduct] = useState<Product | null>(null);
+    const [shop, setShop] = useState<Shop | null>(null);
     const [loading, setLoading] = useState(true);
 
     // Fetch images
@@ -121,6 +122,7 @@ const ProductDetails = () => {
             const stateProduct = state?.product;
             const productId = product?.Slug?.split('-').pop();
             console.log("The product id is: ",productId)
+            console.log("The shop Id is: ",product?.ShopID)
             console.log("The id is is: ",id)
             console.log("The slud is is: ",slug)
             const prodid = id?.split('-').pop();
@@ -157,6 +159,8 @@ const ProductDetails = () => {
             // if (stateProduct && stateProduct.Slug === slug) {
             console.log("The product is: ",stateProduct)
               setProduct(stateProduct);
+              
+
               setLoading(false);
             } else {
                 const productId = slug?.split('-').pop();
@@ -168,18 +172,66 @@ const ProductDetails = () => {
               // Fetch product if not in state
               //fetchProduct();
               fetchProduct(prodid);
+              
             }
           }, [id, location.state, slug]);
+
+          useEffect(() => {
+            // Check if product was passed in state
+            const state = location.state as LocationState;
+             const stateProduct = state?.product;
+            if (stateProduct) {
+            // if (stateProduct && stateProduct.Slug === slug) {
+            console.log("The product is: ",stateProduct)
+              setProduct(stateProduct);
+              fetchShop(state?.product?.ShopID)
+
+              setLoading(false);
+            } else {
+                const productId = slug?.split('-').pop();
+                const prodid = id?.split('-').pop();
+                if (!prodid) {
+                setError('Invalid product URL');
+                return;
+                }
+              // Fetch product if not in state
+              //fetchProduct();
+             // fetchProduct(prodid);
+              
+            }
+          }, []);
+
+
+          const fetchShop= async (id: number|undefined) => {
+            try {
+              setLoading(true);
+              const response = await axios.get<{shop:Shop}>(
+                API_BASE_URL+`/shops/${id}`
+              );
+              console.log("The shop fetched response is: ",response.data)
+              console.log("The shop fetched response is: ",response.data.shop)
+              setShop(response.data.shop);
+              //setProduct(response.data.product);
+              setError(null);
+            } catch (err) {
+              setError('Failed to load product details');
+              console.error('Error fetching product:', err);
+            } finally {
+              setLoading(false);
+            }
+          };
 
 
           const fetchProduct = async (id: string) => {
             try {
               setLoading(true);
-              const response = await axios.get<Product>(
+              const response = await axios.get<{product:Product, shop:Shop}>(
                 API_BASE_URL+`/products/${id}`
               );
-              console.log("The product response is: ",response.data)
-              setProduct(response.data);
+              console.log("The product fetched response is: ",response.data)
+              console.log("The shop fetched response is: ",response.data.shop)
+              setShop(response.data.shop);
+              setProduct(response.data.product);
               setError(null);
             } catch (err) {
               setError('Failed to load product details');
@@ -372,9 +424,17 @@ const ProductDetails = () => {
                 </SubHeaderRight>
             </SubHeader>
             <Page>
-
-                <div className='display-4 fw-bold py-3'>The shop {product?.shop.Name}</div>
-                <div className='display-4 fw-bold py-3'>The {product?.name}</div>
+                <a 
+                    href="#"  // Replace with your actual link
+                    className='text-decoration-none display-6 py-3 text-danger'
+                    style={{
+                        cursor: 'pointer',
+                        
+                    }}
+                    >
+                    Par {shop?.Name}
+                    </a>
+                <div className='display-4 fw-bold py-3'> {product?.name}</div>
 
                 <div className="container py-4">
                 {images?.length > 0 ? (

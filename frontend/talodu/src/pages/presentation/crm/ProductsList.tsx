@@ -278,7 +278,7 @@ const ProductsList = () => {
               totalItems: response.data.totalItems,
               totalPages: response.data.totalPages
             });
-          console.log("The data...",response.data);
+          console.log("The product data...",response.data);
           setLoading(false);
         } catch (e: any) {
           setError(e.message);

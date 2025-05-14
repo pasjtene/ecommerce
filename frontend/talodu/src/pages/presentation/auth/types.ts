@@ -17,6 +17,8 @@
     Slug: string;
     categories?: ProductCategory[];
     shop: Shop;
+    ShopID: number
+    shop_id: number
   }
 
   export interface ProductCategory {
@@ -28,8 +30,7 @@
   export interface Shop {
     ID: number;
     Name: string;
-    description?: string;
-    
+    description?: string; 
   }
 
 

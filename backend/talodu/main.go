@@ -96,8 +96,8 @@ func main() {
 		products.POST("", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.CreateProduct(s.DB))
 		products.DELETE(":id", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.DeleteProduct(s.DB))
 		products.DELETE("/delete/batch", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.DeleteProductBatch(s.DB))
-		products.GET(":id", handlers.GetProduct(s.DB))                                                         // Get single product
-		products.PUT(":id", auth.AuthMiddleware("Sales", "Admin", "SuperAdmin"), handlers.UpdateProduct(s.DB)) // Update
+		products.GET(":id", handlers.GetProduct(s.DB))    // Get single product
+		products.PUT(":id", handlers.UpdateProduct(s.DB)) // Update
 	}
 
 	// Get product categories
@@ -142,6 +142,7 @@ func main() {
 		shops.POST("", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.CreateShop(s.DB))
 		shops.POST("/:id/employees", auth.AuthMiddleware(), handlers.AddShopEmployee2(s.DB))
 		shops.GET("", handlers.ListShops(s.DB))
+		shops.GET(":id", handlers.GetShop(s.DB))
 	}
 
 	r.Static("/uploads", "./uploads")

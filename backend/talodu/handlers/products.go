@@ -93,7 +93,22 @@ func GetProduct(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, product)
+		// Fetch and return the fully updated product
+		var shop models.Shop
+		if err := db.
+			First(&shop, product.ShopID).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch updated shop"})
+			return
+		}
+		product.Shop = shop
+		db.Save(&product)
+
+		//c.JSON(http.StatusOK, product)
+		// Return response
+		c.JSON(http.StatusOK, gin.H{
+			"product": product,
+			"shop":    shop,
+		})
 	}
 }
 
@@ -172,13 +187,17 @@ func UpdateProduct(db *gorm.DB) gin.HandlerFunc {
 
 		// Request payload structure
 		var request struct {
-			Name        string            `json:"name" binding:"required"`
-			Price       float64           `json:"price" binding:"required"`
-			Stock       int               `json:"stock" binding:"required"`
-			Description string            `json:"description"`
-			Shop        models.Shop       `json:"shop" binding:"required"`
-			Categories  []models.Category `json:"categories"`
+			Name        string  `json:"name" binding:"required"`
+			Price       float64 `json:"price" binding:"required"`
+			Stock       int     `json:"stock" binding:"required"`
+			Description string  `json:"description"`
+			//shop        models.Shop       `json:"shop" binding:"required"`
+			ShopID     uint              `json:"ShopID" binding:"required"`
+			Categories []models.Category `json:"categories"`
+			Shop       Shop              `json:"shop_id"`
 		}
+
+		fmt.Println("The request :", request)
 
 		// Bind JSON payload
 		if err := c.ShouldBindJSON(&request); err != nil {
@@ -186,30 +205,18 @@ func UpdateProduct(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		// 1. Handle shop update/create
-		var shop models.Shop
-		if request.Shop.ID == 0 {
-			// New shop - validate required fields
-			if request.Shop.OwnerID == 0 {
-				c.JSON(http.StatusBadRequest, gin.H{"error": "new shop must have an owner_id"})
-				return
-			}
-			if err := db.Create(&request.Shop).Error; err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create shop: " + err.Error()})
-				return
-			}
-			shop = request.Shop
-		} else {
-			// Existing shop
-			if err := db.First(&shop, request.Shop.ID).Error; err != nil {
-				c.JSON(http.StatusNotFound, gin.H{"error": "shop not found"})
-				return
-			}
-			// Update shop fields
-			if err := db.Model(&shop).Updates(request.Shop).Error; err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update shop: " + err.Error()})
-				return
-			}
+		// Print all request fields with detailed information
+		fmt.Println("\n=== Request Payload ===")
+		fmt.Printf("Name: %s\n", request.Name)
+		fmt.Printf("Price: %.2f\n", request.Price)
+		fmt.Printf("Stock: %d\n", request.Stock)
+		fmt.Printf("Description: %s\n", request.Description)
+		fmt.Printf("ShopID: %d\n", request.ShopID)
+
+		fmt.Println("Categories:")
+		for i, cat := range request.Categories {
+			fmt.Printf("  [%d] ID: %d, Name: %s\n", i, cat.ID, cat.Name)
+			// Add other category fields you want to inspect
 		}
 
 		// 2. Get existing product
@@ -225,7 +232,7 @@ func UpdateProduct(db *gorm.DB) gin.HandlerFunc {
 			Price:       request.Price,
 			Stock:       request.Stock,
 			Description: request.Description,
-			ShopID:      shop.ID,
+			ShopID:      request.ShopID,
 		}
 
 		// Generate new slug if name changed
@@ -292,7 +299,26 @@ func UpdateProduct(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, updatedProduct)
+		// Fetch and return the fully updated product
+		var newshop models.Shop
+		if err := db.
+			First(&newshop, request.ShopID).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch updated shop"})
+			return
+		}
+
+		updatedProduct.Shop = newshop
+		db.Save(&updatedProduct)
+
+		fmt.Printf("ShopID before save: %d\n", updatedProduct.Shop.ID)
+
+		//c.JSON(http.StatusOK, updatedProduct)
+
+		// Return response
+		c.JSON(http.StatusOK, gin.H{
+			"product": updatedProduct,
+			"shop":    newshop,
+		})
 	}
 }
 

@@ -131,12 +131,14 @@ const ProductEditComponent = ({ product, onSave, onCancel }: ProductEditProps) =
               name="shop"
               value={editedProduct.shop?.ID}
               onChange={(e) => {
+                console.log("The selected product is: ",editedProduct)
                 const selectedShop = shops.find(s => s.ID === Number(e.target.value));
 
                 if (selectedShop) {
                   setEditedProduct(prev => ({
                     ...prev,
-                    shop: selectedShop
+                    shop: selectedShop,
+                    ShopID: selectedShop.ID
                   }));
                 }
               }}

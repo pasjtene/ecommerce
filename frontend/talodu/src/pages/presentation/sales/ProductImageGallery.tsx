@@ -31,12 +31,14 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[], prod
     try {
       const response = await axios.put(API_BASE_URL+`/products/${product.ID}`, updatedProduct);
       setCurrentProduct(response.data);
-      //console.log("The updated prduct ...: ", response.data)
+      console.log("The updated prduct ...: ", response.data)
+      console.log("The updated prduct shop is ...: ", response.data.ShopID)
       setIsEditing(false);
       // Show success toast
           toast.success(`Product updated savedsuccessfully`);
         } catch (error) {
           toast.error('Failed to update products');
+          console.log(error)
       // Show error toast
     }
   };
