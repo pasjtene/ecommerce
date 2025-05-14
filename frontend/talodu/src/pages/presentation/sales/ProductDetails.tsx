@@ -178,26 +178,14 @@ const ProductDetails = () => {
 
           useEffect(() => {
             // Check if product was passed in state
-            const state = location.state as LocationState;
+                const state = location.state as LocationState;
              const stateProduct = state?.product;
+             fetchShop(state?.product?.ShopID)
             if (stateProduct) {
             // if (stateProduct && stateProduct.Slug === slug) {
             console.log("The product is: ",stateProduct)
               setProduct(stateProduct);
-              fetchShop(state?.product?.ShopID)
-
-              setLoading(false);
-            } else {
-                const productId = slug?.split('-').pop();
-                const prodid = id?.split('-').pop();
-                if (!prodid) {
-                setError('Invalid product URL');
-                return;
-                }
-              // Fetch product if not in state
-              //fetchProduct();
-             // fetchProduct(prodid);
-              
+        
             }
           }, []);
 
