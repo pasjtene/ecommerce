@@ -92,7 +92,7 @@ type Shop struct {
 
 type Category struct {
 	gorm.Model
-	Name        string    `json:"name"`
+	Name        string    `json:"name" gorm:"unique"`
 	Description string    `json:"description"`
 	Products    []Product `json:"products" gorm:"many2many:product_categories;"`
 }

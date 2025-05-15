@@ -420,7 +420,7 @@ const ProductDetails = () => {
                         
                     }}
                     >
-                    Par {shop?.Name}
+                    By {shop?.Name}
                     </a>
                 <div className='display-4 fw-bold py-3'> {product?.name}</div>
 

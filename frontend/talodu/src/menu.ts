@@ -256,6 +256,12 @@ export const demoPagesMenu = {
 				path: 'sales/sales-list',
 				icon: 'FactCheck',
 			},
+			shopsList: {
+				id: 'shops',
+				text: 'Shops List',
+				path: 'sales/shops-list',
+				icon: 'FactCheck',
+			},
 			productsGrid: {
 				id: 'productsGrid',
 				text: 'Products Grid',

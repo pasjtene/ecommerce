@@ -30,7 +30,12 @@
   export interface Shop {
     ID: number;
     Name: string;
-    description?: string; 
+    description?: string;
+    moto?: string;
+    OwnerID: number;
+    Owner: User;
+    Employees: User[];
+    Products: Product[];
   }
 
 
