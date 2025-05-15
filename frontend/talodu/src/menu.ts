@@ -274,6 +274,12 @@ export const demoPagesMenu = {
 				path: 'sales/product',
 				hide: true,
 			},
+			shopID: {
+				id: 'shopID',
+				text: 'shopID',
+				path: 'sales/shop',
+				hide: true,
+			},
 			product: {
 				id: 'product',
 				text: 'Product',

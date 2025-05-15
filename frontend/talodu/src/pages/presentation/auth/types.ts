@@ -8,6 +8,15 @@
     roles: Role[];
   }
 
+   export interface ShopUser {
+      id: number;
+      username: string;
+      FirstName: string;
+      LastName: string;
+      email: string;
+      roles: Role[];
+    }
+
   export interface Product {
     ID: number;
     name: string;
@@ -33,7 +42,7 @@
     description?: string;
     moto?: string;
     OwnerID: number;
-    Owner: User;
+    owner: ShopUser;
     Employees: User[];
     Products: Product[];
   }

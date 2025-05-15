@@ -143,6 +143,7 @@ func main() {
 		shops.POST("/:id/employees", auth.AuthMiddleware(), handlers.AddShopEmployee2(s.DB))
 		shops.GET("", handlers.ListShops(s.DB))
 		shops.GET(":id", handlers.GetShop(s.DB))
+		shops.PUT(":id", handlers.UpdateShop(s.DB))
 	}
 
 	r.Static("/uploads", "./uploads")

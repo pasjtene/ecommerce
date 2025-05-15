@@ -200,26 +200,8 @@ const ShopsList = () => {
     const jwtToken = localStorage.getItem('j_auth_token'); // Assuming you store the token in localStorage
     
     // Function to handle after user is updated
-    const handleUserUpdated = (updatedUser: User) => {
-        console.log('Updated user received:', updatedUser);
-        //console.log('Current users before update:', users);
-       setUsers(prevUsers => prevUsers.map(user => user.id === updatedUser.id ? updatedUser : user) );
-        setEditingUser(null);
-      };
+   
 
-       // Function to handle after user is created
-    const handleUserCreated = (CreatedUser: User) => {
-     console.log('Updated user received:', CreatedUser);
-     //setUsers(prevUsers => [...prevUsers, CreatedUser]);
-
-     setUsers(prev => [
-      ...prev.slice(0, 1),
-      CreatedUser,
-      ...prev.slice(1)
-    ]);
-
-      setEditingUser(null);
-    };
 
     const insertUser = (newUser: User, index: number) => {
       setUsers(prev => [
@@ -273,7 +255,7 @@ const ShopsList = () => {
               Authorization: `${jwtToken}`, // Include the JWT token in the Authorization header
             },
           });
-          console.log("The response shops: ",response.data.shops);
+         // console.log("The response shops: ",response.data.shops);
           setShops(response.data.shops);
           setPagination({
               page: response.data.page,
@@ -281,7 +263,7 @@ const ShopsList = () => {
               totalItems: response.data.totalItems,
               totalPages: response.data.totalPages
             });
-          console.log("The shops data...",response.data);
+         // console.log("The shops data...",response.data);
           setLoading(false);
         } catch (e: any) {
           setError(e.message);
@@ -485,19 +467,14 @@ return buttons;
     );
     }
 
-   // Handle view details
-   const handleViewDetails = (product: Product) => {
-    console.log("The product is",product);
-    navigate(`../${demoPagesMenu.sales.subMenu.productID.path}/${product.ID}`, { state: { product } })
-    
-  };
+  
 
   // Handle view details
   const handleViewDetailsLug = (shop: Shop) => {
-    console.log("The product is: ",shop);
-    {/* 
-    navigate(`../${demoPagesMenu.sales.subMenu.productID.path}/${product.Slug}`, { state: { product } })
-    */}
+    console.log("The shop is: ",shop);
+   
+    navigate(`../${demoPagesMenu.sales.subMenu.shopID.path}/${shop.ID}`, { state: { shop } })
+   
   };
 
   // Handle delete user

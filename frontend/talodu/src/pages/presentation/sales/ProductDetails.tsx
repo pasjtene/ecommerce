@@ -112,7 +112,7 @@ const ProductDetails = () => {
     const [error, setError] = useState<string | null>(null);
     const [refresh, setRefresh] = useState(false);
     const [product, setProduct] = useState<Product | null>(null);
-    const [shop, setShop] = useState<Shop | null>(null);
+    //const [shop, setShop] = useState<Shop | null>(null);
     const [loading, setLoading] = useState(true);
 
     // Fetch images
@@ -180,7 +180,7 @@ const ProductDetails = () => {
             // Check if product was passed in state
                 const state = location.state as LocationState;
              const stateProduct = state?.product;
-             fetchShop(state?.product?.ShopID)
+            // fetchShop(state?.product?.ShopID)
             if (stateProduct) {
             // if (stateProduct && stateProduct.Slug === slug) {
             console.log("The product is: ",stateProduct)
@@ -190,6 +190,7 @@ const ProductDetails = () => {
           }, []);
 
 
+          /*
           const fetchShop= async (id: number|undefined) => {
             try {
               setLoading(true);
@@ -208,6 +209,7 @@ const ProductDetails = () => {
               setLoading(false);
             }
           };
+          */
 
 
           const fetchProduct = async (id: string) => {
@@ -218,7 +220,7 @@ const ProductDetails = () => {
               );
               console.log("The product fetched response is: ",response.data)
               console.log("The shop fetched response is: ",response.data.shop)
-              setShop(response.data.shop);
+             // setShop(response.data.shop);
               setProduct(response.data.product);
               setError(null);
             } catch (err) {
@@ -420,7 +422,7 @@ const ProductDetails = () => {
                         
                     }}
                     >
-                    By {shop?.Name}
+                    By {product?.shop.Name}
                     </a>
                 <div className='display-4 fw-bold py-3'> {product?.name}</div>
 
