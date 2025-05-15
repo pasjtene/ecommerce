@@ -2,6 +2,7 @@
 package handlers
 
 import (
+	"math"
 	"math/rand"
 	"net/http"
 	"regexp"
@@ -173,7 +174,19 @@ func isAuthorized(authUser *auth.AuthUser, shop models.Shop) bool {
 func ListShops(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var shops []models.Shop
+
 		query := db.Preload("Owner").Preload("Products").Preload("Employees")
+
+		// 1. Search (by name)
+		if search := c.Query("search"); search != "" {
+			//query = query.Where("name LIKE ?", "%"+search+"%" )
+
+			query = query.Where(
+				"name ILIKE ? OR description ILIKE ?",
+				"%"+search+"%", "%"+search+"%",
+			)
+
+		}
 
 		// Pagination
 		page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
@@ -185,16 +198,19 @@ func ListShops(db *gorm.DB) gin.HandlerFunc {
 			query = query.Where("owner_id = ?", ownerID)
 		}
 
-		// Execute query
-		query.Offset(offset).Limit(limit).Find(&shops)
 		var totalCount int64
 		query.Model(&models.Shop{}).Count(&totalCount)
+		// Execute query
+		query.Offset(offset).Limit(limit).Find(&shops)
+
+		totalPages := int(math.Ceil(float64(totalCount) / float64(limit)))
 
 		c.JSON(http.StatusOK, gin.H{
 			"shops":      shops,
 			"page":       page,
 			"limit":      limit,
 			"totalItems": totalCount,
+			"totalPages": totalPages,
 		})
 	}
 }
