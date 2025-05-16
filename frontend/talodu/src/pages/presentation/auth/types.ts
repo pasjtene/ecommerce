@@ -28,6 +28,7 @@
     shop: Shop;
     ShopID: number
     shop_id: number
+    images: ProductImage[]
   }
 
   export interface ProductCategory {
@@ -44,10 +45,8 @@
     OwnerID: number;
     owner: ShopUser;
     Employees: User[];
-    Products: Product[];
+    products: Product[];
   }
-
-
 
   export interface ProductImage {
     ID: string;
@@ -59,7 +58,6 @@
     price?: number;
     sku?: string;
   }
-
 
   export interface User2 {
     ID: number;

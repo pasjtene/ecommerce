@@ -11,10 +11,6 @@ import { demoPagesMenu } from '../../../menu';
 import Card, { CardBody } from '../../../components/bootstrap/Card';
 import { getFirstLetter, priceFormat } from '../../../helpers/helpers';
 import data from '../../../common/data/dummyCustomerData';
-import PaginationButtons, {
-    dataPagination,
-    PER_COUNT,
-} from '../../../components/PaginationButtons';
 import Button from '../../../components/bootstrap/Button';
 import Icon from '../../../components/icon/Icon';
 import Input from '../../../components/bootstrap/forms/Input';
@@ -81,14 +77,7 @@ const ProductsList = () => {
     const { darkModeStatus } = useDarkMode();
 
     const navigate = useNavigate();
-    // Available roles from your API or state
-    const [availableRoles, setAvailableRoles] = useState<Role[]>([
-        { ID: 1, Name: 'SuperAdmin', CreatedAt: "", UpdatedAt:"", DeletedAt:"" },
-        { ID: 2, Name: 'Admin', CreatedAt: "", UpdatedAt:"", DeletedAt:""  },
-        { ID: 3, Name: 'Sales' , CreatedAt: "", UpdatedAt:"", DeletedAt:"" },
-        { ID: 4, Name: 'Visitor' , CreatedAt: "", UpdatedAt:"", DeletedAt:"" },
-        { ID: 5, Name: 'User' , CreatedAt: "", UpdatedAt:"", DeletedAt:"" },
-      ]);
+   
   
     // State for edit modal
     const [showEditModal, setShowEditModal] = useState(false);
@@ -758,10 +747,11 @@ const handleEditUser = (user: User) => {
                 </th>
                   <th scope="col">ID</th>
                   <th scope="col">Name</th>
+                  <th scope="col">Images</th>
                   <th scope="col">Price</th>
                   <th scope="col">Stock</th>
                   <th scope="col">Description</th>
-                  <th scope="col">Roles</th>
+                  <th scope="col">Shop</th>
                   <th scope="col">Action</th>
                 </tr>
               </thead>
@@ -789,11 +779,12 @@ const handleEditUser = (user: User) => {
                       
                       
                     </td>
+                    <td>{p.images.length}</td>
                     <td>{p.price}</td>
                     <td>{p.stock}</td>
                     <td>{p.description}</td>
                     <td>
-                      Categories
+                      {p.shop.Name} - {p.shop.ID}
                     </td>
                       {renderActionDropdown(p)}
                   </tr>
@@ -804,37 +795,6 @@ const handleEditUser = (user: User) => {
         <div>No users found in list.</div>
         )}
     </div>
-
-          <UserEditModal 
-            setIsOpen={setEditModalStatus}
-            isOpen={editModalStatus}
-            id={editingUserId || 'new-user'}
-            formData={editFormData}
-            formData2={editFormData2}
-            availableRoles={availableRoles}
-            onFormChange={setEditFormData}
-            onFormChange2={setEditFormData2}
-            onSave={handleSaveUser}
-
-            isNewUser={isNewUser}
-            onUserUpdated={handleUserUpdated}
-            />
-
-          <UserCreateModal 
-            setIsOpen={setCreateModalStatus}
-            isOpen={createModalStatus}
-            id={editingUserId || 'new-user'}
-            formData={editFormData}
-            formData2={editFormData2}
-            availableRoles={availableRoles}
-            onFormChange={setEditFormData}
-            onFormChange2={setEditFormData2}
-            onSave={handleSaveUser}
-
-            isNewUser={isNewUser}
-            onUserUpdated={handleUserCreated}
-            
-            />
 
            {/* Pagination Footer */}
            <div className="d-flex justify-content-center mt-3">

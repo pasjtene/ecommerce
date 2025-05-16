@@ -40,7 +40,7 @@ const ShopEdit = () => {
         OwnerID: 0,
         owner: {} as ShopUser,
         Employees: [],
-        Products: []
+        products: []
       });
     
     const { state } = useLocation();

@@ -742,7 +742,7 @@ const handleEditUser = (user: User) => {
                   <th scope="col">Price</th>
                   <th scope="col">Stock</th>
                   <th scope="col">Description</th>
-                  <th scope="col">Roles</th>
+                  <th scope="col">Products</th>
                   <th scope="col">Action</th>
                 </tr>
               </thead>
@@ -774,7 +774,7 @@ const handleEditUser = (user: User) => {
                     <td>{p.moto}</td>
                     <td>{p.description}</td>
                     <td>
-                      Categories
+                      {p.products?.length}
                     </td>
                       {renderActionDropdown(p)}
                   </tr>

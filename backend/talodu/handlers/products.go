@@ -25,7 +25,7 @@ func ListProducts(db *gorm.DB) gin.HandlerFunc {
 		var products []models.Product
 
 		//query := db.Model(&models.Product{})
-		query := db.Model(&models.Product{}).Preload("Shop", func(db *gorm.DB) *gorm.DB {
+		query := db.Model(&models.Product{}).Preload("Images").Preload("Shop", func(db *gorm.DB) *gorm.DB {
 			return db.Select("id", "name") // Only load specific shop fields
 		})
 
