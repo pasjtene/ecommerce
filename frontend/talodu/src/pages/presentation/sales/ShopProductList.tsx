@@ -15,7 +15,7 @@ import Input from '../../../components/bootstrap/forms/Input';
 
 import useDarkMode from '../../../hooks/useDarkMode';
 import axios from 'axios'
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useNavigate, Link, useLocation, useParams } from 'react-router-dom';
 import { updateUser, API_BASE_URL } from '../auth/api'
 import { User, Role, Shop, ShopUser } from '../auth/types'
 import { toast } from 'react-toastify';
@@ -30,6 +30,7 @@ import ImageDisplayComponent from './ImageDisplayComponent'
 const ShopProductList = () => {
     //const ProductEditComponent = ({ product, onSave, onCancel }: ProductEditProps) => {
     const { darkModeStatus } = useDarkMode();
+     const { id } = useParams<{ id: string }>();
 
     const [shop, setShop] = useState<Shop>({
         ID: 0,
@@ -66,7 +67,7 @@ const ShopProductList = () => {
   };
 
 
-   useEffect(() => {
+            useEffect(() => {
                const stateShop = state?.shop;
                console.log("Shop owner",state?.shop.owner)
               if (stateShop) {
@@ -76,14 +77,34 @@ const ShopProductList = () => {
                 setLoading(false);
               } else {
                   //const productId = slug?.split('-').pop();
-                  const prodid = stateShop.id?.split('-').pop();
-                  if (!prodid) {
+                  //const shopid = stateShop.id?.split('-').pop();
+                  const shopid = id?.split('-').pop();
+                  if (!shopid) {
                   setError('Invalid product URL');
                   return;
                   }
-                
+                  fetchShop(shopid);
               }
             }, []);
+
+            const fetchShop = async (id: string) => {
+                        try {
+                          setLoading(true);
+                          const response = await axios.get<{shop:Shop}>(
+                            API_BASE_URL+`/shops/${id}`
+                          );
+                          console.log("The shop data fetched response is: ",response.data)
+                          console.log("The shop fetched response is: ",response.data.shop)
+                         // setShop(response.data.shop);
+                         setShop(response.data.shop);
+                          setError(null);
+                        } catch (err) {
+                          setError('Failed to load product details');
+                          console.error('Error fetching product:', err);
+                        } finally {
+                          setLoading(false);
+                        }
+                      };
 
  
   // Handle input changes
@@ -174,8 +195,9 @@ const ShopProductList = () => {
 
                            
                             <div className="mb-3">
-                                <label className="form-label">{shop.name} </label>
-                                <div className="row">
+                                <label className="form-label text-decoration-none display-6 py-3 text-danger">{shop.name} </label>
+                                
+                                <div className="row text-decoration-none display-3 py-3 text-primary">
                                 {shop.moto} 
                                 </div>
                                 
