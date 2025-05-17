@@ -76,8 +76,6 @@ const ShopProductList = () => {
                 setShop(stateShop);
                 setLoading(false);
               } else {
-                  //const productId = slug?.split('-').pop();
-                  //const shopid = stateShop.id?.split('-').pop();
                   const shopid = id?.split('-').pop();
                   if (!shopid) {
                   setError('Invalid product URL');
@@ -162,7 +160,7 @@ const ShopProductList = () => {
     }
 
     return (
-        <PageWrapper title={demoPagesMenu.crm.subMenu.usersList.text}>
+        <PageWrapper title={shop.name}>
             <SubHeader>
                 <SubHeaderLeft>
                     <label
@@ -221,9 +219,6 @@ const ShopProductList = () => {
                     
                     <ImageDisplayComponent shop={shop} />
                     </div>
-
-
-
 
             </Page>
             
