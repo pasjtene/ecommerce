@@ -30,7 +30,7 @@ import ImageDisplayComponent from './ImageDisplayComponent'
 const ShopProductList = () => {
     //const ProductEditComponent = ({ product, onSave, onCancel }: ProductEditProps) => {
     const { darkModeStatus } = useDarkMode();
-     const { id } = useParams<{ id: string }>();
+    const { id } = useParams<{ id: string }>();
 
     const [shop, setShop] = useState<Shop>({
         ID: 0,
@@ -130,15 +130,16 @@ const ShopProductList = () => {
       // Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsLoading(true);
-        console.log("The shop data", shop)
+        //setIsLoading(true);
+        //console.log("The shop data", shop)
+        alert('Tel: 696 65 66 50 - Situé a denver, apres la fondation Francis Nganou');
         
         try {
         // Add your API call here to save the shop
         // await updateShop(shop);
-        const response = await axios.put(API_BASE_URL+`/shops/${shop.ID}`, shop);
-        console.log('Shop data to save:', response.data);
-        alert('Shop updated successfully!');
+        //const response = await axios.put(API_BASE_URL+`/shops/${shop.ID}`, shop);
+        //console.log('Shop data to save:', response.data);
+       // alert('Tel: 696 65 66 50 - Situé a denver, apres la fondation Francis Nganou');
         } catch (error) {
         console.error('Error updating shop:', error);
         alert('Failed to update shop');
@@ -179,7 +180,7 @@ const ShopProductList = () => {
                         color='primary'
                         isLight
                         onClick={() => {setCreateModalStatus(true); setisNewUser(true);}}>
-                        Add New Shop
+                        Ajouter un produit
                     </Button>
                 </SubHeaderRight>
             </SubHeader>
@@ -206,7 +207,7 @@ const ShopProductList = () => {
                             <div className="d-flex justify-content-end gap-2">
                             
                                 <button type="submit" className="btn btn-primary" disabled={isLoading}>
-                                {isLoading ? 'Saving...' : 'Save Changes'}
+                                {isLoading ? 'Saving...' : 'Nous contacter'}
                                 </button>
                             </div>
                             </form>
@@ -216,9 +217,6 @@ const ShopProductList = () => {
                         </Card>
                     </div>
                 </div>
-
-
-
                     <div>
                     
                     <ImageDisplayComponent shop={shop} />

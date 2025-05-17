@@ -65,7 +65,7 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
 
   return (
     <div className="container-fluid mt-4">
-      <h2 className="mb-4">Product Gallery</h2>
+      <h2 className="mb-4">Nos Products</h2>
       <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
         {allImages.map((image) => (
           <div key={image.ID} className="col">
