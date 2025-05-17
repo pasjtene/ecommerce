@@ -86,6 +86,29 @@ func ListProducts(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// GET /shops/:id/products
+func GetShopProducts(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		shopID := c.Param("id")
+		var products []models.Product
+
+		result := db.
+			Preload("Images").
+			Preload("Categories").
+			Where("shop_id = ?", shopID).
+			Find(&products)
+
+		if result.Error != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch products"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"products": products,
+		})
+	}
+}
+
 // GET /products/:id
 func GetProduct(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {

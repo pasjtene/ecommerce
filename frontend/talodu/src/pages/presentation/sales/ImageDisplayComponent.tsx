@@ -1,13 +1,46 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { User, Product, ProductImage, Shop} from '../auth/types';
+import axios from 'axios';
+import { API_IMAGES, API_BASE_URL } from '../auth/api'
 
 interface ImageDisplayProps {
   shop: Shop;
 }
 
 const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
-  // Flatten all product images from the shop
-  const allImages = shop.products.flatMap(product => 
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+  
+
+
+  useEffect(() => {
+    const fetchShopProducts = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(API_BASE_URL+`/shops/${shop.ID}/products`);
+        setProducts(response.data.products);
+      } catch (err) {
+        setError('Failed to load products');
+        console.error('Error fetching products:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchShopProducts();
+  }, [shop.ID]);
+
+  if (loading) {
+    return <div className="text-center my-5">Loading products...</div>;
+  }
+
+  if (error) {
+    return <div className="alert alert-danger my-5">{error}</div>;
+  }
+
+// Flatten all product images from the shop
+  const allImages = products.flatMap(product => 
     (product.images || []).map(image => ({
       ...image,
       productName: product.name,
@@ -31,7 +64,7 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
           <div key={image.ID} className="col">
             <div className="card h-100 shadow-sm">
               <img 
-                src={image.url} 
+                src={API_BASE_URL+image.url} 
                 alt={image.altText || `Product: ${image.productName}`}
                 className="card-img-top img-fluid"
                 style={{ 

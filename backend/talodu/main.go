@@ -144,6 +144,7 @@ func main() {
 		shops.GET("", handlers.ListShops(s.DB))
 		shops.GET(":id", handlers.GetShop(s.DB))
 		shops.PUT(":id", handlers.UpdateShop(s.DB))
+		shops.GET(":id/products", handlers.GetShopProducts(s.DB))
 	}
 
 	r.Static("/uploads", "./uploads")

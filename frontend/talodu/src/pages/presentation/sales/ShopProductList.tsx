@@ -148,15 +148,7 @@ const ShopProductList = () => {
                         htmlFor='searchInput'>
                         <Icon icon='Search' size='2x' color='primary' />
                     </label>
-                    <Input
-                        id='searchInput'
-                        type='search'
-                        className='border-0 shadow-none bg-transparent'
-                        placeholder='Search customer...2..'
-                        onChange={handleChange}
-                        value={shop.name}
-                        
-                    />
+                    
                 </SubHeaderLeft>
                 <SubHeaderRight>
                    
@@ -174,80 +166,19 @@ const ShopProductList = () => {
                 <div className='row h-100'>
                     <div className='col-12'>
                         <Card stretch>
-                        <div>
-                        <h3>Shop Edit</h3>  
-                        </div>
-   
-                    <div className="d-flex justify-content-between align-items-center mb-3">
-                   
-                  </div>
-     
-                  <div className="card">
-                    <div className="card-header">
-                        <h3>Shop products</h3>
-                    </div>
-
-                    <div className="card-body">
+                        <div className="card-body">
                         <form onSubmit={handleSubmit}>
                         <div className="mb-3">
-                            <label className="form-label">Name</label>
-                            <input
-                            type="text"
-                            className="form-control"
-                            name="name"
-                            value={shop?.name}
-                            onChange={handleChange}
-                            required
-                            />
+                           
                         </div>
 
-                            <div className="row mb-3">
-                                <div className="col-md-6">
-                                <label className="form-label">Moto</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    name="moto"
-                                    value={shop?.moto}
-                                    onChange={handleChange}
-                                    min="0"
-                                    step="0.01"
-                                    required
-                                />
-                                </div>
-                                <div className="col-md-6">
-                                <label className="form-label">City</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    name="FirstName"
-                                    value={shop?.moto}
-                                    onChange={handleChange}
-                                    min="0"
-                                    required
-                                />
-                                </div>
-                            </div>
-
+                           
                             <div className="mb-3">
-                                <label className="form-label">Description</label>
-                                <textarea
-                                className="form-control"
-                                name="description"
-                                value={shop?.description}
-                                onChange={handleChange}
-                                rows={3}
-                                />
-                            </div>
-
-                            <div className="mb-3">
-                                <label className="form-label">Shop Owner</label>
+                                <label className="form-label">{shop.name} </label>
                                 <div className="row">
-                                {shop.owner.FirstName} {shop.owner.LastName}
+                                {shop.moto} 
                                 </div>
-                                <div className="row">
-                                Slug: {shop.Slug}
-                                </div>
+                                
                             </div>
 
                             <div className="d-flex justify-content-end gap-2">
@@ -258,7 +189,7 @@ const ShopProductList = () => {
                             </div>
                             </form>
                         </div>
-                        </div>
+                      
 
                         </Card>
                     </div>
