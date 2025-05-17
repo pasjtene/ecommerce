@@ -19,6 +19,7 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { updateUser, API_BASE_URL } from '../auth/api'
 import { User, Role, Shop, ShopUser } from '../auth/types'
 import { toast } from 'react-toastify';
+import ImageDisplayComponent from './ImageDisplayComponent'
 
 
   interface LocationState {
@@ -26,9 +27,7 @@ import { toast } from 'react-toastify';
   }
 
 
-  
-
-const ShopEdit = () => {
+const ShopProductList = () => {
     //const ProductEditComponent = ({ product, onSave, onCancel }: ProductEditProps) => {
     const { darkModeStatus } = useDarkMode();
 
@@ -47,25 +46,9 @@ const ShopEdit = () => {
     const { state } = useLocation();
 
     const navigate = useNavigate();
-    // Available roles from your API or state
-    const [availableRoles, setAvailableRoles] = useState<Role[]>([
-        { ID: 1, Name: 'SuperAdmin', CreatedAt: "", UpdatedAt:"", DeletedAt:"" },
-        { ID: 2, Name: 'Admin', CreatedAt: "", UpdatedAt:"", DeletedAt:""  },
-        { ID: 3, Name: 'Sales' , CreatedAt: "", UpdatedAt:"", DeletedAt:"" },
-        { ID: 4, Name: 'Visitor' , CreatedAt: "", UpdatedAt:"", DeletedAt:"" },
-        { ID: 5, Name: 'User' , CreatedAt: "", UpdatedAt:"", DeletedAt:"" },
-      ]);
-  
-    // State for edit modal
-    const [showEditModal, setShowEditModal] = useState(false);
-    const [isNewUser, setisNewUser] = useState(false);
-    const [editedProduct, setEditedProduct] = useState<Shop>();
-    
-
  
-    const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
+    const [isNewUser, setisNewUser] = useState(false);
 
-    //const [dropdownOpen, setDropdownOpen] = useState<Record<number, boolean>>({});
     const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
 
     const toggleDropdown = (userId: number) => {
@@ -170,8 +153,6 @@ const ShopEdit = () => {
                         type='search'
                         className='border-0 shadow-none bg-transparent'
                         placeholder='Search customer...2..'
-                        //onChange={formik.handleChange}
-                        //value={formik.values.searchInput}
                         onChange={handleChange}
                         value={shop.name}
                         
@@ -203,7 +184,7 @@ const ShopEdit = () => {
      
                   <div className="card">
                     <div className="card-header">
-                        <h3>Edit Shop 2</h3>
+                        <h3>Shop products</h3>
                     </div>
 
                     <div className="card-body">
@@ -282,10 +263,21 @@ const ShopEdit = () => {
                         </Card>
                     </div>
                 </div>
+
+
+
+                    <div>
+                    
+                    <ImageDisplayComponent shop={shop} />
+                    </div>
+
+
+
+
             </Page>
             
         </PageWrapper>
     );
 };
 
-export default ShopEdit;
+export default ShopProductList;

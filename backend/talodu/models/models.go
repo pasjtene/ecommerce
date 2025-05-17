@@ -81,7 +81,8 @@ type UpdateUserRequest struct {
 
 type Shop struct {
 	gorm.Model
-	Name        string    `gorm:"name"`
+	Name        string    `json:"name" gorm:"unique"`
+	Slug        string    `gorm:"unique"`
 	Description string    `json:"description"`
 	Moto        string    `json:"moto" binding:"max=100"`
 	OwnerID     uint      `json:"owner_id"`

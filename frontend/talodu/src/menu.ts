@@ -280,6 +280,12 @@ export const demoPagesMenu = {
 				path: 'sales/shop',
 				hide: true,
 			},
+			shopProducts: {
+				id: 'shopProducts',
+				text: 'shopProducts',
+				path: 'sales/shop/products',
+				hide: true,
+			},
 			product: {
 				id: 'product',
 				text: 'Product',

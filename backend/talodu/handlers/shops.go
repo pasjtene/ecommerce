@@ -60,11 +60,11 @@ func UpdateShop(db *gorm.DB) gin.HandlerFunc {
 
 		// Request payload structure
 		var request struct {
-			Name        string            `json:"name" binding:"required"`
-			Description string            `json:"description"`
-			Moto        string            `json:"moto"`
-			Categories  []models.Category `json:"categories"`
-			Shop        Shop              `json:"shop_id"`
+			Name        string `json:"name" binding:"required"`
+			Description string `json:"description"`
+			Moto        string `json:"moto"`
+			//Categories  []models.Category `json:"categories"`
+			//Shop        Shop              `json:"shop_id"`
 		}
 
 		fmt.Println("The request :", request)
@@ -83,8 +83,8 @@ func UpdateShop(db *gorm.DB) gin.HandlerFunc {
 		fmt.Printf("Description: %s\n", request.Description)
 
 		// 2. Get existing product
-		var existingProduct models.Shop
-		if err := db.First(&existingProduct, shopID).Error; err != nil {
+		var existingShop models.Shop
+		if err := db.First(&existingShop, shopID).Error; err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "product not found"})
 			return
 		}
@@ -97,21 +97,22 @@ func UpdateShop(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		// Generate new slug if name changed
-		if existingProduct.Name != request.Name {
-			//product.Slug = generateSlug(request.Name) + "-" + productID
+		if existingShop.Name != request.Name {
+			shop.Slug = generateSlug(request.Name) + "-" + shopID
 		}
 
 		// 4. Update shop
 		if err := db.Model(&models.Shop{}).Where("id = ?", shopID).Updates(&shop).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update product: " + err.Error()})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update shop: " + err.Error()})
 			return
 		}
 
 		// Fetch and return the fully updated product
-		var updatedProduct models.Shop
+		var updatedShop models.Shop
 		if err := db.Preload("Owner").Preload("Employees").Preload("Products").
-			First(&updatedProduct, shopID).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch updated shop"})
+			First(&updatedShop, shopID).Error; err != nil {
+			//c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch updated shop"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
@@ -119,8 +120,7 @@ func UpdateShop(db *gorm.DB) gin.HandlerFunc {
 
 		// Return response
 		c.JSON(http.StatusOK, gin.H{
-			"shop": updatedProduct,
-			//"shop":    newshop,
+			"shop": updatedShop,
 		})
 	}
 }

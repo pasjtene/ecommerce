@@ -29,9 +29,6 @@ import PAYMENTS from '../../../common/data/enumPaymentMethod';
 import useSortableData from '../../../hooks/useSortableData';
 import InputGroup, { InputGroupText } from '../../../components/bootstrap/forms/InputGroup';
 import Popovers from '../../../components/bootstrap/Popovers';
-//import CustomerEditModal from './CustomerEditModal';
-//import UserEditModal from './UserEditModal';
-//import UserCreateModal from './UserCreateModal';
 import { getColorNameWithIndex } from '../../../common/data/enumColors';
 import useDarkMode from '../../../hooks/useDarkMode';
 import axios from 'axios'
@@ -40,17 +37,6 @@ import { updateUser, API_BASE_URL } from '../auth/api'
 import { User, Role, Product, Shop } from '../auth/types'
 import { toast } from 'react-toastify';
 
-
-
- 
-
-  interface ProductsResponse {
-    products: Product[];
-    page: number;
-    limit: number;
-    totalItems: number;
-    totalPages: number;
-  }
 
   interface ShopsResponse {
     shops: Shop[];
@@ -444,6 +430,15 @@ return buttons;
             </div>
             </DropdownItem>
             <DropdownItem>
+            <div 
+                className="dropdown-item d-flex align-items-center"
+                onClick={(e) => handleActionClick(e, () => handleViewShopProducts(shop))}
+                >
+                <Icon icon="Eye" className="me-2" />
+                View Products
+            </div>
+            </DropdownItem>
+            <DropdownItem>
                 <Button
                 icon="Pencil"
                // onClick={() => handleEditUser(product)}
@@ -467,14 +462,23 @@ return buttons;
     );
     }
 
-  
-
   // Handle view details
   const handleViewDetailsLug = (shop: Shop) => {
     console.log("The shop is: ",shop);
-   
+   if(shop.Slug) {
+    navigate(`../${demoPagesMenu.sales.subMenu.shopID.path}/${shop.Slug}`, { state: { shop } })
+   } else {
     navigate(`../${demoPagesMenu.sales.subMenu.shopID.path}/${shop.ID}`, { state: { shop } })
-   
+   }
+  };
+
+  const handleViewShopProducts = (shop: Shop) => {
+    console.log("The shop is: ",shop);
+   if(shop.Slug) {
+    navigate(`../${demoPagesMenu.sales.subMenu.shopProducts.path}/${shop.Slug}`, { state: { shop } })
+   } else {
+    navigate(`../${demoPagesMenu.sales.subMenu.shopProducts.path}/${shop.ID}`, { state: { shop } })
+   }
   };
 
   // Handle delete user
@@ -495,52 +499,7 @@ return buttons;
         }
       }
     };
-
-
-      // When editing a user
-const handleEditUser = (user: User) => {
-    setEditingUser(user);
-    setEditFormData({
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        roles: [...user.roles],
-    });
-    setEditFormData2({
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        roles: [...user.roles.map(r=>r.ID)],
-    });
-    //console.log("User set to", user)
-    //console.log("edited User set to", editFormData2)
-    setEditingUserId(user.id.toString());
-    setIsEditModalOpen(true);
-    setEditModalStatus(true);
-    setisNewUser(false);
-};
-
-   // Handle save edited user
-   const handleSaveEdit = async () => {
-    console.log("saving users..")
-  };
-
-    // When saving changes
-    const handleSaveUser = (updatedData: EditFormData) => {
-        if (editingUserId) {
-
-            handleSaveEdit();
-            //updateUser(17, editFormData)
-        } else {
-            handleSaveEdit();
-        }
-    };
-
-    
+   
     //Display loading spinner while loading data from API                
     if (loading) return (
         <div className="d-flex justify-content-center my-5">
@@ -765,7 +724,7 @@ const handleEditUser = (user: User) => {
                         onClick={(e) => handleActionClick(e, () => handleViewDetailsLug(p))}
                         >
                         <Icon icon="Eye" className="me-2" />
-                        {p.Name}
+                        {p.name}
                       </div>
                       
                       

@@ -39,7 +39,8 @@
 
   export interface Shop {
     ID: number;
-    Name: string;
+    name: string;
+    Slug: string;
     description?: string;
     moto?: string;
     OwnerID: number;

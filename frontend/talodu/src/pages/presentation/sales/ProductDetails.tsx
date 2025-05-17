@@ -121,13 +121,8 @@ const ProductDetails = () => {
           try {
             const stateProduct = state?.product;
             const productId = product?.Slug?.split('-').pop();
-            console.log("The product id is: ",productId)
-            console.log("The shop Id is: ",product?.ShopID)
-            console.log("The id is is: ",id)
-            console.log("The slud is is: ",slug)
             const prodid = id?.split('-').pop();
             const response = await axios.get<{ images: ProductImage[] }>(
-              //API_BASE_URL+`/images/product/${product?.ID}`
               API_BASE_URL+`/images/product/${prodid}`
 
             );
@@ -189,27 +184,6 @@ const ProductDetails = () => {
             }
           }, []);
 
-
-          /*
-          const fetchShop= async (id: number|undefined) => {
-            try {
-              setLoading(true);
-              const response = await axios.get<{shop:Shop}>(
-                API_BASE_URL+`/shops/${id}`
-              );
-              console.log("The shop fetched response is: ",response.data)
-              console.log("The shop fetched response is: ",response.data.shop)
-              setShop(response.data.shop);
-              //setProduct(response.data.product);
-              setError(null);
-            } catch (err) {
-              setError('Failed to load product details');
-              console.error('Error fetching product:', err);
-            } finally {
-              setLoading(false);
-            }
-          };
-          */
 
 
           const fetchProduct = async (id: string) => {
@@ -290,39 +264,7 @@ const ProductDetails = () => {
     const itemData = tableData.filter((item) => item.id.toString() === id.toString());
     const data = itemData[0];
 
-    const chartOptions: ApexOptions = {
-        colors: [process.env.REACT_APP_WARNING_COLOR],
-        chart: {
-            type: 'line',
-            width: '100%',
-            height: 105,
-            sparkline: {
-                enabled: true,
-            },
-        },
-        tooltip: {
-            theme: 'dark',
-            fixed: {
-                enabled: false,
-            },
-            x: {
-                show: false,
-            },
-            y: {
-                title: {
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    formatter(seriesName: string) {
-                        return '';
-                    },
-                },
-            },
-        },
-        stroke: {
-            curve: 'smooth',
-            width: 2,
-        },
-    };
-
+  
     const TABS: ITabs = {
         SUMMARY: 'Summary',
         COMMENTS: 'Comments',
@@ -422,7 +364,7 @@ const ProductDetails = () => {
                         
                     }}
                     >
-                    By {product?.shop.Name}
+                    By {product?.shop.name}
                     </a>
                 <div className='display-4 fw-bold py-3'> {product?.name}</div>
 

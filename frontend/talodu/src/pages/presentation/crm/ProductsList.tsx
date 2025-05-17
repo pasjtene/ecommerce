@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo} from 'react';
-import { useFormik } from 'formik';
 import PageWrapper from '../../../layout/PageWrapper/PageWrapper';
 import SubHeader, {
     SubHeaderLeft,
@@ -9,8 +8,6 @@ import SubHeader, {
 import Page from '../../../layout/Page/Page';
 import { demoPagesMenu } from '../../../menu';
 import Card, { CardBody } from '../../../components/bootstrap/Card';
-import { getFirstLetter, priceFormat } from '../../../helpers/helpers';
-import data from '../../../common/data/dummyCustomerData';
 import Button from '../../../components/bootstrap/Button';
 import Icon from '../../../components/icon/Icon';
 import Input from '../../../components/bootstrap/forms/Input';
@@ -19,16 +16,6 @@ import Dropdown, {
     DropdownMenu,
     DropdownToggle,
 } from '../../../components/bootstrap/Dropdown';
-import FormGroup from '../../../components/bootstrap/forms/FormGroup';
-import Checks, { ChecksGroup } from '../../../components/bootstrap/forms/Checks';
-import PAYMENTS from '../../../common/data/enumPaymentMethod';
-import useSortableData from '../../../hooks/useSortableData';
-import InputGroup, { InputGroupText } from '../../../components/bootstrap/forms/InputGroup';
-import Popovers from '../../../components/bootstrap/Popovers';
-import CustomerEditModal from './CustomerEditModal';
-import UserEditModal from './UserEditModal';
-import UserCreateModal from './UserCreateModal';
-import { getColorNameWithIndex } from '../../../common/data/enumColors';
 import useDarkMode from '../../../hooks/useDarkMode';
 import axios from 'axios'
 import { useNavigate, Link } from 'react-router-dom';
@@ -38,14 +25,6 @@ import { toast } from 'react-toastify';
 
 
 
-  interface ApiResponse {
-    users: User[];
-    page: number;
-    limit: number;
-    totalItems: number;
-    totalPages: number;
-  }
-
   interface ProductsResponse {
     products: Product[];
     page: number;
@@ -54,56 +33,12 @@ import { toast } from 'react-toastify';
     totalPages: number;
   }
 
-  interface EditFormData {
-    id: number;
-    username: string;
-    email: string;
-    first_name: string;
-    last_name: string;
-    roles: Role[]; // Array of role IDs
-  }
-
-  interface EditFormData2 {
-    id: number;
-    username: string;
-    email: string;
-    first_name: string;
-    last_name: string;
-    roles: number[]; // Array of role IDs
-  }
-  
 
 const ProductsList = () => {
     const { darkModeStatus } = useDarkMode();
-
     const navigate = useNavigate();
-   
   
-    // State for edit modal
-    const [showEditModal, setShowEditModal] = useState(false);
-    const [isNewUser, setisNewUser] = useState(false);
-    
-    const [editingUser, setEditingUser] = useState<User | null>(null);
-    const [editFormData, setEditFormData] = useState<EditFormData>({
-        id: 0,
-        username: '',
-        email: '',
-        first_name: '',
-        last_name: '',
-        roles: []
-    });
 
-    const [editFormData2, setEditFormData2] = useState<EditFormData2>({
-        id: 0,
-        username: '',
-        email: '',
-        first_name: '',
-        last_name: '',
-        roles: []
-    });
-
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [editingUserId, setEditingUserId] = useState<string | null>(null);
     const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
 
     //const [dropdownOpen, setDropdownOpen] = useState<Record<number, boolean>>({});
@@ -141,38 +76,26 @@ const ProductsList = () => {
     }
   };
 
-   // Handle bulk delete
-   const handleDeleteProducts2 = () => {
-    if (selectedProducts.length > 0) {
-      //onDeleteProducts(selectedProducts);
-      setSelectedProducts([]);
-    }
-  };  
-  
-  const handleDeleteProducts = async (productIds: number[]) => {
-    try {
-      await axios.delete(API_BASE_URL+'/products/delete/batch', {
-        data: { ids: productIds }
-      });
-      
-      // Update local state
-      setProducts(prev => prev.filter(p => !productIds.includes(p.ID)));
-      setSelectedProducts([]);
-      
-      // Show success message
-      toast.success(`${productIds.length} products deleted successfully`);
-    } catch (error) {
-      toast.error('Failed to delete products');
-      //setProducts(prev => prev.filter(p => !productIds.includes(p.ID)));
-    }
-  };
-
-
-
+    const handleDeleteProducts = async (productIds: number[]) => {
+      try {
+        await axios.delete(API_BASE_URL+'/products/delete/batch', {
+          data: { ids: productIds }
+        });
+        
+        // Update local state
+        setProducts(prev => prev.filter(p => !productIds.includes(p.ID)));
+        setSelectedProducts([]);
+        
+        // Show success message
+        toast.success(`${productIds.length} products deleted successfully`);
+      } catch (error) {
+        toast.error('Failed to delete products');
+        //setProducts(prev => prev.filter(p => !productIds.includes(p.ID)));
+      }
+    };
     const { handleActionClick } = useDropdownActions();
     const [loading, setLoading] = useState<boolean>(true);
     const [searchTerm, setSearchTerm] = useState('');
-    const [users, setUsers] = useState<User[]>([]);
     const [products, setProducts] = useState<Product[]>([]);
 
     const [pagination, setPagination] = useState({
@@ -184,66 +107,8 @@ const ProductsList = () => {
     
     const [error, setError] = useState<string | null>(null);
     const jwtToken = localStorage.getItem('j_auth_token'); // Assuming you store the token in localStorage
-    
-    // Function to handle after user is updated
-    const handleUserUpdated = (updatedUser: User) => {
-        console.log('Updated user received:', updatedUser);
-        //console.log('Current users before update:', users);
-       setUsers(prevUsers => prevUsers.map(user => user.id === updatedUser.id ? updatedUser : user) );
-        setEditingUser(null);
-      };
-
-       // Function to handle after user is created
-    const handleUserCreated = (CreatedUser: User) => {
-     console.log('Updated user received:', CreatedUser);
-     //setUsers(prevUsers => [...prevUsers, CreatedUser]);
-
-     setUsers(prev => [
-      ...prev.slice(0, 1),
-      CreatedUser,
-      ...prev.slice(1)
-    ]);
-
-      setEditingUser(null);
-    };
-
-    const insertUser = (newUser: User, index: number) => {
-      setUsers(prev => [
-        ...prev.slice(0, index),
-        newUser,
-        ...prev.slice(index)
-      ]);
-    };
 
 
-    const formik = useFormik({
-        initialValues: {
-            searchInput: '',
-            payment: Object.keys(PAYMENTS).map((i) => PAYMENTS[i].name),
-            minPrice: '',
-            maxPrice: '',
-        },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        onSubmit: (values) => {
-            // alert(JSON.stringify(values, null, 2));
-        },
-    });
-
-    const filteredData = data.filter(
-        (f) =>
-            // Name
-            f.name.toLowerCase().includes(formik.values.searchInput.toLowerCase()) &&
-            // Price
-            (formik.values.minPrice === '' || f.balance > Number(formik.values.minPrice)) &&
-            (formik.values.maxPrice === '' || f.balance < Number(formik.values.maxPrice)) &&
-            // Payment Type
-            formik.values.payment.includes(f.payout),
-    );
-    
-    //const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-    //const API_BASE_URL = process.env.REACT_APP_API_PRODUCTION_BASE_URL;
-    const [editModalStatus, setEditModalStatus] = useState<boolean>(false);
-    const [createModalStatus, setCreateModalStatus] = useState<boolean>(false);
     const fetchUsers = async (page = 1, limit = 10, search = ''):Promise<void> => {
         try {
             // const response = await axios.get<ApiResponse>('/api/products',{
@@ -267,7 +132,7 @@ const ProductsList = () => {
               totalItems: response.data.totalItems,
               totalPages: response.data.totalPages
             });
-          console.log("The product data...",response.data);
+          
           setLoading(false);
         } catch (e: any) {
           setError(e.message);
@@ -286,23 +151,6 @@ const ProductsList = () => {
         }
     }, [jwtToken, loading]); // Re-run the effect if the JWT token changes
         
-    
-    
-          // Client-side filtering for immediate responsiveness
-        const filteredUsers = useMemo(() => {
-            if (!searchTerm) return users;
-            
-            const term = searchTerm.toLowerCase();
-            return users.filter(user => 
-            user.username.toLowerCase().includes(term) ||
-            user.email.toLowerCase().includes(term) ||
-            user.first_name?.toLowerCase().includes(term) ||
-            user.last_name?.toLowerCase().includes(term) ||
-            user.roles.some(role => role.Name.toLowerCase().includes(term))
-            );
-        }, [users, searchTerm]);
-
-
     // Debounced search - resets to page 1 when searching
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -326,7 +174,6 @@ const ProductsList = () => {
         const newLimit = parseInt(e.target.value);
         fetchUsers(1, newLimit, searchTerm); // Reset to page 1 when changing limit
     };
-
 
         // Update pagination buttons to include search term
     const renderPaginationButtons = () => {
@@ -480,9 +327,7 @@ return buttons;
 
   // Handle view details
   const handleViewDetailsLug = (product: Product) => {
-    console.log("The product is",product);
     navigate(`../${demoPagesMenu.sales.subMenu.productID.path}/${product.Slug}`, { state: { product } })
-    
   };
 
   // Handle delete user
@@ -504,51 +349,6 @@ return buttons;
       }
     };
 
-
-      // When editing a user
-const handleEditUser = (user: User) => {
-    setEditingUser(user);
-    setEditFormData({
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        roles: [...user.roles],
-    });
-    setEditFormData2({
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        roles: [...user.roles.map(r=>r.ID)],
-    });
-    //console.log("User set to", user)
-    //console.log("edited User set to", editFormData2)
-    setEditingUserId(user.id.toString());
-    setIsEditModalOpen(true);
-    setEditModalStatus(true);
-    setisNewUser(false);
-};
-
-   // Handle save edited user
-   const handleSaveEdit = async () => {
-    console.log("saving users..")
-  };
-
-    // When saving changes
-    const handleSaveUser = (updatedData: EditFormData) => {
-        if (editingUserId) {
-
-            handleSaveEdit();
-            //updateUser(17, editFormData)
-        } else {
-            handleSaveEdit();
-        }
-    };
-
-    
     //Display loading spinner while loading data from API                
     if (loading) return (
         <div className="d-flex justify-content-center my-5">
@@ -576,81 +376,20 @@ const handleEditUser = (user: User) => {
                         type='search'
                         className='border-0 shadow-none bg-transparent'
                         placeholder='Search customer...2..'
-                        onChange={formik.handleChange}
-                        value={formik.values.searchInput}
+                        onChange={()=>{}}
+                        value=""
                         
                     />
                 </SubHeaderLeft>
                 <SubHeaderRight>
-                    <Dropdown>
-                        <DropdownToggle hasIcon={false}>
-                            <Button
-                                icon='FilterAlt'
-                                color='dark'
-                                isLight
-                                className='btn-only-icon position-relative'
-                                aria-label='Filter'>
-                                {data.length !== filteredData.length && (
-                                    <Popovers desc='Filtering applied' trigger='hover'>
-                                        <span className='position-absolute top-0 start-100 translate-middle badge border border-light rounded-circle bg-danger p-2'>
-                                            <span className='visually-hidden'>
-                                                there is filtering
-                                            </span>
-                                        </span>
-                                    </Popovers>
-                                )}
-                            </Button>
-                        </DropdownToggle>
-                        <DropdownMenu isAlignmentEnd size='lg'>
-                            <div className='container py-2'>
-                                <div className='row g-3'>
-                                    <FormGroup label='Balance' className='col-12'>
-                                        <InputGroup>
-                                            <Input
-                                                id='minPrice'
-                                                ariaLabel='Minimum price'
-                                                placeholder='Min.'
-                                                onChange={formik.handleChange}
-                                                value={formik.values.minPrice}
-                                            />
-                                            <InputGroupText>to</InputGroupText>
-                                            <Input
-                                                id='maxPrice'
-                                                ariaLabel='Maximum price'
-                                                placeholder='Max.'
-                                                onChange={formik.handleChange}
-                                                value={formik.values.maxPrice}
-                                            />
-                                        </InputGroup>
-                                    </FormGroup>
-                                    <FormGroup label='Payments' className='col-12'>
-                                        <ChecksGroup>
-                                            {Object.keys(PAYMENTS).map((payment) => (
-                                                <Checks
-                                                    key={PAYMENTS[payment].name}
-                                                    id={PAYMENTS[payment].name}
-                                                    label={PAYMENTS[payment].name}
-                                                    name='payment'
-                                                    value={PAYMENTS[payment].name}
-                                                    onChange={formik.handleChange}
-                                                    checked={formik.values.payment.includes(
-                                                        PAYMENTS[payment].name,
-                                                    )}
-                                                />
-                                            ))}
-                                        </ChecksGroup>
-                                    </FormGroup>
-                                </div>
-                            </div>
-                        </DropdownMenu>
-                    </Dropdown>
+                    
                     <SubheaderSeparator />
                     <Button
                         icon='PersonAdd'
                         color='primary'
                         isLight
-                        onClick={() => {setCreateModalStatus(true); setisNewUser(true);}}>
-                        Add New user
+                        onClick={()=>{console.log("no")}}>
+                        Add New Product
                     </Button>
                 </SubHeaderRight>
             </SubHeader>
@@ -659,27 +398,27 @@ const handleEditUser = (user: User) => {
                     <div className='col-12'>
                         <Card stretch>
 
-    <div>
-      <h3>Products List</h3>  
-    </div>
-    <div className="col-md-4">
-<div className="input-group">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Search users..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <button 
-                className="btn btn-outline-light" 
-                type="button"
-                onClick={() => fetchUsers(1, pagination.limit, searchTerm)}
-              >
-                <i className="bi bi-search">S</i>
-              </button>
-            </div>
-            </div>
+                        <div>
+                          <h3>Products List</h3>  
+                        </div>
+                        <div className="col-md-4">
+                        <div className="input-group">
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Search users..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                          />
+                          <button 
+                            className="btn btn-outline-light" 
+                            type="button"
+                            onClick={() => fetchUsers(1, pagination.limit, searchTerm)}
+                          >
+                            <i className="bi bi-search">S</i>
+                          </button>
+                        </div>
+                        </div>
 
      {/* Product list Table */}
      <div className="d-flex pe-4 ps-4
@@ -704,8 +443,6 @@ const handleEditUser = (user: User) => {
                 {Math.min(pagination.page * pagination.limit, pagination.totalItems)} of {pagination.totalItems - selectedProducts.length} products
               </span>
             </div>
-
-
             <nav>
               <ul className="pagination pagination-sm mb-0">
                 {renderPaginationButtons()}
@@ -731,92 +468,86 @@ const handleEditUser = (user: User) => {
                     </div>
                   </div>
      
-     <div className="table-responsive ms-4 me-4">
-     {products?.length > 0 ? (
-            <table className="table table-striped table-hover">
-                
-              <thead>
-                <tr>
-                <th>
-                  <input
-                    type="checkbox"
-                    checked={selectedProducts.length === products.length && products.length > 0}
-                    onChange={toggleSelectAll}
-                    className="form-check-input"
-                  />
-                </th>
-                  <th scope="col">ID</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Images</th>
-                  <th scope="col">Price</th>
-                  <th scope="col">Stock</th>
-                  <th scope="col">Description</th>
-                  <th scope="col">Shop</th>
-                  <th scope="col">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {products.map(p => (
-                  <tr key={p.ID} className={selectedProducts.includes(p.ID) ? 'table-active' : ''}>
-                    <td>
-                      <input
-                        type="checkbox"
-                        checked={selectedProducts.includes(p.ID)}
-                        onChange={() => toggleProductSelection(p.ID)}
-                        className="form-check-input"
-                      />
-                    </td>
-                    <td>{p.ID}</td>
-                    <td>
-                     
-                      <div 
-                        className="dropdown-item d-flex align-items-center"
-                        onClick={(e) => handleActionClick(e, () => handleViewDetailsLug(p))}
-                        >
-                        <Icon icon="Eye" className="me-2" />
-                        {p.name}
-                      </div>
-                      
-                      
-                    </td>
-                    <td>{p.images.length}</td>
-                    <td>{p.price}</td>
-                    <td>{p.stock}</td>
-                    <td>{p.description}</td>
-                    <td>
-                      {p.shop.Name} - {p.shop.ID}
-                    </td>
-                      {renderActionDropdown(p)}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-        ) : (
-        <div>No users found in list.</div>
-        )}
-    </div>
-
-           {/* Pagination Footer */}
-           <div className="d-flex justify-content-center mt-3">
-           <nav>
-              <ul className="pagination pagination-sm mb-0">
-                {renderPaginationButtons()}
-              </ul>
-            </nav>
-           
-          </div>
-
-                        {/* Pagination Footer 
-
-                        */}
-
-                        </Card>
+                    <div className="table-responsive ms-4 me-4">
+                    {products?.length > 0 ? (
+                            <table className="table table-striped table-hover">
+                                
+                              <thead>
+                                <tr>
+                                <th>
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedProducts.length === products.length && products.length > 0}
+                                    onChange={toggleSelectAll}
+                                    className="form-check-input"
+                                  />
+                                </th>
+                                  <th scope="col">ID</th>
+                                  <th scope="col">Name</th>
+                                  <th scope="col">Images</th>
+                                  <th scope="col">Price</th>
+                                  <th scope="col">Stock</th>
+                                  <th scope="col">Description</th>
+                                  <th scope="col">Shop</th>
+                                  <th scope="col">Action</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {products.map(p => (
+                                  <tr key={p.ID} className={selectedProducts.includes(p.ID) ? 'table-active' : ''}>
+                                    <td>
+                                      <input
+                                        type="checkbox"
+                                        checked={selectedProducts.includes(p.ID)}
+                                        onChange={() => toggleProductSelection(p.ID)}
+                                        className="form-check-input"
+                                      />
+                                    </td>
+                                    <td>{p.ID}</td>
+                                    <td>
+                                    
+                                      <div 
+                                        className="dropdown-item d-flex align-items-center"
+                                        onClick={(e) => handleActionClick(e, () => handleViewDetailsLug(p))}
+                                        >
+                                        <Icon icon="Eye" className="me-2" />
+                                        {p.name}
+                                      </div>
+                                    </td>
+                                    <td>{p.images.length}</td>
+                                    <td>{p.price}</td>
+                                    <td>{p.stock}</td>
+                                    <td>{p.description}</td>
+                                    <td>
+                                      {p.shop.name} - {p.shop.ID}
+                                    </td>
+                                      {renderActionDropdown(p)}
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                        ) : (
+                        <div>No users found in list.</div>
+                        )}
                     </div>
-                </div>
-            </Page>
-            
-        </PageWrapper>
-    );
-};
+
+                    {/* Pagination Footer */}
+                    <div className="d-flex justify-content-center mt-3">
+                    <nav>
+                        <ul className="pagination pagination-sm mb-0">
+                          {renderPaginationButtons()}
+                        </ul>
+                      </nav>
+                    
+                    </div>
+                    </Card>
+                              </div>
+                          </div>
+                      </Page>
+                      
+                  </PageWrapper>
+              );
+          };
 
 export default ProductsList;
+                        

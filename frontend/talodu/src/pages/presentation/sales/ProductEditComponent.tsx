@@ -11,10 +11,11 @@ interface ProductEditProps {
 
 const ProductEditComponent = ({ product, onSave, onCancel }: ProductEditProps) => {
     const [shops, setShops] = useState<Shop[]>([]);
+
     const [editedProduct, setEditedProduct] = useState<Product>({ ...product,
     categories: product.categories || [],
     shop: product.shop || shops[0] || { ID: '', name: ''}
- });
+      });
   const [categories, setCategories] = useState<ProductCategory[]>([]);
   
   const [isLoading, setIsLoading] = useState(false);
@@ -146,7 +147,7 @@ const ProductEditComponent = ({ product, onSave, onCancel }: ProductEditProps) =
             >
               {shops.map(shop => (
                 <option key={shop.ID} value={shop.ID}>
-                  {shop.Name}
+                  {shop.name}
                 </option>
               ))}
             </select>
