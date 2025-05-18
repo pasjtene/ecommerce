@@ -17,9 +17,10 @@ import useDarkMode from '../../../hooks/useDarkMode';
 import axios from 'axios'
 import { useNavigate, Link, useLocation, useParams } from 'react-router-dom';
 import { updateUser, API_BASE_URL } from '../auth/api'
-import { User, Role, Shop, ShopUser } from '../auth/types'
+import { User, Role, Shop, ShopUser, Product } from '../auth/types'
 import { toast } from 'react-toastify';
 import ImageDisplayComponent from './ImageDisplayComponent'
+import ProductAddComponent from './ProductAddComponent'
 
 
   interface LocationState {
@@ -31,6 +32,8 @@ const ShopProductList = () => {
     //const ProductEditComponent = ({ product, onSave, onCancel }: ProductEditProps) => {
     const { darkModeStatus } = useDarkMode();
     const { id } = useParams<{ id: string }>();
+    const [isAddingProduct, setisAddingProduct] = useState(false);
+
 
     const [shop, setShop] = useState<Shop>({
         ID: 0,
@@ -146,6 +149,23 @@ const ShopProductList = () => {
         }
     };
 
+    const handleSave = async (updatedProduct: Product) => {
+        console.log("The prduct to update: ", updatedProduct)
+        try {
+          const response = await axios.put(API_BASE_URL+`/products/add/shop/${shop.ID}`, updatedProduct);
+          //setCurrentProduct(response.data);
+          console.log("The updated prduct ...: ", response.data)
+          console.log("The updated prduct shop is ...: ", response.data.ShopID)
+          setisAddingProduct(false);
+          // Show success toast
+              toast.success(`Product updated savedsuccessfully`);
+            } catch (error) {
+              toast.error('Failed to update products');
+              console.log(error)
+          // Show error toast
+        }
+      };
+
     //Display loading spinner while loading data from API                
     if (loading) return (
         <div className="d-flex justify-content-center my-5">
@@ -177,12 +197,27 @@ const ShopProductList = () => {
                         icon='PersonAdd'
                         color='primary'
                         isLight
-                        onClick={() => {setCreateModalStatus(true); setisNewUser(true);}}>
+                        onClick={() => {setisAddingProduct(true);}}>
                         Ajouter un produit
                     </Button>
                 </SubHeaderRight>
             </SubHeader>
             <Page>
+
+            <div className="container mt-4">
+        {isAddingProduct ? (
+          <ProductAddComponent 
+            shop={shop}
+            onSave={handleSave}
+            onCancel={() => setisAddingProduct(false)}
+          />
+        ) : (
+          <>
+          </>
+          )
+          }
+      </div>
+
                 <div className='row h-100'>
                     <div className='col-12'>
                         <Card stretch>

@@ -99,7 +99,7 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
                 </h5>
                 <p className="card-text">
                   <span className="fw-bold">
-                    ${(image.price || image.productPrice).toFixed(2)}
+                    {(image.price || image.productPrice).toFixed(0)} FCFA
                   </span>
                 </p>
                 {image.description && (
