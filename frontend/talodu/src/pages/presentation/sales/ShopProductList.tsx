@@ -136,11 +136,7 @@ const ShopProductList = () => {
         alert('Tel: 696 65 66 50 - Situé a denver, apres la fondation Francis Nganou');
         
         try {
-        // Add your API call here to save the shop
-        // await updateShop(shop);
-        //const response = await axios.put(API_BASE_URL+`/shops/${shop.ID}`, shop);
-        //console.log('Shop data to save:', response.data);
-       // alert('Tel: 696 65 66 50 - Situé a denver, apres la fondation Francis Nganou');
+
         } catch (error) {
         console.error('Error updating shop:', error);
         alert('Failed to update shop');
@@ -152,17 +148,29 @@ const ShopProductList = () => {
     const handleSave = async (updatedProduct: Product) => {
         console.log("The prduct to update: ", updatedProduct)
         try {
-          const response = await axios.put(API_BASE_URL+`/products/add/shop/${shop.ID}`, updatedProduct);
+          const response = await axios.post(API_BASE_URL+`/products`, updatedProduct);
           //setCurrentProduct(response.data);
           console.log("The updated prduct ...: ", response.data)
           console.log("The updated prduct shop is ...: ", response.data.ShopID)
           setisAddingProduct(false);
           // Show success toast
-              toast.success(`Product updated savedsuccessfully`);
+              toast.success(`Product created savedsuccessfully`);
             } catch (error) {
-              toast.error('Failed to update products');
-              console.log(error)
+              //toast.error('Failed to update products');
+              //console.log(error.data)
           // Show error toast
+
+          if (axios.isAxiosError(error)) {
+            // The error has a response from the server
+            if (error.response) {
+                //console.log("Error response data:", error.response.data);
+                //console.log("Error status:", error.response.status);
+                //console.log("Error headers:", error.response.headers);
+                //toast.error(`Failed to create product: ${error.response.data.message || error.message}`);
+                toast.error(`Failed to create product: ${error.response.data.error || error.message}`);
+            } 
+        }
+
         }
       };
 
@@ -211,12 +219,12 @@ const ShopProductList = () => {
             onSave={handleSave}
             onCancel={() => setisAddingProduct(false)}
           />
-        ) : (
-          <>
-          </>
-          )
-          }
-      </div>
+        ) : (<></>)
+        }
+    </div>
+          
+          
+          
 
                 <div className='row h-100'>
                     <div className='col-12'>
@@ -227,7 +235,6 @@ const ShopProductList = () => {
                            
                         </div>
 
-                           
                             <div className="mb-3">
                                 <label className="form-label text-decoration-none display-6 py-3 text-danger">{shop.name} </label>
                                 

@@ -162,11 +162,13 @@ func CreateProduct(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
+		/**
 		currentUserID := c.GetUint("userID")
 		if shop.OwnerID != currentUserID && !isEmployee(shop.Employees, currentUserID) {
 			c.JSON(http.StatusForbidden, gin.H{"error": "No permission to add products to this shop"})
 			return
 		}
+		*/
 
 		product := models.Product{
 			Name:        input.Name,
@@ -175,6 +177,8 @@ func CreateProduct(db *gorm.DB) gin.HandlerFunc {
 			Stock:       input.Stock,
 			ShopID:      input.ShopID,
 		}
+		//product.Slug = generateSlug(input.Name) + "-" + productID
+		product.Slug = generateSlug(input.Name) + "-"
 
 		db.Create(&product)
 
