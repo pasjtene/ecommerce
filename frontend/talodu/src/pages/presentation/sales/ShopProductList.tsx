@@ -29,10 +29,10 @@ import ProductAddComponent from './ProductAddComponent'
 
 
 const ShopProductList = () => {
-    //const ProductEditComponent = ({ product, onSave, onCancel }: ProductEditProps) => {
     const { darkModeStatus } = useDarkMode();
     const { id } = useParams<{ id: string }>();
     const [isAddingProduct, setisAddingProduct] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
 
 
     const [shop, setShop] = useState<Shop>({
@@ -189,15 +189,24 @@ const ShopProductList = () => {
 
     return (
         <PageWrapper title={shop.name}>
-            <SubHeader>
-                <SubHeaderLeft>
-                    <label
-                        className='border-0 bg-transparent cursor-pointer me-0'
-                        htmlFor='searchInput'>
-                        <Icon icon='Search' size='2x' color='primary' />
-                    </label>
-                    
-                </SubHeaderLeft>
+                <SubHeader>
+                    <SubHeaderLeft>
+                        <label
+                            className='border-0 bg-transparent cursor-pointer me-0'
+                            htmlFor='searchInput'>
+                            <Icon icon='Search' size='2x' color='primary' />
+                        </label>
+                        <Input
+                            id='searchInput'
+                            //type='search'
+                            type='text'
+                            className='border-0 shadow-none bg-transparent'
+                            placeholder='Search products..'
+                            value={searchTerm}
+                            onChange={(e:React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+                            
+                        />
+                    </SubHeaderLeft>
                 <SubHeaderRight>
                    
                     <SubheaderSeparator />

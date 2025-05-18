@@ -2,6 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { User, Product, ProductImage, Shop} from '../auth/types';
 import axios from 'axios';
 import { API_BASE_URL } from '../auth/api'
+import SubHeader, {
+    SubHeaderLeft,
+    SubHeaderRight,
+    SubheaderSeparator,
+} from '../../../layout/SubHeader/SubHeader';
+import Icon from '../../../components/icon/Icon';
+import Input from '../../../components/bootstrap/forms/Input';
+import Button from '../../../components/bootstrap/Button';
 
 interface ImageDisplayProps {
   shop: Shop;
@@ -14,9 +22,68 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [isAddingProduct, setisAddingProduct] = useState(false);
+    const [pagination, setPagination] = useState({
+            page: 1,
+            limit: 10,
+            totalItems: 0,
+            totalPages: 1
+          });
+
+      const fetchShopProducts = async (page = 1, limit = 10, search = ''):Promise<void> => {
+            try {
+                //const response = await axios.get<ApiResponse>('/users',{
+                //const response = await axios.get<ApiResponse>(API_BASE_URL+'/users',{
+                    const response = await axios.get(API_BASE_URL+`/shops/${shop.ID}/products`,{
+                
+                params: { 
+                    page,
+                    limit,
+                    search: search.length > 0 ? search : undefined 
+                },
+                headers: {
+                  //Authorization: `Bearer ${jwtToken}`, // Include the JWT token in the Authorization header
+                  //Authorization: `${jwtToken}`, // Include the JWT token in the Authorization header
+                },
+              });
+              //const { users } = response.data;
+              //setUsers(response.data.users);
+              setProducts(response.data.products);
+              setPagination({
+                  page: response.data.page,
+                  limit: response.data.limit,
+                  totalItems: response.data.totalItems,
+                  totalPages: response.data.totalPages
+                });
+              console.log("The data...",response.data);
+              setLoading(false);
+            } catch (e: any) {
+              setError(e.message);
+              setLoading(false);
+            }finally {
+                setLoading(false);
+              }
+          };
   
-  useEffect(() => {
-    const fetchShopProducts = async () => {
+  
+  
+  
+   // Debounced search - resets to page 1 when searching
+      useEffect(() => {
+          const timer = setTimeout(() => {
+          if (searchTerm.length > 2 || searchTerm.length === 0) {
+            fetchShopProducts(1, pagination.limit, searchTerm);
+          }
+          }, 500);
+  
+          return () => clearTimeout(timer);
+      }, [searchTerm]);
+  
+  
+    useEffect(() => {
+        /**
+         *  const fetchShopProducts = async () => {
       try {
         setLoading(true);
         const response = await axios.get(API_BASE_URL+`/shops/${shop.ID}/products`);
@@ -28,8 +95,11 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
         setLoading(false);
       }
     };
+         */
+   
 
-    fetchShopProducts();
+    //fetchShopProducts();
+    fetchShopProducts(1, pagination.limit, searchTerm);
   }, [shop.ID]);
 
   if (loading) {
@@ -57,15 +127,56 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
 
   if (!allImages || allImages.length === 0) {
     return (
-      <div className="alert alert-info mt-4">
-        No images available for products in this shop.
+      <div className="container-fluid mt-4">
+        
+        <h2 className="mb-4">Aucune image trouvée</h2>
+      <SubHeader>
+            <SubHeaderLeft>
+                <label
+                    className='border-0 bg-transparent cursor-pointer me-0'
+                    htmlFor='searchInput'>
+                    <Icon icon='Search' size='2x' color='primary' />
+                </label>
+                <Input
+                    id='searchInput'
+                    //type='search'
+                    type='text'
+                    className='border-0 shadow-none bg-transparent'
+                    placeholder='Shop search....'
+                    value={searchTerm}
+                    onChange={(e:React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+                    
+                />
+            </SubHeaderLeft>
+        
+    </SubHeader>
       </div>
     );
   }
 
   return (
     <div className="container-fluid mt-4">
-      <h2 className="mb-4">Nos Products</h2>
+      <h2 className="mb-4"> {allImages.length} images</h2>
+      <SubHeader>
+            <SubHeaderLeft>
+                <label
+                    className='border-0 bg-transparent cursor-pointer me-0'
+                    htmlFor='searchInput'>
+                    <Icon icon='Search' size='2x' color='primary' />
+                </label>
+                <Input
+                    id='searchInput'
+                    //type='search'
+                    type='text'
+                    className='border-0 shadow-none bg-transparent'
+                    placeholder='Shop search....'
+                    value={searchTerm}
+                    onChange={(e:React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+                    
+                />
+            </SubHeaderLeft>
+        
+    </SubHeader>
       <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
         {allImages.map((image) => (
           <div key={image.ID} className="col">

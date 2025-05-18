@@ -92,16 +92,39 @@ func GetShopProducts(db *gorm.DB) gin.HandlerFunc {
 		shopID := c.Param("id")
 		var products []models.Product
 
-		result := db.
+		query := db.
 			Preload("Images").
 			Preload("Categories").
 			Where("shop_id = ?", shopID).
 			Find(&products)
 
-		if result.Error != nil {
+			// 1. Search (by name)
+		if search := c.Query("search"); search != "" {
+			//query = query.Where("name LIKE ?", "%"+search+"%" )
+
+			query = query.Where(
+				"name ILIKE ? OR description ILIKE ?",
+				"%"+search+"%", "%"+search+"%",
+			)
+
+		}
+
+		if query.Error != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch products"})
 			return
 		}
+		var totalCount int64
+		query.Count(&totalCount)
+
+		// 3. Pagination
+		page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+		limit, _ := strconv.Atoi(c.DefaultQuery("limit", "5"))
+		offset := (page - 1) * limit
+
+		// Execute query
+		query.Offset(offset).Limit(limit).Find(&products)
+		//  Calculate total pages
+		// totalPages := int(math.Ceil(float64(totalCount) / float64(limit)))
 
 		c.JSON(http.StatusOK, gin.H{
 			"products": products,
