@@ -150,23 +150,13 @@ const ShopProductList = () => {
         try {
           const response = await axios.post(API_BASE_URL+`/products`, updatedProduct);
           //setCurrentProduct(response.data);
-          console.log("The updated prduct ...: ", response.data)
-          console.log("The updated prduct shop is ...: ", response.data.ShopID)
           setisAddingProduct(false);
           // Show success toast
               toast.success(`Product created savedsuccessfully`);
             } catch (error) {
-              //toast.error('Failed to update products');
-              //console.log(error.data)
-          // Show error toast
-
           if (axios.isAxiosError(error)) {
             // The error has a response from the server
             if (error.response) {
-                //console.log("Error response data:", error.response.data);
-                //console.log("Error status:", error.response.status);
-                //console.log("Error headers:", error.response.headers);
-                //toast.error(`Failed to create product: ${error.response.data.message || error.message}`);
                 toast.error(`Failed to create product: ${error.response.data.error || error.message}`);
             } 
         }

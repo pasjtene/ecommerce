@@ -79,24 +79,9 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
   
   
     useEffect(() => {
-        /**
-         *  const fetchShopProducts = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(API_BASE_URL+`/shops/${shop.ID}/products`);
-        setProducts(response.data.products);
-      } catch (err) {
-        setError('Failed to load products');
-        console.error('Error fetching products:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-         */
-   
-
-    //fetchShopProducts();
+       
     fetchShopProducts(1, pagination.limit, searchTerm);
+    
   }, [shop.ID]);
 
   if (loading) {

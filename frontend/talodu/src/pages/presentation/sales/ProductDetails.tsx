@@ -25,10 +25,6 @@ import Card, {
     CardTitle,
 } from '../../../components/bootstrap/Card';
 import Icon from '../../../components/icon/Icon';
-import { priceFormat } from '../../../helpers/helpers';
-import Chart from '../../../components/extras/Chart';
-import Accordion, { AccordionItem } from '../../../components/bootstrap/Accordion';
-import PlaceholderImage from '../../../components/extras/PlaceholderImage';
 import Input from '../../../components/bootstrap/forms/Input';
 import FormGroup from '../../../components/bootstrap/forms/FormGroup';
 import showNotification from '../../../components/extras/showNotification';
@@ -38,6 +34,7 @@ import axios  from 'axios';
 import { API_IMAGES, API_BASE_URL } from '../auth/api'
 import ProductImageGallery from './ProductImageGallery'
 import { Helmet, HelmetProvider } from 'react-helmet-async';
+import { toast } from 'react-toastify';
 
 interface IValues {
     name: string;
@@ -224,8 +221,6 @@ const ProductDetails = () => {
         files.forEach((file) => {
           formData.append('images', file);
         });
-         // For single file
-    // formData.append('image', files[0]);
 
     try {
         const response = await axios.post(
@@ -253,7 +248,16 @@ const ProductDetails = () => {
         setFiles([]);
       } catch (error) {
         console.error('Upload failed:', error);
-        alert('Upload failed. Please try again.');
+        
+         if (axios.isAxiosError(error)) {
+                    // The error has a response from the server
+                    alert('Upload failed. Please try again.'+error.response?.statusText);
+                    if (error.response) {
+                        toast.error(`Failed to create product: ${error.response.data.error || error.message}`);
+                    } 
+                }
+            //    alert('Upload failed. Please try again.');
+
       } finally {
         setUploading(false);
         setProgress(0);
