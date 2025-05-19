@@ -427,7 +427,7 @@ const ProductDetails = () => {
 
 
 
-                <div className='row h-100'>
+                <div className='row h-100 mt-5'>
                     
                     <div className='col-lg-8'>
                         <Card

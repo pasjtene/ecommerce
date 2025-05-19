@@ -61,11 +61,6 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[], prod
           }
       </div>
         
-        
-
-
-
-
       <div className="row">
         {/* Main Image Display Area - Left Side */}
         <div className="col-lg-8">
@@ -80,7 +75,7 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[], prod
               <>
                 <img
                   src={API_BASE_URL+selectedImage.url}
-                  alt={selectedImage.altText || 'Product image'}
+                  alt={selectedImage.altText || 'Product image1'}
                   className="main-product-image"
                 />
                 {/* Magnifying glass lens */}
@@ -192,7 +187,7 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[], prod
   {/* Product Details Card */}
   <div className="card shadow-sm product-details-card">
             <div className="card-body">
-              <h4 className="card-title">Product Details</h4>
+              <h4 className="card-title">Product Details 2</h4>
               
               {selectedImage ? (
                 <>
