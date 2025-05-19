@@ -424,58 +424,7 @@ const ProductDetails = () => {
 
 
                 <div className='row h-100'>
-                    <div className='col-lg-4'>
-                        <Card stretch>
-                            <CardBody isScrollable>
-                                <div className='row g-3'>
-                                    <div className='col-12'>
-                                        <img src={images[0]?.url} alt='' width='100%' className='p-5' />
-                                    </div>
-                                    <div className='col-12'>
-                                        <Button
-                                            icon='Summarize'
-                                            color='info'
-                                            className='w-100 p-3'
-                                            isLight={activeTab !== TABS.SUMMARY}
-                                            onClick={() => setActiveTab(TABS.SUMMARY)}>
-                                            {TABS.SUMMARY}
-                                        </Button>
-                                    </div>
-                                    <div className='col-12'>
-                                        <Button
-                                            icon='Chat'
-                                            color='info'
-                                            className='w-100 p-3'
-                                            isLight={activeTab !== TABS.COMMENTS}
-                                            onClick={() => setActiveTab(TABS.COMMENTS)}>
-                                            {TABS.COMMENTS}
-                                        </Button>
-                                    </div>
-                                    <div className='col-12'>
-                                        <Button
-                                            icon='Edit'
-                                            color='success'
-                                            className='w-100 p-3'
-                                            isLight={activeTab !== TABS.EDIT}
-                                            onClick={() => setActiveTab(TABS.EDIT)}>
-                                            {TABS.EDIT}
-                                        </Button>
-                                    </div>
-                                </div>
-                            </CardBody>
-                            <CardFooter>
-                                <CardFooterLeft className='w-100'>
-                                    <Button
-                                        icon='Delete'
-                                        color='danger'
-                                        isLight
-                                        className='w-100 p-3'>
-                                        Delete
-                                    </Button>
-                                </CardFooterLeft>
-                            </CardFooter>
-                        </Card>
-                    </div>
+                    
                     <div className='col-lg-8'>
                         <Card
                             stretch
@@ -483,274 +432,6 @@ const ProductDetails = () => {
                             tag='form'
                             noValidate
                             onSubmit={formik.handleSubmit}>
-                            {activeTab === TABS.SUMMARY && (
-                                <>
-                                    <CardHeader>
-                                        <CardLabel icon='Summarize' iconColor='info'>
-                                            <CardTitle tag='div' className='h5'>
-                                                Summary
-                                            </CardTitle>
-                                            <CardSubTitle tag='div' className='h6'>
-                                                Product Information
-                                            </CardSubTitle>
-                                        </CardLabel>
-                                    </CardHeader>
-                                    <CardBody isScrollable>
-                                        <div className='row'>
-                                            <div className='col-lg-6'>
-                                                <Card
-                                                    stretch
-                                                    shadow='sm'
-                                                    className={`bg-l${
-                                                        darkModeStatus ? 'o25' : '25'
-                                                    }-primary rounded-2`}>
-                                                    <CardHeader className='bg-transparent'>
-                                                        <CardLabel>
-                                                            <CardTitle>Price</CardTitle>
-                                                        </CardLabel>
-                                                    </CardHeader>
-                                                    <CardBody>
-                                                        <div className='d-flex align-items-center pb-3'>
-                                                            <div className='flex-shrink-0'>
-                                                                <Icon
-                                                                    icon='ConfirmationNumber'
-                                                                    size='4x'
-                                                                    color='primary'
-                                                                />
-                                                            </div>
-                                                            <div className='flex-grow-1 ms-3'>
-                                                                <div className='fw-bold fs-3 mb-0'>
-                                                                    {priceFormat(product?.price)}
-                                                                </div>
-                                                                <div className='text-muted'>
-                                                                    <b>Quantity: </b> {product?.stock}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </CardBody>
-                                                </Card>
-                                            </div>
-                                            <div className='col-lg-6'>
-                                                <Card
-                                                    stretch
-                                                    shadow='sm'
-                                                    className={`bg-l${
-                                                        darkModeStatus ? 'o25' : '25'
-                                                    }-warning bg-l${
-                                                        darkModeStatus ? 'o50' : '10'
-                                                    }-warning-hover transition-base rounded-2`}>
-                                                    <CardHeader className='bg-transparent'>
-                                                        <CardLabel>
-                                                            <CardTitle tag='h4' className='h5'>
-                                                                Sales
-                                                            </CardTitle>
-                                                        </CardLabel>
-                                                    </CardHeader>
-                                                    {/**
-                                                     *  <CardBody className='py-0'>
-                                                    <Chart
-                                                            className='mx-n4'
-                                                            series={data.series}
-                                                            options={chartOptions}
-                                                            type={chartOptions.chart?.type}
-                                                            height={chartOptions.chart?.height}
-                                                            width={chartOptions.chart?.width}
-                                                        />
-                                                        
-                                                    </CardBody>
-                                                     */}
-                                                   
-                                                </Card>
-                                            </div>
-                                            <div className='col-lg-6'>
-                                                <Card
-                                                    stretch
-                                                    shadow='sm'
-                                                    className={`bg-l${
-                                                        darkModeStatus ? 'o25' : '25'
-                                                    }-success rounded-2`}>
-                                                    <CardHeader className='bg-transparent'>
-                                                        <CardLabel>
-                                                            <CardTitle>Category</CardTitle>
-                                                        </CardLabel>
-                                                    </CardHeader>
-                                                    <CardBody>
-                                                        <div className='d-flex align-items-center pb-3'>
-                                                            <div className='flex-shrink-0'>
-                                                                <Icon
-                                                                    icon='Category'
-                                                                    size='4x'
-                                                                    color='success'
-                                                                />
-                                                            </div>
-                                                            <div className='flex-grow-1 ms-3'>
-                                                                <div className='fw-bold fs-3 mb-0'>
-                                                                    
-                                                                    data category
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </CardBody>
-                                                </Card>
-                                            </div>
-                                            <div className='col-lg-6'>
-                                                <Card
-                                                    stretch
-                                                    shadow='sm'
-                                                    className={`bg-l${
-                                                        darkModeStatus ? 'o25' : '25'
-                                                    }-info rounded-2`}>
-                                                    <CardHeader className='bg-transparent'>
-                                                        <CardLabel>
-                                                            <CardTitle>Compatible</CardTitle>
-                                                        </CardLabel>
-                                                    </CardHeader>
-                                                    <CardBody>
-                                                        <div className='d-flex align-items-center pb-3'>
-                                                            <div className='flex-shrink-0'>
-                                                                <Icon
-                                                                    icon='Extension'
-                                                                    size='4x'
-                                                                    color='info'
-                                                                />
-                                                            </div>
-                                                            <div className='flex-grow-1 ms-3'>
-                                                                <div className='fw-bold fs-3 mb-0'>
-                                                                   
-                                                                    data file
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </CardBody>
-                                                </Card>
-                                            </div>
-                                            <div className='col-12 shadow-3d-container'>
-                                                <Accordion id='faq' shadow='sm'>
-                                                    <AccordionItem
-                                                        id='faq1'
-                                                        title='Can I change the colors?'>
-                                                        In at urna nec risus aliquam accumsan.
-                                                        Vivamus rutrum rhoncus massa, sed facilisis
-                                                        justo sodales vitae. Pellentesque mattis
-                                                        
-                                                        lacinia arcu.
-                                                    </AccordionItem>
-                                                    <AccordionItem
-                                                        id='faq2'
-                                                        title='Can I use these for presentations?'>
-                                                        Nunc ex odio, fermentum dignissim urna eu,
-                                                        suscipit vehicula magna. Vestibulum vel
-                                                        risus sed metus pellentesque gravida. Etiam
-                                                       
-                                                    </AccordionItem>
-                                                    <AccordionItem
-                                                        id='faq3'
-                                                        title='an I use these for commercial projects?'>
-                                                        Cras rutrum turpis in nisl rhoncus volutpat.
-                                                        In vel augue commodo, aliquet dolor sit
-                                                        amet, pellentesque diam. Donec in dolor eu
-                                                        
-                                                    </AccordionItem>
-                                                </Accordion>
-                                            </div>
-                                        </div>
-                                    </CardBody>
-                                </>
-                            )}
-                            {activeTab === TABS.COMMENTS && (
-                                <>
-                                    <CardHeader>
-                                        <CardLabel icon='Chat' iconColor='info'>
-                                            <CardTitle tag='div' className='h5'>
-                                                Comments
-                                            </CardTitle>
-                                            <CardSubTitle tag='div' className='h6'>
-                                                Product Reviews
-                                            </CardSubTitle>
-                                        </CardLabel>
-                                    </CardHeader>
-                                    <CardBody isScrollable>
-                                        <div className='row g-4'>
-                                            <div className='col-12 d-flex align-items-center'>
-                                                <div className='flex-shrink-0'>
-                                                    <Avatar
-                                                        src={USERS.GRACE.src}
-                                                        srcSet={USERS.GRACE.srcSet}
-                                                        color={USERS.GRACE.color}
-                                                        size={64}
-                                                    />
-                                                </div>
-                                                <div className='flex-grow-1 ms-3 d-flex justify-content-between align-items-center'>
-                                                    <figure className='mb-0'>
-                                                        <blockquote className='blockquote'>
-                                                            <p>
-                                                                We made a very logical decision to
-                                                                use it in our project. Design
-                                                                quality is very nice.
-                                                            </p>
-                                                        </blockquote>
-                                                        <figcaption className='blockquote-footer mb-0'>
-                                                            {USERS.GRACE.name} in{' '}
-                                                            <cite title='Company'>Company</cite>
-                                                        </figcaption>
-                                                    </figure>
-                                                </div>
-                                            </div>
-                                            <div className='col-12 d-flex align-items-center'>
-                                                <div className='flex-shrink-0'>
-                                                    <Avatar
-                                                        src={USERS.SAM.src}
-                                                        srcSet={USERS.SAM.srcSet}
-                                                        color={USERS.SAM.color}
-                                                        size={64}
-                                                    />
-                                                </div>
-                                                <div className='flex-grow-1 ms-3 d-flex justify-content-between align-items-center'>
-                                                    <figure className='mb-0'>
-                                                        <blockquote className='blockquote'>
-                                                            <p>
-                                                                We have used another product of the
-                                                                same author before. It was very easy
-                                                                to integrate it into our project.
-                                                            </p>
-                                                        </blockquote>
-                                                        <figcaption className='blockquote-footer mb-0'>
-                                                            {USERS.SAM.name} in{' '}
-                                                            <cite title='Company'>Company</cite>
-                                                        </figcaption>
-                                                    </figure>
-                                                </div>
-                                            </div>
-                                            <div className='col-12 d-flex align-items-center'>
-                                                <div className='flex-shrink-0'>
-                                                    <Avatar
-                                                        src={USERS.CHLOE.src}
-                                                        srcSet={USERS.CHLOE.srcSet}
-                                                        color={USERS.CHLOE.color}
-                                                        size={64}
-                                                    />
-                                                </div>
-                                                <div className='flex-grow-1 ms-3 d-flex justify-content-between align-items-center'>
-                                                    <figure className='mb-0'>
-                                                        <blockquote className='blockquote'>
-                                                            <p>
-                                                                Just the design I was looking
-                                                                for.🎉🎉
-                                                            </p>
-                                                        </blockquote>
-                                                        <figcaption className='blockquote-footer mb-0'>
-                                                            {USERS.CHLOE.name} in{' '}
-                                                            <cite title='Company'>Company</cite>
-                                                        </figcaption>
-                                                    </figure>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </CardBody>
-                                </>
-                            )}
-                            {activeTab === TABS.EDIT && (
-                                <>
                                     <CardHeader>
                                         <CardLabel icon='Edit' iconColor='success'>
                                             <CardTitle tag='div' className='h5'>
@@ -761,7 +442,7 @@ const ProductDetails = () => {
                                             </CardSubTitle>
                                         </CardLabel>
                                     </CardHeader>
-                                    <CardBody isScrollable>
+                                    <CardBody >
                                         <Card>
                                             <CardHeader>
                                                 <CardLabel icon='Photo' iconColor='info'>
@@ -770,25 +451,7 @@ const ProductDetails = () => {
                                             </CardHeader>
                                             <CardBody>
                                                 <div className='row'>
-                                                    <div className='col-lg-4'>
-                                                        {editItem?.image ? (
-                                                            <img
-                                                                src={editItem.image}
-                                                                alt=''
-                                                                width={128}
-                                                                height={128}
-                                                                className='mx-auto d-block img-fluid mb-3'
-                                                            />
-                                                        ) : (
-                                                            <PlaceholderImage
-                                                                width={128}
-                                                                height={128}
-                                                                className='mx-auto d-block img-fluid mb-3 rounded'
-                                                            />
-                                                        )}
-                                                    </div>
-
-
+                                                   
                                                     <div className='col-lg-8'>
                                                         <div className='row g-4'>
                                                             <div className='col-12'>
@@ -817,11 +480,6 @@ const ProductDetails = () => {
                                                                     </ul>
                                                                 </div>
                                                             )}
-
-
-
-
-
                                                             <div className='col-12'>
                                                                 <Button
                                                                     color='dark'
@@ -836,144 +494,15 @@ const ProductDetails = () => {
                                                                     Delete Image
                                                                 </Button>
                                                             </div>
-
-        {/** Image galery */}
-        <div className="mt-4">
-        <h5 className="mb-3">Current Images</h5>
-            {images?.length > 0 ? (
-              <div className="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
-                {images.map((image) => (
-                  <div key={image.ID} className="col">
-                    <div className="card h-100 shadow-sm">
-                      <img 
-                        src={image.url} 
-                        alt={image.altText || 'Product image'} 
-                        className="card-img-top img-thumbnail"
-                        style={{ height: '100px', objectFit: 'cover' }}
-                      />
-                      <div className="card-body">
-                        <h6 className="card-title text-truncate">
-                          {image.url.split('/').pop()}
-                        </h6>
-                        {image.altText && (
-                          <p className="card-text text-muted small">
-                            {image.altText}
-                          </p>
-                        )}
-                      </div>
-                      <div className="card-footer bg-white">
-                        <div className="d-flex justify-content-between">
-                          <button className="btn btn-sm btn-outline-primary">
-                            Set as Primary
-                          </button>
-                          
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="alert alert-info">
-                No images available for this product
-              </div>
-            )}
-          </div>
-
-    {/**  End Image galery */}
-
-
+                                                             {/** Image galery */}
+                                                            
                                                         </div>
-                                                    </div>
-                                                </div>
-                                            </CardBody>
-                                        </Card>
-
-                                        <Card>
-                                            <CardHeader>
-                                                <CardLabel icon='Description' iconColor='success'>
-                                                    <CardTitle>Product Details</CardTitle>
-                                                </CardLabel>
-                                            </CardHeader>
-                                            <CardBody>
-                                                <div className='row g-4'>
-                                                    <div className='col-12'>
-                                                        <FormGroup
-                                                            id='name'
-                                                            label='Name'
-                                                            isFloating>
-                                                            <Input
-                                                                placeholder='Name'
-                                                                onChange={formik.handleChange}
-                                                                onBlur={formik.handleBlur}
-                                                                value={formik.values.name}
-                                                                isValid={formik.isValid}
-                                                                isTouched={formik.touched.name}
-                                                                invalidFeedback={formik.errors.name}
-                                                                validFeedback='Looks good!'
-                                                            />
-                                                        </FormGroup>
-                                                    </div>
-                                                    <div className='col-12'>
-                                                        <FormGroup
-                                                            id='price'
-                                                            label='Price'
-                                                            isFloating>
-                                                            <Input
-                                                                placeholder='Price'
-                                                                onChange={formik.handleChange}
-                                                                onBlur={formik.handleBlur}
-                                                                value={formik.values.price}
-                                                                isValid={formik.isValid}
-                                                                isTouched={formik.touched.price}
-                                                                invalidFeedback={
-                                                                    formik.errors.price
-                                                                }
-                                                                validFeedback='Looks good!'
-                                                            />
-                                                        </FormGroup>
-                                                    </div>
-                                                    <div className='col-12'>
-                                                        <FormGroup
-                                                            id='stock'
-                                                            label='Stock'
-                                                            isFloating>
-                                                            <Input
-                                                                placeholder='Stock'
-                                                                onChange={formik.handleChange}
-                                                                onBlur={formik.handleBlur}
-                                                                value={formik.values.stock}
-                                                                isValid={formik.isValid}
-                                                                isTouched={formik.touched.stock}
-                                                                invalidFeedback={
-                                                                    formik.errors.stock
-                                                                }
-                                                                validFeedback='Looks good!'
-                                                            />
-                                                        </FormGroup>
-                                                    </div>
-                                                    <div className='col-12'>
-                                                        <FormGroup
-                                                            id='category'
-                                                            label='Category'
-                                                            isFloating>
-                                                            <Input
-                                                                placeholder='Category'
-                                                                onChange={formik.handleChange}
-                                                                onBlur={formik.handleBlur}
-                                                                value={formik.values.category}
-                                                                isValid={formik.isValid}
-                                                                isTouched={formik.touched.category}
-                                                                invalidFeedback={
-                                                                    formik.errors.category
-                                                                }
-                                                                validFeedback='Looks good!'
-                                                            />
-                                                        </FormGroup>
-                                                    </div>
-                                                </div>
-                                            </CardBody>
-                                        </Card>
+                                                    </div>                                        
+                                                        </div>                                     
+                                                        </CardBody>
+                                                        </Card>                                 
+                                       
+                                       
                                     </CardBody>
                                     <CardFooter>
                                         <CardFooterRight>
@@ -986,8 +515,7 @@ const ProductDetails = () => {
                                             </Button>
                                         </CardFooterRight>
                                     </CardFooter>
-                                </>
-                            )}
+                             
                         </Card>
                     </div>
                 </div>

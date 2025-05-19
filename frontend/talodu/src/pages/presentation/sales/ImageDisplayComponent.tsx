@@ -23,7 +23,6 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
     const [error, setError] = useState<string | null>(null);
     const [hoveredCard, setHoveredCard] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
-    const [isAddingProduct, setisAddingProduct] = useState(false);
     const [pagination, setPagination] = useState({
             page: 1,
             limit: 10,
@@ -65,8 +64,6 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
                 setLoading(false);
               }
           };
-  
-  
   
   
    // Debounced search - resets to page 1 when searching

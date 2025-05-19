@@ -18,7 +18,8 @@ import AsideRoutes from '../layout/Aside/AsideRoutes';
 import { ToastCloseButton } from '../components/bootstrap/Toasts';
 import { useAuth, AuthProvider } from '../pages/presentation/auth/AuthContext';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-//import {AuthProvider } 
+//import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const App = () => {
@@ -79,16 +80,10 @@ const App = () => {
 
 	
 
-	  
-
 	return (
 		
 		<HelmetProvider>
-
-		
 		<AuthProvider>
-
-		
 		<ThemeProvider theme={theme}>
 			<TourProvider steps={steps} styles={styles} showNavigation={false} showBadge={false}>
 				<div
