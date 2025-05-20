@@ -1,14 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-//import { useAuth } from './AuthContext';
-import { useAuth, AuthProvider } from '../../presentation/auth/AuthContext';
+import { useAuth} from '../../presentation/auth/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faShoppingBasket, faSearch } from '@fortawesome/free-solid-svg-icons';
-//import { Container, Navbar, Nav, Form, FormControl } from 'react-bootstrap';
-//import Button from '../../../components/bootstrap/Button';
-//import Nav from '../../../components/bootstrap/Nav';
-import Alert from '../../../components/bootstrap/Alert';
-//import Badge from '../../../components/bootstrap/Badge';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
@@ -17,15 +11,6 @@ import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 import Badge from 'react-bootstrap/Badge';
 
-
-
-
-import Icon from '../../../components/icon/Icon';
-
-import Input from '../../../components/bootstrap/forms/Input';
-
-
-import Label from '../../../components/bootstrap/forms/Label';
 
 const ProductsListHeader = () => {
     const { user, logout } = useAuth();
