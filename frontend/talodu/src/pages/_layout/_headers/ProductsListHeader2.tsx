@@ -59,12 +59,12 @@ const ProductsListHeader = () => {
 
     return (
         <Navbar bg="light" expand="lg" sticky="top" className="shadow-sm mb-4 py-2">
-            <Container fluid className="px-3">
+            <Container fluid className="px-0 me-1">
                 {/* Logo on the left */}
                 <Navbar.Brand 
                     href="/" 
-                    className="fw-bold fs-4 text-primary me-1"
-                    style={{ fontFamily: "'Pacifico', cursive", minWidth: '100px' }}
+                    className="fw-bold fs-4 text-primary me-0"
+                    style={{ fontFamily: "'Pacifico', cursive", minWidth: '70px' }}
                 >
                     Talodu
                 </Navbar.Brand>
@@ -72,7 +72,7 @@ const ProductsListHeader = () => {
                 {/* Search bar - always visible */}
                 <Form 
                     onSubmit={handleSearch}
-                    className="d-flex flex-grow-1 mx-0 my-0"
+                    className="d-flex flex-grow-1 mx-0 my-0 ms-0"
                 >
                     <FormControl
                         type="search"
