@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../presentation/auth/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faUser, 
-  faShoppingCart,  // Changed from faShoppingBasket to faShoppingCart
+  faShoppingCart,
   faSearch, 
   faCog, 
   faSignOutAlt,
@@ -12,18 +12,32 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
-import Nav from 'react-bootstrap/Nav';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 import Badge from 'react-bootstrap/Badge';
-import Dropdown from 'react-bootstrap/Dropdown';
 
 const ProductsListHeader = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
     const [cartItemCount, setCartItemCount] = useState(0);
+    const [showDropdown, setShowDropdown] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setShowDropdown(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -35,34 +49,129 @@ const ProductsListHeader = () => {
     const handleLogout = () => {
         logout();
         navigate('/');
+        setShowDropdown(false);
+    };
+
+    const toggleDropdown = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setShowDropdown(!showDropdown);
     };
 
     return (
-        <Navbar bg="light" expand="lg" sticky="top" className="shadow-sm mb-4">
-            <Container fluid>
+        <Navbar bg="light" expand="lg" sticky="top" className="shadow-sm mb-4 py-2">
+            <Container fluid className="px-3">
                 {/* Logo on the left */}
                 <Navbar.Brand 
                     href="/" 
-                    className="fw-bold fs-3 text-primary"
-                    style={{ fontFamily: "'Pacifico', cursive" }}
+                    className="fw-bold fs-4 text-primary me-1"
+                    style={{ fontFamily: "'Pacifico', cursive", minWidth: '100px' }}
                 >
                     Talodu
                 </Navbar.Brand>
 
-                {/* Always visible user info and cart on mobile */}
-                <div className="d-flex d-lg-none align-items-center ms-auto">
-                    {user && (
-                        <div className="d-flex align-items-center me-3">
-                            <FontAwesomeIcon icon={faUser} className="me-2" />
-                            <span>{user.FirstName}</span>
+                {/* Search bar - always visible */}
+                <Form 
+                    onSubmit={handleSearch}
+                    className="d-flex flex-grow-1 mx-0 my-0"
+                >
+                    <FormControl
+                        type="search"
+                        placeholder="Search..."
+                        className="me-2"
+                        aria-label="Search"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        style={{ fontSize: '0.9rem' }}
+                    />
+                    <Button 
+                        variant="outline-primary" 
+                        type="submit"
+                        className="py-1 px-2"
+                    >
+                        <FontAwesomeIcon icon={faSearch} size="sm" />
+                    </Button>
+                </Form>
+
+                {/* User info and cart - always visible */}
+                <div className="d-flex align-items-center ms-2">
+                    {user ? (
+                        <div className="d-flex align-items-center position-relative me-2" ref={dropdownRef}>
+                            <div 
+                                onClick={toggleDropdown}
+                                style={{ cursor: 'pointer' }}
+                                className="d-flex align-items-center"
+                            >
+                                <FontAwesomeIcon 
+                                    icon={faUser} 
+                                    className="me-1" 
+                                    style={{ fontSize: '1rem' }} 
+                                />
+                                <span className="ms-1 d-sm-inline" style={{ fontSize: '0.9rem' }}>
+                                    {user.FirstName}
+                                </span>
+                                <FontAwesomeIcon 
+                                    icon={faChevronDown} 
+                                    className="ms-1" 
+                                    style={{ fontSize: '0.7rem' }} 
+                                />
+                            </div>
+                            
+                            {/* Dropdown menu */}
+                            {showDropdown && (
+                                <div 
+                                    className="position-absolute bg-white rounded shadow mt-1 border"
+                                    style={{
+                                        top: '100%',
+                                        right: 0,
+                                        zIndex: 1000,
+                                        minWidth: '160px'
+                                    }}
+                                >
+                                    <div 
+                                        className="dropdown-item py-2 px-3"
+                                        onClick={() => {
+                                            navigate('/account/settings');
+                                            setShowDropdown(false);
+                                        }}
+                                        style={{ cursor: 'pointer', fontSize: '0.9rem' }}
+                                    >
+                                        <FontAwesomeIcon icon={faCog} className="me-2" />
+                                        Settings
+                                    </div>
+                                    <div className="dropdown-divider my-1"></div>
+                                    <div 
+                                        className="dropdown-item py-2 px-3"
+                                        onClick={handleLogout}
+                                        style={{ cursor: 'pointer', fontSize: '0.9rem' }}
+                                    >
+                                        <FontAwesomeIcon icon={faSignOutAlt} className="me-2" />
+                                        Logout
+                                    </div>
+                                </div>
+                            )}
                         </div>
+                    ) : (
+                        <Button 
+                            variant="outline-secondary"
+                            onClick={() => navigate('/auth-pages/login')}
+                            className="me-2 py-1 px-2"
+                            style={{ fontSize: '0.9rem' }}
+                        >
+                            <FontAwesomeIcon icon={faUser} className="me-1" />
+                            <span className="d-none d-sm-inline">Login</span>
+                        </Button>
                     )}
+
+                    {/* Shopping cart */}
                     <div 
-                        className="position-relative me-2"
+                        className="position-relative"
                         onClick={() => navigate('/cart')}
                         style={{ cursor: 'pointer' }}
                     >
-                        <FontAwesomeIcon icon={faShoppingCart} size="lg" />
+                        <FontAwesomeIcon 
+                            icon={faShoppingCart} 
+                            style={{ fontSize: '1.1rem' }} 
+                        />
                         {cartItemCount > 0 && (
                             <Badge 
                                 pill 
@@ -75,82 +184,6 @@ const ProductsListHeader = () => {
                         )}
                     </div>
                 </div>
-
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-
-                <Navbar.Collapse id="basic-navbar-nav">
-                    {/* Search bar in the middle */}
-                    <Form 
-                        onSubmit={handleSearch}
-                        className="d-flex mx-auto my-2 my-lg-0" 
-                        style={{ width: '100%', maxWidth: '500px' }}
-                    >
-                        <FormControl
-                            type="search"
-                            placeholder="Search products..."
-                            className="me-2"
-                            aria-label="Search"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                        <Button variant="outline-primary" type="submit">
-                            <FontAwesomeIcon icon={faSearch} />
-                        </Button>
-                    </Form>
-
-                    {/* User dropdown and cart (hidden on mobile) */}
-                    <Nav className="ms-lg-auto d-none d-lg-flex align-items-center">
-                        {user ? (
-                            <Dropdown align="end">
-                                <Dropdown.Toggle 
-                                    variant="light" 
-                                    className="d-flex align-items-center"
-                                    id="dropdown-user"
-                                >
-                                    <FontAwesomeIcon icon={faUser} className="me-2" />
-                                    {user.FirstName}
-                                    <FontAwesomeIcon icon={faChevronDown} className="ms-2" style={{ fontSize: '0.8rem' }} />
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                    <Dropdown.Item onClick={() => navigate('/account/settings')}>
-                                        <FontAwesomeIcon icon={faCog} className="me-2" />
-                                        Settings
-                                    </Dropdown.Item>
-                                    <Dropdown.Divider />
-                                    <Dropdown.Item onClick={handleLogout}>
-                                        <FontAwesomeIcon icon={faSignOutAlt} className="me-2" />
-                                        Logout
-                                    </Dropdown.Item>
-                                </Dropdown.Menu>
-                            </Dropdown>
-                        ) : (
-                            <Nav.Link 
-                                onClick={() => navigate('/auth-pages/login')}
-                                className="d-flex align-items-center"
-                            >
-                                <FontAwesomeIcon icon={faUser} className="me-2" />
-                                Login
-                            </Nav.Link>
-                        )}
-
-                        <Nav.Link 
-                            onClick={() => navigate('/cart')}
-                            className="d-flex align-items-center position-relative ms-3 d-none d-lg-flex"
-                        >
-                            <FontAwesomeIcon icon={faShoppingCart} size="lg" />
-                            {cartItemCount > 0 && (
-                                <Badge 
-                                    pill 
-                                    bg="danger" 
-                                    className="position-absolute top-0 start-100 translate-middle"
-                                    style={{ fontSize: '0.6rem' }}
-                                >
-                                    {cartItemCount}
-                                </Badge>
-                            )}
-                        </Nav.Link>
-                    </Nav>
-                </Navbar.Collapse>
             </Container>
         </Navbar>
     );
