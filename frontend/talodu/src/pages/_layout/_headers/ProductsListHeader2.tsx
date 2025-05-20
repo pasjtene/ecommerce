@@ -109,7 +109,7 @@ const ProductsListHeader = () => {
                                             className="me-1" 
                                             style={{ fontSize: '1rem' }} 
                                         />
-                                        <span className="ms-1  d-sm-inline w-100" style={{ fontSize: '0.9rem' }}>
+                                        <span className="ms-1  w-100" style={{ fontSize: '0.9rem' }}>
                                             {user.FirstName}
                                         </span>
                                         <FontAwesomeIcon 
