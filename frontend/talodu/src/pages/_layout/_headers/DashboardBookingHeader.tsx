@@ -5,39 +5,21 @@ import CommonHeaderChat from './CommonHeaderChat';
 import useDarkMode from '../../../hooks/useDarkMode';
 import { useAuth, AuthProvider } from '../../presentation/auth/AuthContext';
 
-const DashboardBookingHeader = () => {
-	const { darkModeStatus } = useDarkMode();
-	const { user, hasRole } = useAuth();
+import ProductsListHeader from './ProductsListHeader';
 
-	 
-	return (
-		<AuthProvider>
-			<Header>
-			
-				
-			<HeaderLeft>
-				<div className='d-flex align-items-center'>
-					<div className='row g-4'>
-						<div className='col-md-auto'>
-							<div
-								className={classNames('fs-3', 'fw-bold', {
-									'text-dark': !darkModeStatus,
-								})}>
-								Hi  { user?.FirstName} {user?.LastName}
-								
-							</div>
-						</div>
-					</div>
-				</div>
-			</HeaderLeft>
-			<HeaderRight>
-				<CommonHeaderChat />
-			</HeaderRight>
-			
-			</Header>
-			</AuthProvider>
-		
-	);
+const DashboardBookingHeader = () => {
+    const { darkModeStatus } = useDarkMode();
+    const { user, hasRole } = useAuth();
+
+     
+    return (
+        <AuthProvider>
+
+<ProductsListHeader />
+            
+            </AuthProvider>
+        
+    );
 };
 
 export default DashboardBookingHeader;

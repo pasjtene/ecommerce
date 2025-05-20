@@ -21,7 +21,7 @@ const DefaultFooter = () => {
 								'link-dark': !darkModeStatus,
 								'link-light': darkModeStatus,
 							})}>
-							<small className='fw-bold me-5'>Talodu Theme</small>
+							<small className='fw-bold me-5'>Talodu - Votre supermarché en Ligne</small>
 						</a>
 					</div>
 				</div>

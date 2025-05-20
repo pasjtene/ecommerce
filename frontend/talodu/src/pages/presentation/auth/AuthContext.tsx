@@ -2,9 +2,7 @@ import React, {createContext, useCallback, useContext, useState, useEffect, Reac
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from '../auth/api'
-//axios.defaults.withCredentials = true;
 
-//Type definitions
 
 type Role = {
     ID: number;
@@ -46,9 +44,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const navigate = useNavigate();
 
     const handleOnAuth = useCallback(() => navigate('/'), [navigate]);
-    //const storedToken = localStorage.getItem('j_auth_token');
-    //const storedUser = localStorage.getItem('j_user');
-
     const u: User = {
         id: 8,
         username: "Pasjtene",
@@ -57,7 +52,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         Email: "pasjtene@yahoo.com",
         Roles: [{
             ID: 1,
-            Name: "admin",
+            Name: "Admin",
             Description: "an admin"
         }, {
             ID: 2,
@@ -70,7 +65,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     //setToken("myToken");
     useEffect(()=>{
         const initializeAuth = async () => {
-           // console.log("Setting user...");
             const storedToken = localStorage.getItem('j_auth_token');
             const storedUser = localStorage.getItem('j_user');
             //setUser(u);
@@ -101,8 +95,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     const loaddata = (): void => {
-        //localStorage.removeItem('j_auth_token')
-        //localStorage.removeItem('j_user')
         console.log("Loading data in load data...")
             const storedToken = localStorage.getItem('j_auth_token');
             const storedUser = localStorage.getItem('j_user');
@@ -114,8 +106,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     const login = async (email: string, password: string): Promise<User> => {
-       // const login = async (username: string, password: string): Promise<User> => {
-       // const API_BASE_URL = process.env.REACT_APP_API_PRODUCTION_BASE_URL;
         console.log("The API base URL is: ",API_BASE_URL);
         try {
             const response = await axios.post<{
@@ -123,21 +113,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 refresh_token: string;
                 user: User,
                 token: string
-           // }>('/login',{ email, password }); 
             }>(API_BASE_URL+'/login',{ email, password }); 
 
             const { access_token, refresh_token, user } = response.data;
-            
-            //localStorage.setItem('globegrctoken', access);
             setToken(access_token);
             setUser(response.data.user);
             localStorage.setItem('j_auth_token', access_token);
             localStorage.setItem('j_refresh_token', refresh_token);
             localStorage.setItem('j_user', JSON.stringify(user));
             setLoading(false);
-            //axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
             axios.defaults.headers.common['Authorization'] = `${access_token}`;
-            console.log("The access token is: ",access_token);
 
             return user;
         } catch (error) {
@@ -160,7 +145,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           
           localStorage.setItem('j_auth_token', access_token);
           localStorage.setItem('j_refresh_token', refresh_token);
-          //axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
           axios.defaults.headers.common['Authorization'] = `${access_token}`;
     
     return access_token;
@@ -195,11 +179,8 @@ axios.interceptors.response.use(
     );
    
 
-    //setUser(u);
-
     const hasRole = (role: string): boolean => {
         if (!user) return false;
-        console.log("The user is,", user);
         return user.Roles?.some(r=>r.Name === role);
     }
 
@@ -219,7 +200,6 @@ axios.interceptors.response.use(
         loaddata
     };
 
-    //console.log("The value is: ",value);
 
     return (
         <AuthContext.Provider value={value}>
