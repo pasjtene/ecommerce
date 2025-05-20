@@ -155,7 +155,7 @@ const ProductsListHeader = () => {
                                 </div>
                             ) : (
                                 <Button 
-                                    variant="outline-secondary"
+                                    variant="outline-danger"
                                     onClick={() => navigate('/auth-pages/login')}
                                     className="me-2 py-1 px-2"
                                     style={{ fontSize: '0.9rem' }}
