@@ -16,6 +16,8 @@ import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 import Badge from 'react-bootstrap/Badge';
+import Login from './Login'
+import Register from './Register'
 
 const ProductsListHeader = () => {
     const { user, logout } = useAuth();
@@ -24,6 +26,8 @@ const ProductsListHeader = () => {
     const [cartItemCount, setCartItemCount] = useState(0);
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const [showLogin, setShowLogin] = useState(false);
+    const [showAuthModal, setShowAuthModal] = useState<'login' | 'register' | null>(null);
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -156,12 +160,14 @@ const ProductsListHeader = () => {
                             ) : (
                                 <Button 
                                     variant="outline-danger"
-                                    onClick={() => navigate('/auth-pages/login')}
+                                    //onClick={() => navigate('/auth-pages/login')}
+                                    //onClick={() => setShowLogin(true)}
+                                    onClick={() => setShowAuthModal('login')}
                                     className="me-2 py-1 px-2"
                                     style={{ fontSize: '0.9rem' }}
                                 >
                                     <FontAwesomeIcon icon={faUser} className="me-1" />
-                                    <span className="me-2">Login</span>
+                                    <span className="me-2">Connexion</span>
                                 </Button>
                             )}
 
@@ -215,6 +221,23 @@ const ProductsListHeader = () => {
                     </div>
                 </Container>
             </Navbar>
+
+
+            {showAuthModal === 'login' && (
+                <Login 
+                    show={true}
+                    onClose={() => setShowAuthModal(null)}
+                    onSwitchToRegister={() => setShowAuthModal('register')}
+                />
+                )}
+
+                {showAuthModal === 'register' && (
+                <Register 
+                    show={true}
+                    onClose={() => setShowAuthModal(null)}
+                    onSwitchToLogin={() => setShowAuthModal('login')}
+                />
+                )}
         </>
     );
 };
