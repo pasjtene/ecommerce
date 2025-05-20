@@ -23,7 +23,7 @@ const ProductsListHeader = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
-    const [cartItemCount, setCartItemCount] = useState(0);
+    const [cartItemCount, setCartItemCount] = useState(7);
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const [showLogin, setShowLogin] = useState(false);
