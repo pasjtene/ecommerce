@@ -6,6 +6,7 @@ import { faTimes, faUser, faLock, faUserPlus } from '@fortawesome/free-solid-svg
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
+import { toast } from 'react-toastify';
 
 interface LoginProps {
   show: boolean;
@@ -23,6 +24,7 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister }) => {
     try {
       await login(email, password);
       onClose();
+      toast.success('Succes vous etes connecté');
     } catch (error) {
       console.error('Login failed:', error);
     }

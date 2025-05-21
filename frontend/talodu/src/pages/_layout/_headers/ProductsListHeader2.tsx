@@ -18,6 +18,7 @@ import Button from 'react-bootstrap/Button';
 import Badge from 'react-bootstrap/Badge';
 import Login from './Login'
 import Register from './Register'
+import { toast } from 'react-toastify';
 
 const ProductsListHeader = () => {
     const { user, logout } = useAuth();
@@ -52,7 +53,7 @@ const ProductsListHeader = () => {
 
     const handleLogout = () => {
         logout();
-        //navigate('/');
+        toast.success('Succes vous etes déconnecté');
         setShowDropdown(false);
     };
 
