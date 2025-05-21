@@ -52,7 +52,7 @@ const ProductsListHeader = () => {
 
     const handleLogout = () => {
         logout();
-        navigate('/');
+        //navigate('/');
         setShowDropdown(false);
     };
 
