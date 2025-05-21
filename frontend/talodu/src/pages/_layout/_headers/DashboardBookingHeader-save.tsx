@@ -5,7 +5,7 @@ import CommonHeaderChat from './CommonHeaderChat';
 import useDarkMode from '../../../hooks/useDarkMode';
 import { useAuth, AuthProvider } from '../../presentation/auth/AuthContext';
 
-import ProductsListHeader from './ProductsListHeader';
+//import ProductsListHeader from './ProductsListHeader';
 
 const DashboardBookingHeader = () => {
 	const { darkModeStatus } = useDarkMode();
