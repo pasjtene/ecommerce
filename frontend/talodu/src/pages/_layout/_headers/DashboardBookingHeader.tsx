@@ -14,11 +14,8 @@ const DashboardBookingHeader = () => {
      
     return (
        
-
             <ProductsListHeader />
             
-           
-        
     );
 };
 

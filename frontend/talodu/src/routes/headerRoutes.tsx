@@ -132,7 +132,7 @@ const headers: RouteProps[] = [
 	},
 	{
 		path: `${demoPagesMenu.sales.subMenu.productID.path}/:id`,
-		element: <ProductListHeader />,
+		element: <DashboardBookingHeader />,
 	},
 	{
 		path: `${pageLayoutTypesPagesMenu.asideTypes.path}/*`,
