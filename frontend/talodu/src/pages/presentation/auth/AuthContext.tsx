@@ -85,13 +85,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     },[token]);
 
     const logout = (): void => {
-        //console.log("Login out");
         localStorage.removeItem('j_auth_token')
         localStorage.removeItem('j_user')
         delete axios.defaults.headers.common['Authorization'];
         setToken(null);
         setUser(null);
-       // navigate('/auth-pages/login');
+        window.location.reload();
     };
 
     const loaddata = (): void => {
@@ -123,6 +122,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             localStorage.setItem('j_user', JSON.stringify(user));
             setLoading(false);
             axios.defaults.headers.common['Authorization'] = `${access_token}`;
+            
 
             return user;
         } catch (error) {

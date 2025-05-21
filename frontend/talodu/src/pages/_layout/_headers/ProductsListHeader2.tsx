@@ -55,6 +55,7 @@ const ProductsListHeader = () => {
         logout();
         toast.success('Succes vous etes déconnecté');
         setShowDropdown(false);
+        //window.location.reload();
     };
 
     const toggleDropdown = (e: React.MouseEvent) => {

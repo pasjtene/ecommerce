@@ -25,6 +25,7 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister }) => {
       await login(email, password);
       onClose();
       toast.success('Succes vous etes connecté');
+      window.location.reload();
     } catch (error) {
       console.error('Login failed:', error);
     }

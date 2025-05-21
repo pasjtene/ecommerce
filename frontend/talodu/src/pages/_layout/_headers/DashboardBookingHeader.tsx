@@ -13,11 +13,11 @@ const DashboardBookingHeader = () => {
 
      
     return (
-        <AuthProvider>
+       
 
-<ProductsListHeader />
+            <ProductsListHeader />
             
-            </AuthProvider>
+           
         
     );
 };
