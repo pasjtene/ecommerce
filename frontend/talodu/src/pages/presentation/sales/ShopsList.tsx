@@ -502,7 +502,7 @@ return buttons;
               </div>
     <div className="row">
       
-        <div className="col-3 mt-4 ms-4">
+        <div className="col-sm-12 col-md-6 col-lg-4 mt-4 ms-sm-0 ms-md-4">
             <select 
                 className="form-select form-select-sm"
                 style={{ width: '120px' }}
@@ -520,14 +520,14 @@ return buttons;
               
           </div>
 
-          <div className="col-3 mt-4">
+          <div className="col-sm-4 col-md-4 col-lg-4 mt-4">
           <span className="text-muted">
                 Showing {(pagination.page - 1) * pagination.limit + 1}-
                 {Math.min(pagination.page * pagination.limit, pagination.totalItems)} of {pagination.totalItems - selectedProducts.length} products
               </span>
           </div>
 
-          <div className="col-3 mt-4">
+          <div className="col-sm-4 col-md-4 col-lg-4 mt-4">
             <nav>
                 <ul className="pagination pagination-sm mb-0">
                   {renderPaginationButtons()}
