@@ -487,42 +487,69 @@ return buttons;
 
     return (
         <PageWrapper title={demoPagesMenu.crm.subMenu.usersList.text}>
-            <SubHeader>
-                <SubHeaderLeft>
-                    <label
-                        className='border-0 bg-transparent cursor-pointer me-0'
-                        htmlFor='searchInput'>
-                        <Icon icon='Search' size='2x' color='primary' />
-                    </label>
-                    <Input
-                        id='searchInput'
-                        type='search'
-                        className='border-0 shadow-none bg-transparent'
-                        placeholder='Search customer...2..'
-                        onChange={formik.handleChange}
-                        value={formik.values.searchInput}
-                        
-                    />
-                </SubHeaderLeft>
-                <SubHeaderRight>
-                    <SubheaderSeparator />
-                    <Button
-                        icon='PersonAdd'
-                        color='primary'
-                        isLight
-                        onClick={() => {handleCreateShop();}}>
-                        Créer une boutique
-                    </Button>
-                </SubHeaderRight>
-            </SubHeader>
+          <SubHeader>
+              <SubHeaderLeft>
+                  <Button color='info' isLink icon='ArrowBack' onClick={() => handleCreateShop()}>
+                  Créer une boutique
+                  </Button>
+                  <SubheaderSeparator />
+                  
+              </SubHeaderLeft>
+             </SubHeader>
+
+             <div>
+                <h3> Liste des boutiques</h3>  
+              </div>
+    <div className="row">
+      
+        <div className="col-3 mt-4 ms-4">
+            <select 
+                className="form-select form-select-sm"
+                style={{ width: '120px' }}
+                value={pagination.limit} 
+                onChange={handleLimitChange}
+              >
+                <option value="2">2 per page</option>
+                <option value="3">3 per page</option>
+                <option value="5">5 per page</option>
+                <option value="10">10 per page</option>
+                <option value="20">20 per page</option>
+                <option value="50">50 per page</option>
+              </select>
+              
+              
+          </div>
+
+          <div className="col-3 mt-4">
+          <span className="text-muted">
+                Showing {(pagination.page - 1) * pagination.limit + 1}-
+                {Math.min(pagination.page * pagination.limit, pagination.totalItems)} of {pagination.totalItems - selectedProducts.length} products
+              </span>
+          </div>
+
+          <div className="col-3 mt-4">
+            <nav>
+                <ul className="pagination pagination-sm mb-0">
+                  {renderPaginationButtons()}
+                </ul>
+              </nav>
+          </div>
+            
+      </div>
+
+
+
+
+
+            
             <Page>
                 <div className='row h-100'>
                     <div className='col-12'>
                         <Card stretch>
 
-    <div>
-      <h3>Shops List</h3>  
-    </div>
+   
+
+
     <div className="col-md-4">
 <div className="input-group">
               <input
@@ -543,36 +570,7 @@ return buttons;
             </div>
 
      {/* Product list Table */}
-     <div className="d-flex pe-4 ps-4
-     justify-content-between align-items-center mb-4 ms-2 me-8">
-        <div className="d-flex align-items-center gap-2">
-            <select 
-                className="form-select form-select-sm"
-                style={{ width: '120px' }}
-                value={pagination.limit} 
-                onChange={handleLimitChange}
-              >
-                <option value="2">2 per page</option>
-                <option value="3">3 per page</option>
-                <option value="5">5 per page</option>
-                <option value="10">10 per page</option>
-                <option value="20">20 per page</option>
-                <option value="50">50 per page</option>
-              </select>
-              
-              <span className="text-muted">
-                Showing {(pagination.page - 1) * pagination.limit + 1}-
-                {Math.min(pagination.page * pagination.limit, pagination.totalItems)} of {pagination.totalItems - selectedProducts.length} products
-              </span>
-            </div>
-
-
-            <nav>
-              <ul className="pagination pagination-sm mb-0">
-                {renderPaginationButtons()}
-              </ul>
-            </nav>
-            </div>
+     
 
             <div className="d-flex justify-content-between align-items-center mb-3">
                     <div>
@@ -606,11 +604,11 @@ return buttons;
                     className="form-check-input"
                   />
                 </th>
-                  <th scope="col">ID</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Price</th>
-                  <th scope="col">Stock</th>
+                  
+                  <th scope="col">Nom</th>
+                  <th scope="col">Slogan</th>
                   <th scope="col">Description</th>
+                  
                   <th scope="col">Products</th>
                   <th scope="col">Action</th>
                 </tr>
@@ -626,7 +624,7 @@ return buttons;
                         className="form-check-input"
                       />
                     </td>
-                    <td>{p.ID}</td>
+                    
                     <td>
                      
                       <div 
@@ -640,7 +638,7 @@ return buttons;
                       
                     </td>
                     <td>{p.moto}</td>
-                    <td>{p.moto}</td>
+                   
                     <td>{p.description}</td>
                     <td>
                       {p.products?.length}
