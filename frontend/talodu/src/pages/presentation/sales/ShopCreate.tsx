@@ -142,7 +142,7 @@ const ShopCreate = () => {
         try {
         const response = await axios.post(API_BASE_URL+`/shops`, shop);
         //console.log('Shop data to save:', response.data);
-        alert('Votre boutique a été crée avec succes!');
+        alert('Votre boutique a été crée avec succes merci!');
         handleManageShop();
         } catch (error) {
         console.error('Error updating shop:', error);
