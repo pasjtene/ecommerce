@@ -31,12 +31,6 @@
     images: ProductImage[]
   }
 
-  export interface ProductCategory {
-    ID: number;
-    name: string;
-    description?: string;
-  }
-
   export interface Shop {
     ID: number;
     name: string;
@@ -47,6 +41,7 @@
     owner: ShopUser;
     Employees: User[];
     products: Product[];
+    City: string
   }
 
   export interface ProductImage {
@@ -54,10 +49,16 @@
     url: string;
     altText?: string;
     isPrimary?: boolean;
-    // Add any additional product details you want to display
     description?: string;
+    name?: string;
     price?: number;
     sku?: string;
+  }
+
+  export interface ProductCategory {
+    ID: number;
+    name: string;
+    description?: string;
   }
 
   export interface User2 {

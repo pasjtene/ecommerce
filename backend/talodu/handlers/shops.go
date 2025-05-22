@@ -25,6 +25,7 @@ func CreateShop(db *gorm.DB) gin.HandlerFunc {
 		var input struct {
 			Name        string `json:"name" binding:"required"`
 			Description string `json:"description"`
+			Moto        string `json:"moto"`
 			OwnerID     uint   `json:"owner_id" binding:"required"`
 		}
 
@@ -44,7 +45,11 @@ func CreateShop(db *gorm.DB) gin.HandlerFunc {
 			Name:        input.Name,
 			Description: input.Description,
 			OwnerID:     input.OwnerID,
+			Moto:        input.Moto,
 		}
+
+		shop.Slug = generateSlug(input.Name) + "-"
+
 		if err := db.Create(&shop).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create shop"})
 			return

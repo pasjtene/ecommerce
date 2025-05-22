@@ -139,7 +139,7 @@ func main() {
 
 	shops := r.Group("/shops")
 	{
-		shops.POST("", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.CreateShop(s.DB))
+		shops.POST("", auth.AuthMiddleware(), handlers.CreateShop(s.DB))
 		shops.POST("/:id/employees", auth.AuthMiddleware(), handlers.AddShopEmployee2(s.DB))
 		shops.GET("", handlers.ListShops(s.DB))
 		shops.GET(":id", handlers.GetShop(s.DB))

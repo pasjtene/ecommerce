@@ -95,8 +95,6 @@ const ProductDetails = () => {
 
     const { state } = useLocation();
     const navigate = useNavigate();
-    //const product = state?.product as Product | undefined;
-
     const { id } = useParams<{ id: string }>();
     const { slug } = useParams<{ slug: string }>();
    // const navigate = useNavigate();
@@ -242,7 +240,6 @@ const ProductDetails = () => {
         );
   
         alert('Images uploaded successfully!');
-        //console.log(response.data);
         // Update the images state with the new images
         setImages(prevImages => [...prevImages, ...response.data.images]);
         setFiles([]);

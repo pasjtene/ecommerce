@@ -66,6 +66,16 @@ const headers: RouteProps[] = [
 			path: `${demoPagesMenu.sales.subMenu.shopProducts.path}/:id`,
 			element: <DashboardBookingHeader />,
 		},
+		{
+			path: `${demoPagesMenu.sales.subMenu.shopsList.path}`,
+			element: <DashboardBookingHeader />,
+		},
+		{
+			path: `${demoPagesMenu.sales.subMenu.shopCreate.path}`,
+			element: <DashboardBookingHeader />,
+		},
+
+		
 	{
 		path: `${demoPagesMenu.projectManagement.subMenu.itemID.path}/*`,
 		element: <DashboardBookingHeader />,

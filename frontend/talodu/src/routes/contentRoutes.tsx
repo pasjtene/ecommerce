@@ -63,6 +63,7 @@ const APP = {
 		PRODUCTS_GRID: lazy(() => import('../pages/presentation/sales/ProductsGridPage')),
 		PRODUCTS_VIEW: lazy(() => import('../pages/presentation/sales/ProductDetails')),
 		SHOP_VIEW: lazy(() => import('../pages/presentation/sales/ShopEdit')),
+		SHOP_CREATE: lazy(() => import('../pages/presentation/sales/ShopCreate')),
 		SHOP_PRODUCTS: lazy(() => import('../pages/presentation/sales/ShopProductList')),
 		
 	},
@@ -369,6 +370,10 @@ const presentation: RouteProps[] = [
 	{
 		path: `${demoPagesMenu.sales.subMenu.shopID.path}/:id`,
 		element: <APP.SALES.SHOP_VIEW />,
+	},
+	{
+		path: `${demoPagesMenu.sales.subMenu.shopCreate.path}`,
+		element: <APP.SALES.SHOP_CREATE/>,
 	},
 
 	/**

@@ -7,11 +7,12 @@ import useDarkMode from '../../../hooks/useDarkMode';
 import axios from 'axios'
 import { useNavigate, Link, useLocation, useParams } from 'react-router-dom';
 import { updateUser, API_BASE_URL } from '../auth/api'
-import { Shop, ShopUser, Product } from '../auth/types'
+import { Shop, ShopUser, Product, User } from '../auth/types'
 import { toast } from 'react-toastify';
 import ImageDisplayComponent from './ImageDisplayComponent'
 import ProductAddComponent from './ProductAddComponent'
 import { useAuth } from '../../presentation/auth/AuthContext';
+import { demoPagesMenu } from '../../../menu';
 
 
   interface LocationState {
@@ -26,6 +27,7 @@ const ShopProductList = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const { user, loaddata } = useAuth();
     const [, forceUpdate] = useReducer(x => x + 1, 0);
+    const navigate = useNavigate();
 
 
     const [shop, setShop] = useState<Shop>({
@@ -37,7 +39,8 @@ const ShopProductList = () => {
         OwnerID: 0,
         owner: {} as ShopUser,
         Employees: [],
-        products: []
+        products: [],
+        City: ''
       });
     
     const { state } = useLocation();
@@ -61,6 +64,21 @@ const ShopProductList = () => {
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
+
+  const handleCreateShop = () => {
+   
+    navigate(`../${demoPagesMenu.sales.subMenu.shopCreate.path}`, { state:  { user } })
+    
+  }
+
+  const handleManageShop = () => {
+   
+    navigate(`../${demoPagesMenu.sales.subMenu.shopsList.path}`, { state:  { user } })
+    
+  }
+
+
+  
 
   /*
   useEffect(() => {
@@ -180,15 +198,36 @@ const ShopProductList = () => {
         <PageWrapper title={shop.name}>
                
             <Page>
-            {user &&(<div>
-                    <Button
+            {user &&(<div className='row'>
+                <div className='col-md-4'>
+                <Button
                         icon='PersonAdd'
                         color='primary'
                         isLight
                         onClick={() => {setisAddingProduct(true);}}>
-                        Add new Product
+                        Ajouter new Product
                     </Button>
-            </div>)}
+                </div>
+                <div className='col-md-4'>
+                <Button
+                        icon='PersonAdd'
+                        color='primary'
+                        isLight
+                        onClick={() => {handleManageShop();}}>
+                        Gerer ma boutique
+                    </Button>
+                </div>
+            <div className='col-md-4'>
+                    <Button
+                        icon='PersonAdd'
+                        color='primary'
+                        isLight
+                        onClick={() => {handleCreateShop();}}>
+                        Créer ma boutique
+                    </Button>
+            </div>
+            </div>
+               )}
 
             <div className="container mt-4">
                 {isAddingProduct ? (

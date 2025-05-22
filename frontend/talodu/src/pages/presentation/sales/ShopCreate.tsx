@@ -19,30 +19,55 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { updateUser, API_BASE_URL } from '../auth/api'
 import { User, Role, Shop, ShopUser } from '../auth/types'
 import { toast } from 'react-toastify';
+import { useAuth } from '../../presentation/auth/AuthContext';
 
 
   interface LocationState {
     shop?: Shop;
   }
 
-const ShopEdit = () => {
+  interface ShopFormData {
+    //id: number,
+    name: string;
+    description: string;
+    moto: string;
+    owner_id: string;
+  }
+
+const ShopCreate = () => {
     //const ProductEditComponent = ({ product, onSave, onCancel }: ProductEditProps) => {
     const { darkModeStatus } = useDarkMode();
+    const { user, loaddata } = useAuth();
+    const { state } = useLocation();
 
-    const [shop, setShop] = useState<Shop>({
+
+    const [shop, setShop] = useState<ShopFormData >({
+        
+        name: '',
+        
+        description: '',
+        moto: '',
+        owner_id:  state.user?.ID || user?.id,
+        ////owner: {} as ShopUser,
+        //Employees: [],
+        //products: [],
+        //City: ' '
+      });
+
+      const [shop1, setShop1] = useState<Shop>({
         ID: 0,
         name: '',
         Slug: '',
         description: '',
         moto: '',
-        OwnerID: 0,
+        OwnerID:  state.user?.ID || user?.id,
         owner: {} as ShopUser,
         Employees: [],
         products: [],
-        City: ''
+        City: ' '
       });
     
-    const { state } = useLocation();
+    
 
     const navigate = useNavigate();
 
@@ -65,20 +90,17 @@ const ShopEdit = () => {
 
 
    useEffect(() => {
-               const stateShop = state?.shop;
-               //console.log("Shop owner",state?.shop.owner)
+               const stateShop = state?.user;
+               console.log("Shop owner",state?.user.name)
               if (stateShop) {
               // if (stateProduct && stateProduct.Slug === slug) {
-              console.log("The shop in state is: ",stateShop)
-                setShop(stateShop);
+              console.log("The user in state is: ",stateShop)
+                //setShop(stateShop);
                 setLoading(false);
               } else {
                   //const productId = slug?.split('-').pop();
-                  const prodid = stateShop.id?.split('-').pop();
-                  if (!prodid) {
-                  setError('Invalid product URL');
-                  return;
-                  }
+                  console.log("The user is: ",user)
+                  setLoading(false);
                 
               }
             }, []);
@@ -91,6 +113,8 @@ const ShopEdit = () => {
       ...prev,
       [name]: value
     }));
+
+    console.log("The updated shop is: ", shop);
   };
 
 
@@ -103,6 +127,12 @@ const ShopEdit = () => {
   
     const [isLoading, setIsLoading] = useState(false);
 
+    const handleManageShop = () => {
+       
+        navigate(`../${demoPagesMenu.sales.subMenu.shopsList.path}`, { state:  { user } })
+        
+      }
+
       // Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -110,9 +140,10 @@ const ShopEdit = () => {
         console.log("The shop data", shop)
         
         try {
-        const response = await axios.put(API_BASE_URL+`/shops/${shop.ID}`, shop);
-        console.log('Shop data to save:', response.data);
-        alert('Shop updated successfully!');
+        const response = await axios.post(API_BASE_URL+`/shops`, shop);
+        //console.log('Shop data to save:', response.data);
+        alert('Votre boutique a été crée avec succes!');
+        handleManageShop();
         } catch (error) {
         console.error('Error updating shop:', error);
         alert('Failed to update shop');
@@ -138,31 +169,23 @@ const ShopEdit = () => {
         <PageWrapper title={demoPagesMenu.crm.subMenu.usersList.text}>
             <SubHeader>
                 <SubHeaderLeft>
-                    <label
-                        className='border-0 bg-transparent cursor-pointer me-0'
-                        htmlFor='searchInput'>
-                        <Icon icon='Search' size='2x' color='primary' />
-                    </label>
-                    <Input
-                        id='searchInput'
-                        type='search'
-                        className='border-0 shadow-none bg-transparent'
-                        placeholder='Search customer...2..'
-                        //onChange={formik.handleChange}
-                        //value={formik.values.searchInput}
-                        onChange={handleChange}
-                        value={shop.name}
-                        
-                    />
+                    <Button color='info' isLink icon='ArrowBack' onClick={() => handleManageShop()}>
+                        Lister mes boutiques
+                    </Button>
+                    <SubheaderSeparator />
+                    
                 </SubHeaderLeft>
-                
+                <SubHeaderRight>
+                    <span className='text-muted fst-italic me-2'>Last update:</span>
+                    <span className='fw-bold'>13 hours ago</span>
+                </SubHeaderRight>
             </SubHeader>
             <Page>
                 <div className='row h-100'>
                     <div className='col-12'>
                         <Card stretch>
                         <div>
-                        <h3>Shop Edit</h3>  
+                        <h5><span className='text-danger'> {user?.FirstName} </span> tu peux ajouter des employés e des produits dans ta boutique apres</h5>  
                         </div>
    
                     <div className="d-flex justify-content-between align-items-center mb-3">
@@ -171,13 +194,13 @@ const ShopEdit = () => {
      
                   <div className="card">
                     <div className="card-header">
-                        <h3>Edit Shop 2</h3>
+                        <h3>Créer ma boutique</h3>
                     </div>
 
                     <div className="card-body">
                         <form onSubmit={handleSubmit}>
                         <div className="mb-3">
-                            <label className="form-label">Name</label>
+                            <label className="form-label">Nom</label>
                             <input
                             type="text"
                             className="form-control"
@@ -190,7 +213,7 @@ const ShopEdit = () => {
 
                             <div className="row mb-3">
                                 <div className="col-md-6">
-                                <label className="form-label">Moto</label>
+                                <label className="form-label">Slogan</label>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -208,7 +231,7 @@ const ShopEdit = () => {
                                     type="text"
                                     className="form-control"
                                     name="FirstName"
-                                    value={shop?.moto}
+                                    //value={shop?.City}
                                     onChange={handleChange}
                                     min="0"
                                     required
@@ -230,17 +253,15 @@ const ShopEdit = () => {
                             <div className="mb-3">
                                 <label className="form-label">Shop Owner</label>
                                 <div className="row">
-                                {shop.owner.FirstName} {shop.owner.LastName}
+                                {user?.FirstName} {user?.LastName}
                                 </div>
-                                <div className="row">
-                                Slug: {shop.Slug}
-                                </div>
+                                
                             </div>
 
                             <div className="d-flex justify-content-end gap-2">
                             
                                 <button type="submit" className="btn btn-primary" disabled={isLoading}>
-                                {isLoading ? 'Saving...' : 'Save Changes'}
+                                {isLoading ? 'Saving...' : 'Creer ma boutique'}
                                 </button>
                             </div>
                             </form>
@@ -256,4 +277,4 @@ const ShopEdit = () => {
     );
 };
 
-export default ShopEdit;
+export default ShopCreate;

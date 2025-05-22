@@ -9,12 +9,7 @@ import SubHeader, {
 import Page from '../../../layout/Page/Page';
 import { demoPagesMenu } from '../../../menu';
 import Card, { CardBody } from '../../../components/bootstrap/Card';
-import { getFirstLetter, priceFormat } from '../../../helpers/helpers';
-import data from '../../../common/data/dummyCustomerData';
-import PaginationButtons, {
-    dataPagination,
-    PER_COUNT,
-} from '../../../components/PaginationButtons';
+//import data from '../../../common/data/dummyCustomerData';
 import Button from '../../../components/bootstrap/Button';
 import Icon from '../../../components/icon/Icon';
 import Input from '../../../components/bootstrap/forms/Input';
@@ -26,16 +21,13 @@ import Dropdown, {
 import FormGroup from '../../../components/bootstrap/forms/FormGroup';
 import Checks, { ChecksGroup } from '../../../components/bootstrap/forms/Checks';
 import PAYMENTS from '../../../common/data/enumPaymentMethod';
-import useSortableData from '../../../hooks/useSortableData';
-import InputGroup, { InputGroupText } from '../../../components/bootstrap/forms/InputGroup';
-import Popovers from '../../../components/bootstrap/Popovers';
-import { getColorNameWithIndex } from '../../../common/data/enumColors';
 import useDarkMode from '../../../hooks/useDarkMode';
 import axios from 'axios'
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { updateUser, API_BASE_URL } from '../auth/api'
 import { User, Role, Product, Shop } from '../auth/types'
 import { toast } from 'react-toastify';
+import { useAuth } from '../../presentation/auth/AuthContext';
 
 
   interface ShopsResponse {
@@ -70,13 +62,8 @@ const ShopsList = () => {
 
     const navigate = useNavigate();
     // Available roles from your API or state
-    const [availableRoles, setAvailableRoles] = useState<Role[]>([
-        { ID: 1, Name: 'SuperAdmin', CreatedAt: "", UpdatedAt:"", DeletedAt:"" },
-        { ID: 2, Name: 'Admin', CreatedAt: "", UpdatedAt:"", DeletedAt:""  },
-        { ID: 3, Name: 'Sales' , CreatedAt: "", UpdatedAt:"", DeletedAt:"" },
-        { ID: 4, Name: 'Visitor' , CreatedAt: "", UpdatedAt:"", DeletedAt:"" },
-        { ID: 5, Name: 'User' , CreatedAt: "", UpdatedAt:"", DeletedAt:"" },
-      ]);
+    const { user } = useAuth();
+    const { state } = useLocation();
   
     // State for edit modal
     const [showEditModal, setShowEditModal] = useState(false);
@@ -121,6 +108,12 @@ const ShopsList = () => {
   
     return { handleActionClick };
   };
+
+   const handleCreateShop = () => {
+     
+      navigate(`../${demoPagesMenu.sales.subMenu.shopCreate.path}`, { state:  { user } })
+      
+    }
 
   // Toggle product selection
   const toggleProductSelection = (productId: number) => {
@@ -211,22 +204,15 @@ const ShopsList = () => {
         },
     });
 
-    const filteredData = data.filter(
-        (f) =>
-            // Name
-            f.name.toLowerCase().includes(formik.values.searchInput.toLowerCase()) &&
-            // Price
-            (formik.values.minPrice === '' || f.balance > Number(formik.values.minPrice)) &&
-            (formik.values.maxPrice === '' || f.balance < Number(formik.values.maxPrice)) &&
-            // Payment Type
-            formik.values.payment.includes(f.payout),
-    );
-    
-    //const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-    //const API_BASE_URL = process.env.REACT_APP_API_PRODUCTION_BASE_URL;
-    const [editModalStatus, setEditModalStatus] = useState<boolean>(false);
+   
+  
     const [createModalStatus, setCreateModalStatus] = useState<boolean>(false);
-    const fetchUsers = async (page = 1, limit = 10, search = ''):Promise<void> => {
+    const fetchShops = async (page = 1, limit = 10, search = ''):Promise<void> => {
+      //console.log("The state user is: ",state?.user);
+      //console.log("The auth user is: ",user);
+      //console.log("The auth user id is: ",user?.id);
+      //console.log("The auth user name is: ",user?.LastName);
+      //console.log("The auth owner_id is: ",owner_id);
         try {
             // const response = await axios.get<ApiResponse>('/api/products',{
             const response = await axios.get<ShopsResponse>(API_BASE_URL+'/shops',{
@@ -234,14 +220,16 @@ const ShopsList = () => {
             params: { 
                 page,
                 limit,
-                search: search.length > 0 ? search : undefined 
+                search: search.length > 0 ? search : undefined,
+                owner_id: state?.user?.ID // if there is no owner_id, all shops are displayed for Admin or SuperAdmin
             },
             headers: {
               //Authorization: `Bearer ${jwtToken}`, // Include the JWT token in the Authorization header
               Authorization: `${jwtToken}`, // Include the JWT token in the Authorization header
             },
           });
-         // console.log("The response shops: ",response.data.shops);
+          console.log("The response shops: ",response.data.shops);
+          //console.log("The auth owner_id 2 is: ",owner_id);
           setShops(response.data.shops);
           setPagination({
               page: response.data.page,
@@ -261,35 +249,19 @@ const ShopsList = () => {
 
     useEffect(() => {
         if (jwtToken) {
-            fetchUsers();
+          fetchShops();
         } else {
             setError('Authentication token not found.');
             setLoading(false);
         }
     }, [jwtToken, loading]); // Re-run the effect if the JWT token changes
         
-    
-    
-          // Client-side filtering for immediate responsiveness
-        const filteredUsers = useMemo(() => {
-            if (!searchTerm) return users;
-            
-            const term = searchTerm.toLowerCase();
-            return users.filter(user => 
-            user.username.toLowerCase().includes(term) ||
-            user.email.toLowerCase().includes(term) ||
-            user.first_name?.toLowerCase().includes(term) ||
-            user.last_name?.toLowerCase().includes(term) ||
-            user.roles.some(role => role.Name.toLowerCase().includes(term))
-            );
-        }, [users, searchTerm]);
-
-
+ 
     // Debounced search - resets to page 1 when searching
     useEffect(() => {
         const timer = setTimeout(() => {
         if (searchTerm.length > 2 || searchTerm.length === 0) {
-            fetchUsers(1, pagination.limit, searchTerm);
+            fetchShops(1, pagination.limit, searchTerm);
         }
         }, 500);
 
@@ -299,14 +271,14 @@ const ShopsList = () => {
     // Handle page change - maintains search term
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= pagination.totalPages) {
-        fetchUsers(newPage, pagination.limit, searchTerm);
+        fetchShops(newPage, pagination.limit, searchTerm);
         }
     };
 
     // Handle limit change - maintains search term
     const handleLimitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newLimit = parseInt(e.target.value);
-        fetchUsers(1, newLimit, searchTerm); // Reset to page 1 when changing limit
+        fetchShops(1, newLimit, searchTerm); // Reset to page 1 when changing limit
     };
 
 
@@ -492,7 +464,7 @@ return buttons;
           }
         });
          // Refresh user list after deletion
-         fetchUsers(pagination.page, pagination.limit, searchTerm);
+         fetchShops(pagination.page, pagination.limit, searchTerm);
         } catch (err) {
           console.error('Error deleting user:', err);
           alert('Failed to delete user');
@@ -533,75 +505,13 @@ return buttons;
                     />
                 </SubHeaderLeft>
                 <SubHeaderRight>
-                    <Dropdown>
-                        <DropdownToggle hasIcon={false}>
-                            <Button
-                                icon='FilterAlt'
-                                color='dark'
-                                isLight
-                                className='btn-only-icon position-relative'
-                                aria-label='Filter'>
-                                {data.length !== filteredData.length && (
-                                    <Popovers desc='Filtering applied' trigger='hover'>
-                                        <span className='position-absolute top-0 start-100 translate-middle badge border border-light rounded-circle bg-danger p-2'>
-                                            <span className='visually-hidden'>
-                                                there is filtering
-                                            </span>
-                                        </span>
-                                    </Popovers>
-                                )}
-                            </Button>
-                        </DropdownToggle>
-                        <DropdownMenu isAlignmentEnd size='lg'>
-                            <div className='container py-2'>
-                                <div className='row g-3'>
-                                    <FormGroup label='Balance' className='col-12'>
-                                        <InputGroup>
-                                            <Input
-                                                id='minPrice'
-                                                ariaLabel='Minimum price'
-                                                placeholder='Min.'
-                                                onChange={formik.handleChange}
-                                                value={formik.values.minPrice}
-                                            />
-                                            <InputGroupText>to</InputGroupText>
-                                            <Input
-                                                id='maxPrice'
-                                                ariaLabel='Maximum price'
-                                                placeholder='Max.'
-                                                onChange={formik.handleChange}
-                                                value={formik.values.maxPrice}
-                                            />
-                                        </InputGroup>
-                                    </FormGroup>
-                                    <FormGroup label='Payments' className='col-12'>
-                                        <ChecksGroup>
-                                            {Object.keys(PAYMENTS).map((payment) => (
-                                                <Checks
-                                                    key={PAYMENTS[payment].name}
-                                                    id={PAYMENTS[payment].name}
-                                                    label={PAYMENTS[payment].name}
-                                                    name='payment'
-                                                    value={PAYMENTS[payment].name}
-                                                    onChange={formik.handleChange}
-                                                    checked={formik.values.payment.includes(
-                                                        PAYMENTS[payment].name,
-                                                    )}
-                                                />
-                                            ))}
-                                        </ChecksGroup>
-                                    </FormGroup>
-                                </div>
-                            </div>
-                        </DropdownMenu>
-                    </Dropdown>
                     <SubheaderSeparator />
                     <Button
                         icon='PersonAdd'
                         color='primary'
                         isLight
-                        onClick={() => {setCreateModalStatus(true); setisNewUser(true);}}>
-                        Add New user
+                        onClick={() => {handleCreateShop();}}>
+                        Créer une boutique
                     </Button>
                 </SubHeaderRight>
             </SubHeader>
@@ -625,7 +535,7 @@ return buttons;
               <button 
                 className="btn btn-outline-light" 
                 type="button"
-                onClick={() => fetchUsers(1, pagination.limit, searchTerm)}
+                onClick={() => fetchShops(1, pagination.limit, searchTerm)}
               >
                 <i className="bi bi-search">S</i>
               </button>
