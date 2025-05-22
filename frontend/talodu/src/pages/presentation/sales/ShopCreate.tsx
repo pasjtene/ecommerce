@@ -175,10 +175,7 @@ const ShopCreate = () => {
                     <SubheaderSeparator />
                     
                 </SubHeaderLeft>
-                <SubHeaderRight>
-                    <span className='text-muted fst-italic me-2'>Last update:</span>
-                    <span className='fw-bold'>13 hours ago</span>
-                </SubHeaderRight>
+               
             </SubHeader>
             <Page>
                 <div className='row h-100'>
