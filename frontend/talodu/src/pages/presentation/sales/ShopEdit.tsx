@@ -17,8 +17,10 @@ import useDarkMode from '../../../hooks/useDarkMode';
 import axios from 'axios'
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { updateUser, API_BASE_URL } from '../auth/api'
-import { User, Role, Shop, ShopUser } from '../auth/types'
+import { User, Role, Shop, ShopUser, Product } from '../auth/types'
 import { toast } from 'react-toastify';
+import ProductAddComponent  from './ProductAddComponent'
+import ShopProductDisplayComponent from './ShopProductDisplayComponent'
 
 
   interface LocationState {
@@ -28,6 +30,15 @@ import { toast } from 'react-toastify';
 const ShopEdit = () => {
     const [isEditing, setIsEditing] = useState(false);
     const { darkModeStatus } = useDarkMode();
+    const [isAddingProduct, setisAddingProduct] = useState(false);
+    //const { handleActionClick } = useDropdownActions();
+    const [loading, setLoading] = useState<boolean>(true);
+   
+    
+    const [error, setError] = useState<string | null>(null);
+    const jwtToken = localStorage.getItem('j_auth_token'); // Assuming you store the token in localStorage
+  
+    const [isLoading, setIsLoading] = useState(false);
 
     const [shop, setShop] = useState<Shop>({
         ID: 0,
@@ -93,15 +104,27 @@ const ShopEdit = () => {
     }));
   };
 
-
-    const { handleActionClick } = useDropdownActions();
-    const [loading, setLoading] = useState<boolean>(true);
-   
-    
-    const [error, setError] = useState<string | null>(null);
-    const jwtToken = localStorage.getItem('j_auth_token'); // Assuming you store the token in localStorage
+   const handleSave = async (updatedProduct: Product) => {
+          console.log("The prduct to update: ", updatedProduct)
+          try {
+            const response = await axios.post(API_BASE_URL+`/products`, updatedProduct);
+            //setCurrentProduct(response.data);
+            setisAddingProduct(false);
+            // Show success toast
+                toast.success(`Product created savedsuccessfully`);
+              } catch (error) {
+            if (axios.isAxiosError(error)) {
+              // The error has a response from the server
+              if (error.response) {
+                  toast.error(`Failed to create product: ${error.response.data.error || error.message}`);
+              } 
+          }
   
-    const [isLoading, setIsLoading] = useState(false);
+          }
+        };
+
+
+   
 
       // Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
@@ -112,7 +135,7 @@ const ShopEdit = () => {
         try {
         const response = await axios.put(API_BASE_URL+`/shops/${shop.ID}`, shop);
         console.log('Shop data to save:', response.data);
-        alert('Shop updated successfully!');
+        alert('Votre boutique a été mise a jour!');
         setIsEditing(false);
         } catch (error) {
         console.error('Error updating shop:', error);
@@ -151,11 +174,30 @@ const ShopEdit = () => {
                               )}
 
                               <SubheaderSeparator />
+                              <Button color='info' isLink onClick={() => setisAddingProduct(true)}>
+                                Ajouter un produit
+                                </Button>
                               
                           </SubHeaderLeft>
 
                          </SubHeader>
             <Page>
+
+            <div className="container mt-4">
+                {isAddingProduct ? (
+                <ProductAddComponent 
+                    shop={shop}
+                    onSave={handleSave}
+                    onCancel={() => setisAddingProduct(false)}
+                />
+                ) : (<></>)
+                }
+            </div>
+
+
+
+
+
                 <div className='row h-100'>
                     <div className='col-12'>
                         <Card stretch>
@@ -244,6 +286,9 @@ const ShopEdit = () => {
                                 </div>
                                 
                             </div>
+                            <Button color='info' isLink onClick={() => setisAddingProduct(true)}>
+                                Ajouter un produit
+                                </Button>
 
                             {isEditing && (
                             <div className="d-flex justify-content-end gap-2">
@@ -261,6 +306,10 @@ const ShopEdit = () => {
                     </div>
                 </div>
             </Page>
+
+            <div>     
+                <ShopProductDisplayComponent shop={shop} />
+            </div>
             
         </PageWrapper>
     );
