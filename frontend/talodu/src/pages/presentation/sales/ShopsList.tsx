@@ -489,7 +489,7 @@ return buttons;
         <PageWrapper title={demoPagesMenu.crm.subMenu.usersList.text}>
           <SubHeader>
               <SubHeaderLeft>
-                  <Button color='info' isLink icon='ArrowBack' onClick={() => handleCreateShop()}>
+                  <Button color='info' isLink onClick={() => handleCreateShop()}>
                   Créer une boutique
                   </Button>
                   <SubheaderSeparator />
@@ -500,9 +500,10 @@ return buttons;
              <div>
                 <h3> Liste des boutiques</h3>  
               </div>
+              {shops?.length > 5 ? (
     <div className="row">
       
-        <div className="col-sm-12 col-md-6 col-lg-4 mt-4 ms-sm-0 ms-md-4">
+        <div className="col-sm-4 col-md-4 col-lg-4 mt-4 ms-sm-0 ms-md-4">
             <select 
                 className="form-select form-select-sm"
                 style={{ width: '120px' }}
@@ -516,17 +517,7 @@ return buttons;
                 <option value="20">20 per page</option>
                 <option value="50">50 per page</option>
               </select>
-              
-              
           </div>
-
-          <div className="col-sm-4 col-md-4 col-lg-4 mt-4">
-          <span className="text-muted">
-                Showing {(pagination.page - 1) * pagination.limit + 1}-
-                {Math.min(pagination.page * pagination.limit, pagination.totalItems)} of {pagination.totalItems - selectedProducts.length} products
-              </span>
-          </div>
-
           <div className="col-sm-4 col-md-4 col-lg-4 mt-4">
             <nav>
                 <ul className="pagination pagination-sm mb-0">
@@ -534,24 +525,21 @@ return buttons;
                 </ul>
               </nav>
           </div>
-            
-      </div>
 
+          <div className="col-sm-4 col-md-4 col-lg-4 mt-4">
+          <span className="text-muted">
+                Showing {(pagination.page - 1) * pagination.limit + 1}-
+                {Math.min(pagination.page * pagination.limit, pagination.totalItems)} of {pagination.totalItems - selectedProducts.length} products
+              </span>
+          </div> 
+      </div>):(<div></div>)}
 
-
-
-
-            
             <Page>
                 <div className='row h-100'>
                     <div className='col-12'>
                         <Card stretch>
-
-   
-
-
-    <div className="col-md-4">
-<div className="input-group">
+                        <div className="col-md-4">
+                    <div className="input-group">
               <input
                 type="text"
                 className="form-control"
@@ -606,8 +594,8 @@ return buttons;
                 </th>
                   
                   <th scope="col">Nom</th>
-                  <th scope="col">Slogan</th>
-                  <th scope="col">Description</th>
+                  <th scope="col" className='d-sm-none'>Slogan</th>
+                  <th scope="col" className='d-sm-none'>Description</th>
                   
                   <th scope="col">Products</th>
                   <th scope="col">Action</th>
@@ -637,9 +625,9 @@ return buttons;
                       
                       
                     </td>
-                    <td>{p.moto}</td>
+                    <td className='d-sm-none'>{p.moto}</td>
                    
-                    <td>{p.description}</td>
+                    <td className='d-sm-none'>{p.description}</td>
                     <td>
                       {p.products?.length}
                     </td>
