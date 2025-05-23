@@ -22,6 +22,7 @@ import { toast } from 'react-toastify';
 import ProductAddComponent  from './ProductAddComponent'
 import ShopProductDisplayComponent from './ShopProductDisplayComponent'
 import { useAuth } from '../../presentation/auth/AuthContext';
+import { handleViewShopProducts } from './Navigation'
 
 
   interface LocationState {
@@ -106,14 +107,39 @@ const ShopEdit = () => {
     }));
   };
 
+  const handleViewShopProducts = (shop: Shop) => {
+      console.log("The shop is: ",shop);
+     if(shop.Slug) {
+      navigate(`../${demoPagesMenu.sales.subMenu.shopProducts.path}/${shop.Slug}`, { state: { shop } })
+     } else {
+      navigate(`../${demoPagesMenu.sales.subMenu.shopProducts.path}/${shop.ID}`, { state: { shop } })
+     }
+    };
+
+    const handleManageShop = () => {
+       
+        navigate(`../${demoPagesMenu.sales.subMenu.shopsList.path}`, { state:  { user } })
+        
+      }
+
+       // Handle view details
+        const handleViewDetailsLug = (product: Product) => {
+          navigate(`../${demoPagesMenu.sales.subMenu.productID.path}/${product.Slug}`, { state: { product } })
+        };
+
    const handleSave = async (updatedProduct: Product) => {
           console.log("The prduct to update: ", updatedProduct)
           try {
             const response = await axios.post(API_BASE_URL+`/products`, updatedProduct);
             //setCurrentProduct(response.data);
             setisAddingProduct(false);
+            //handleViewShopProducts(shop)
+            //handleManageShop();
+            console.log("Produc update result: ",response.data)
+            toast.success(`Product created savedsuccessfully`);
+            handleViewDetailsLug(response.data)
             // Show success toast
-                toast.success(`Product created savedsuccessfully`);
+                
               } catch (error) {
             if (axios.isAxiosError(error)) {
               // The error has a response from the server
@@ -219,7 +245,11 @@ const ShopEdit = () => {
                         <h3>Modiffication de {shop?.name}</h3>
                     </div>):(
                         <div className="card-header">
-                        <h3>Détailles de {shop?.name}</h3>
+                        <h3>Détailles de {shop?.name}</h3> 
+                        <Button color='info' isLink onClick={() => {handleViewShopProducts(shop)}}>
+                        Voir en ligne
+                                </Button>
+                        
                     </div>
                     )}
 

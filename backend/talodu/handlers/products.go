@@ -203,9 +203,22 @@ func CreateProduct(db *gorm.DB) gin.HandlerFunc {
 		//product.Slug = generateSlug(input.Name) + "-" + productID
 		product.Slug = generateSlug(input.Name) + "-"
 
-		db.Create(&product)
+		//db.Create(&product)
+		if err := db.Create(&product).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create product"})
+			return
+		}
+		var createdProduct models.Product
+		if err := db.First(&createdProduct, product.ID).Preload("Shop", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "name") // Only load specific shop fields
+		}).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch created product"})
+			return
+		}
 
-		c.JSON(http.StatusCreated, product)
+		createdProduct.Shop = shop
+
+		c.JSON(http.StatusCreated, createdProduct)
 	}
 }
 

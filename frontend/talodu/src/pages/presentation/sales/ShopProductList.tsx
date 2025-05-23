@@ -162,6 +162,11 @@ const ShopProductList = () => {
         }
     };
 
+     // Handle view details
+            const handleViewDetailsLug = (product: Product) => {
+              navigate(`../${demoPagesMenu.sales.subMenu.productID.path}/${product.Slug}`, { state: { product } })
+            };
+
     const handleSave = async (updatedProduct: Product) => {
         console.log("The prduct to update: ", updatedProduct)
         try {
@@ -169,7 +174,11 @@ const ShopProductList = () => {
           //setCurrentProduct(response.data);
           setisAddingProduct(false);
           // Show success toast
-              toast.success(`Product created savedsuccessfully`);
+             
+              console.log("The updated product: ",response.data);
+              handleViewDetailsLug(response.data);
+              toast.success(`Product crée avec succes`);
+
             } catch (error) {
           if (axios.isAxiosError(error)) {
             // The error has a response from the server
@@ -199,33 +208,34 @@ const ShopProductList = () => {
                
             <Page>
             {user &&(<div className='row'>
-                <div className='col-md-4'>
+                <div className='col-md-4 col-6 mt-4'>
                 <Button
-                        icon='PersonAdd'
+                        
                         color='primary'
                         isLight
                         onClick={() => {setisAddingProduct(true);}}>
-                        Ajouter new Product
+                        Ajouter un Product 
                     </Button>
                 </div>
-                <div className='col-md-4'>
+                <div className='col-md-2 col-6 mt-4'>
                 <Button
-                        icon='PersonAdd'
+                        
                         color='primary'
                         isLight
                         onClick={() => {handleManageShop();}}>
                         Gerer ma boutique
                     </Button>
                 </div>
-            <div className='col-md-4'>
+            <div className='col-md-4 col-6 mt-4'>
                     <Button
-                        icon='PersonAdd'
+                        
                         color='primary'
                         isLight
                         onClick={() => {handleCreateShop();}}>
                         Créer ma boutique
                     </Button>
             </div>
+            
             </div>
                )}
 
