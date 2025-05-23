@@ -26,7 +26,7 @@ import { toast } from 'react-toastify';
   }
 
 const ShopEdit = () => {
-    //const ProductEditComponent = ({ product, onSave, onCancel }: ProductEditProps) => {
+    const [isEditing, setIsEditing] = useState(false);
     const { darkModeStatus } = useDarkMode();
 
     const [shop, setShop] = useState<Shop>({
@@ -113,6 +113,7 @@ const ShopEdit = () => {
         const response = await axios.put(API_BASE_URL+`/shops/${shop.ID}`, shop);
         console.log('Shop data to save:', response.data);
         alert('Shop updated successfully!');
+        setIsEditing(false);
         } catch (error) {
         console.error('Error updating shop:', error);
         alert('Failed to update shop');
@@ -136,59 +137,62 @@ const ShopEdit = () => {
 
     return (
         <PageWrapper title={demoPagesMenu.crm.subMenu.usersList.text}>
-            <SubHeader>
-                <SubHeaderLeft>
-                    <label
-                        className='border-0 bg-transparent cursor-pointer me-0'
-                        htmlFor='searchInput'>
-                        <Icon icon='Search' size='2x' color='primary' />
-                    </label>
-                    <Input
-                        id='searchInput'
-                        type='search'
-                        className='border-0 shadow-none bg-transparent'
-                        placeholder='Search customer...2..'
-                        //onChange={formik.handleChange}
-                        //value={formik.values.searchInput}
-                        onChange={handleChange}
-                        value={shop.name}
-                        
-                    />
-                </SubHeaderLeft>
-                
-            </SubHeader>
+             <SubHeader>
+                          <SubHeaderLeft>
+
+                          {isEditing ? (
+                          
+                              <Button color='info' isLink onClick={() => setIsEditing(false)}>
+                              Annuler
+                              </Button>):(
+                                <Button color='info' isLink onClick={() => setIsEditing(true)}>
+                                Modifier ma boutique
+                                </Button>
+                              )}
+
+                              <SubheaderSeparator />
+                              
+                          </SubHeaderLeft>
+
+                         </SubHeader>
             <Page>
                 <div className='row h-100'>
                     <div className='col-12'>
                         <Card stretch>
-                        <div>
-                        <h3>Shop Edit</h3>  
-                        </div>
-   
+                    
                     <div className="d-flex justify-content-between align-items-center mb-3">
                    
                   </div>
      
                   <div className="card">
+                  {isEditing ? (
                     <div className="card-header">
-                        <h3>Edit Shop 2</h3>
+                        <h3>Modiffication de {shop?.name}</h3>
+                    </div>):(
+                        <div className="card-header">
+                        <h3>Détailles de {shop?.name}</h3>
                     </div>
+                    )}
 
                     <div className="card-body">
                         <form onSubmit={handleSubmit}>
-                        <div className="mb-3">
-                            <label className="form-label">Name</label>
-                            <input
-                            type="text"
-                            className="form-control"
-                            name="name"
-                            value={shop?.name}
-                            onChange={handleChange}
-                            required
-                            />
-                        </div>
-
+                            {isEditing ? (
+                                 <div className="mb-3">
+                                 <label className="form-label">Name</label>
+                                 <input
+                                 type="text"
+                                 className="form-control"
+                                 name="name"
+                                 value={shop?.name}
+                                 onChange={handleChange}
+                                 required
+                                 />
+                             </div>
+                            ):(<div className='text text-4 text-danger'>Nom: {shop?.name}</div>)}
+                       
+                       
                             <div className="row mb-3">
+                            {isEditing ? (
                                 <div className="col-md-6">
                                 <label className="form-label">Moto</label>
                                 <input
@@ -202,19 +206,25 @@ const ShopEdit = () => {
                                     required
                                 />
                                 </div>
+                                ):(<div>Slogan: {shop?.moto}</div>)}
+
+                        {isEditing ? (
                                 <div className="col-md-6">
                                 <label className="form-label">City</label>
                                 <input
                                     type="text"
                                     className="form-control"
-                                    name="FirstName"
-                                    value={shop?.moto}
+                                    name="city"
+                                    value={shop?.City}
                                     onChange={handleChange}
-                                    min="0"
-                                    required
+                                    
+                                    
                                 />
-                                </div>
+                                </div>):(<div>Ville: {shop?.City}</div>)}
+
                             </div>
+
+                            {isEditing ? (
 
                             <div className="mb-3">
                                 <label className="form-label">Description</label>
@@ -225,24 +235,24 @@ const ShopEdit = () => {
                                 onChange={handleChange}
                                 rows={3}
                                 />
-                            </div>
+                            </div>):(<div className='text text-4 text-primary'>Description: {shop?.description}</div>)}
 
                             <div className="mb-3">
-                                <label className="form-label">Shop Owner</label>
+                                <label className="form-label">Proprietaire: </label>
                                 <div className="row">
                                 {shop.owner.FirstName} {shop.owner.LastName}
                                 </div>
-                                <div className="row">
-                                Slug: {shop.Slug}
-                                </div>
+                                
                             </div>
 
+                            {isEditing && (
                             <div className="d-flex justify-content-end gap-2">
                             
                                 <button type="submit" className="btn btn-primary" disabled={isLoading}>
-                                {isLoading ? 'Saving...' : 'Save Changes'}
+                                 Enregistrer
                                 </button>
-                            </div>
+                            </div>)}
+
                             </form>
                         </div>
                         </div>

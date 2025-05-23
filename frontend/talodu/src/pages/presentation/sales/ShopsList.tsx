@@ -594,8 +594,8 @@ return buttons;
                 </th>
                   
                   <th scope="col">Nom</th>
-                  <th scope="col" className='d-sm-none'>Slogan</th>
-                  <th scope="col" className='d-sm-none'>Description</th>
+                  <th scope="col" className='d-none d-sm-table-cell'>Slogan</th>
+                  <th scope="col" className='d-none d-sm-table-cell'>Description</th>
                   
                   <th scope="col">Products</th>
                   <th scope="col">Action</th>
@@ -625,9 +625,9 @@ return buttons;
                       
                       
                     </td>
-                    <td className='d-sm-none'>{p.moto}</td>
+                    <td className='d-none d-sm-table-cell'>{p.moto}</td>
                    
-                    <td className='d-sm-none'>{p.description}</td>
+                    <td className='d-none d-sm-table-cell'>{p.description}</td>
                     <td>
                       {p.products?.length}
                     </td>
