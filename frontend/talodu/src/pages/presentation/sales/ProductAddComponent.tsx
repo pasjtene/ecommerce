@@ -84,7 +84,7 @@ const ProductAddComponent = ({ shop, onSave, onCancel }: ShopAddProps) => {
   return (
     <div className="card">
       <div className="card-header">
-        <h3>Ajouter un produit dans ma boutique</h3>
+        <h3>Ajouter un produit dans ma boutique: <span className='text text-danger'>{shop.name}</span></h3>
       </div>
       <div className="card-body">
         <form onSubmit={handleSubmit}>

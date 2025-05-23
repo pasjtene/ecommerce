@@ -137,6 +137,7 @@ const ShopEdit = () => {
         console.log('Shop data to save:', response.data);
         alert('Votre boutique a été mise a jour!');
         setIsEditing(false);
+        setisAddingProduct(false);
         } catch (error) {
         console.error('Error updating shop:', error);
         alert('Failed to update shop');
@@ -168,13 +169,13 @@ const ShopEdit = () => {
                               <Button color='info' isLink onClick={() => setIsEditing(false)}>
                               Annuler
                               </Button>):(
-                                <Button color='info' isLink onClick={() => setIsEditing(true)}>
+                                <Button color='info' isLink onClick={() => {setIsEditing(true);setisAddingProduct(false)}}>
                                 Modifier ma boutique
                                 </Button>
                               )}
 
                               <SubheaderSeparator />
-                              <Button color='info' isLink onClick={() => setisAddingProduct(true)}>
+                              <Button color='info' isLink onClick={() => {setisAddingProduct(true);setIsEditing(false)}}>
                                 Ajouter un produit
                                 </Button>
                               
@@ -286,7 +287,7 @@ const ShopEdit = () => {
                                 </div>
                                 
                             </div>
-                            <Button color='info' isLink onClick={() => setisAddingProduct(true)}>
+                            <Button color='info' isLink onClick={() => {setisAddingProduct(true);setIsEditing(false)}}>
                                 Ajouter un produit
                                 </Button>
 
