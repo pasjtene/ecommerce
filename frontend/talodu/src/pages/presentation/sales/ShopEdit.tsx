@@ -21,6 +21,7 @@ import { User, Role, Shop, ShopUser, Product } from '../auth/types'
 import { toast } from 'react-toastify';
 import ProductAddComponent  from './ProductAddComponent'
 import ShopProductDisplayComponent from './ShopProductDisplayComponent'
+import { useAuth } from '../../presentation/auth/AuthContext';
 
 
   interface LocationState {
@@ -33,6 +34,7 @@ const ShopEdit = () => {
     const [isAddingProduct, setisAddingProduct] = useState(false);
     //const { handleActionClick } = useDropdownActions();
     const [loading, setLoading] = useState<boolean>(true);
+    const { user } = useAuth();
    
     
     const [error, setError] = useState<string | null>(null);
@@ -158,6 +160,10 @@ const ShopEdit = () => {
     if (error) {
     return <div>Error loading users: {error}</div>;
     }
+
+    if (!user) {
+        return <div>Vous devez etre connecté pour voir cette page</div>;
+        }
 
     return (
         <PageWrapper title={demoPagesMenu.crm.subMenu.usersList.text}>
