@@ -2,6 +2,7 @@ import React, {createContext, useCallback, useContext, useState, useEffect, Reac
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from '../auth/api'
+import { Shop } from './types'
 
 
 type Role = {
@@ -28,6 +29,8 @@ type AuthContextType = {
     hasRole: (role: string) => boolean;
     hasAnyRole: (roles: string[]) => boolean;
     loaddata: () => void;
+    isShopOwner: (shop: Shop) => boolean;
+    isShopEmployee: (shop: Shop) => boolean;
 }
 
 type AuthProviderProps = {
@@ -189,6 +192,17 @@ axios.interceptors.response.use(
         return user.Roles?.some(r => roles.includes(r.Name));
     }
 
+    const isShopOwner = (shop: Shop): boolean => {
+        if (!user) return false;
+        return shop.OwnerID == user.id;
+    }
+
+    const isShopEmployee = (shop: Shop): boolean => {
+        const employeeIDs: number[] = shop.Employees.map(e => e.id);
+        if (!user) return false;
+        return employeeIDs?.some(e=>employeeIDs.includes(user.id))
+    }
+
     const value: AuthContextType = {
         user,
         token,
@@ -197,7 +211,10 @@ axios.interceptors.response.use(
         logout,
         hasRole,
         hasAnyRole,
-        loaddata
+        loaddata,
+        isShopOwner,
+        isShopEmployee
+
     };
 
 

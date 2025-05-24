@@ -11,7 +11,7 @@ import { Shop, ShopUser, Product, User } from '../auth/types'
 import { toast } from 'react-toastify';
 import ImageDisplayComponent from './ImageDisplayComponent'
 import ProductAddComponent from './ProductAddComponent'
-import { useAuth } from '../../presentation/auth/AuthContext';
+import { useAuth, isShopOwner, isShopEmployee } from '../../presentation/auth/AuthContext';
 import { demoPagesMenu } from '../../../menu';
 
 
@@ -207,17 +207,20 @@ const ShopProductList = () => {
         <PageWrapper title={shop.name}>
                
             <Page>
-            {user &&(<div className='row'>
+            <div className='row'>
+            {isShopOwner(shop)|| isShopEmployee(shop) &&(
                 <div className='col-md-4 col-6 mt-4'>
                 <Button
-                        
                         color='primary'
                         isLight
                         onClick={() => {setisAddingProduct(true);}}>
                         Ajouter un Product 
                     </Button>
                 </div>
-                <div className='col-md-2 col-6 mt-4'>
+            )}
+
+            {user && (
+                <div className='col-md-4 col-6 mt-4'>
                 <Button
                         
                         color='primary'
@@ -226,6 +229,10 @@ const ShopProductList = () => {
                         Gerer ma boutique
                     </Button>
                 </div>
+
+            )}
+
+        {user && (
             <div className='col-md-4 col-6 mt-4'>
                     <Button
                         
@@ -235,9 +242,11 @@ const ShopProductList = () => {
                         Créer ma boutique
                     </Button>
             </div>
+            )}
+            
             
             </div>
-               )}
+              
 
             <div className="container mt-4">
                 {isAddingProduct ? (
