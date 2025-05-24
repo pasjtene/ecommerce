@@ -82,70 +82,14 @@ const TaloduHomePage = () => {
 
     return (
         <PageWrapper title={demoPagesMenu.sales.subMenu.dashboard.text}>
-            <SubHeader>
-                <SubHeaderLeft>
-                    <span className='h4 mb-0 fw-bold'>Overview</span>
-                    <SubheaderSeparator />
-                    <ButtonGroup>
-                        {Object.keys(TABS).map((key) => (
-                            <Button
-                                key={key}
-                                color={activeTab === TABS[key] ? 'success' : themeStatus}
-                                onClick={() => setActiveTab(TABS[key])}>
-                                {TABS[key]}
-                            </Button>
-                        ))}
-                    </ButtonGroup>
-                </SubHeaderLeft>
-                <SubHeaderRight>
-                    <CommonAvatarTeam>
-                        <strong>Marketing 12</strong> Team
-                    </CommonAvatarTeam>
-                </SubHeaderRight>
-            </SubHeader>
+            
             <Page container='fluid'>
                 <div className='row'>
                     <div>
                         <AllProductsDisplay/>
                     </div>
-                    <div className='col-12'>
-                        <CommonDashboardAlert />
-                    </div>
-
-                    <div className='col-xl-4'>
-                        <CommonDashboardUserCard />
-                    </div>
-                    <div className='col-xl-4'>
-                        <CommonDashboardMarketingTeam />
-                    </div>
-                    <div className='col-xl-4'>
-                        <CommonDashboardDesignTeam />
-                    </div>
-
-                    <div className='col-xxl-6'>
-                        <CommonDashboardIncome activeTab={activeTab} />
-                    </div>
-                    <div className='col-xxl-3'>
-                        <CommonDashboardRecentActivities />
-                    </div>
-                    <div className='col-xxl-3'>
-                        <CommonDashboardUserIssue />
-                    </div>
-
-                    <div className='col-xxl-8'>
-                        <CommonDashboardSalesByStore />
-                    </div>
-
-                    <div className='col-xxl-4 col-xl-6'>
-                        <CommonDashboardWaitingAnswer />
-                    </div>
-
-                    <div className='col-xxl-4 col-xl-6'>
-                        <CommonMyWallet />
-                    </div>
-                    <div className='col-xxl-8'>
-                        <CommonDashboardTopSeller />
-                    </div>
+                    
+                
                 </div>
             </Page>
         </PageWrapper>
