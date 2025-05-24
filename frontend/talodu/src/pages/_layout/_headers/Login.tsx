@@ -94,6 +94,9 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister }) => {
                 required
               />
               <span className="input-group-text text-success"
+              onMouseLeave={() => setShowPassword(false)} // In case cursor leaves while holding
+              onTouchStart={() => setShowPassword(true)}
+              onTouchEnd={() => setShowPassword(false)}
               onMouseUp={()=>{setShowPassword(false)}}
               onMouseDown={()=>{setShowPassword(true)}}>
                 <FontAwesomeIcon icon={faEye} />
