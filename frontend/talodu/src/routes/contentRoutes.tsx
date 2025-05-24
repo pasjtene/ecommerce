@@ -12,7 +12,8 @@ import {
 import Login from '../pages/presentation/auth/Login';
 
 const LANDING = {
-	DASHBOARD: lazy(() => import('../pages/presentation/dashboard/DashboardPage')),
+	//DASHBOARD: lazy(() => import('../pages/presentation/dashboard/DashboardPage')),
+	DASHBOARD: lazy(() => import('../pages/presentation/dashboard/TaloduHomePage')),
 	DASHBOARD_BOOKING: lazy(() => import('../pages/presentation/dashboard/DashboardBookingPage')),
 	SUMMARY: lazy(() => import('../pages/presentation/SummaryPage')),
 };

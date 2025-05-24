@@ -11,7 +11,7 @@ import { Shop, ShopUser, Product, User } from '../auth/types'
 import { toast } from 'react-toastify';
 import ImageDisplayComponent from './ImageDisplayComponent'
 import ProductAddComponent from './ProductAddComponent'
-import { useAuth, isShopOwner, isShopEmployee } from '../../presentation/auth/AuthContext';
+import { useAuth } from '../../presentation/auth/AuthContext';
 import { demoPagesMenu } from '../../../menu';
 
 
@@ -25,7 +25,7 @@ const ShopProductList = () => {
     const { id } = useParams<{ id: string }>();
     const [isAddingProduct, setisAddingProduct] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-    const { user, loaddata } = useAuth();
+    const { user, loaddata, isShopOwner, isShopEmployee} = useAuth();
     const [, forceUpdate] = useReducer(x => x + 1, 0);
     const navigate = useNavigate();
 
@@ -126,6 +126,8 @@ const ShopProductList = () => {
                     );
                     
                     setShop(response.data.shop);
+                    console.log("The current shop is: ", shop);
+                    console.log("The fetch shop data is: ", response.data);
                     setError(null);
                 } catch (err) {
                     setError('Failed to load product details');
@@ -208,7 +210,9 @@ const ShopProductList = () => {
                
             <Page>
             <div className='row'>
-            {isShopOwner(shop)|| isShopEmployee(shop) &&(
+            {isShopOwner(shop) &&(
+                <div>
+                    <span>Vous etes propriétaire de cette boutique</span>
                 <div className='col-md-4 col-6 mt-4'>
                 <Button
                         color='primary'
@@ -216,6 +220,7 @@ const ShopProductList = () => {
                         onClick={() => {setisAddingProduct(true);}}>
                         Ajouter un Product 
                     </Button>
+                </div>
                 </div>
             )}
 

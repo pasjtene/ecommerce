@@ -65,7 +65,7 @@ const CrmDashboard = () => {
 			<SubHeader>
 				<SubHeaderLeft>
 					<Icon icon='Info' className='me-2' size='2x' />
-					<span className='text-muted'>Check out latest updates.</span>
+					<span className='text-muted'>Check out latest updates here.</span>
 				</SubHeaderLeft>
 				<SubHeaderRight>
 					<Popovers

@@ -13,6 +13,7 @@ type Role = {
 
 type User = {
     id: number;
+    ID: number;
     username: string;
     FirstName?: string;
     LastName?: string;
@@ -20,8 +21,20 @@ type User = {
     Roles: Role[];
 }
 
+type ShopUser = {
+    ID: number;
+    username: string;
+    FirstName?: string;
+    LastName?: string;
+    Email: string;
+    Roles: Role[];
+}
+
+
+
 type AuthContextType = {
     user: User | null;
+    //shopUser: ShopUser | null;
     token: string | null;
     loading: boolean;
     login: (email: string, password: string) => Promise<User>;
@@ -47,6 +60,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const navigate = useNavigate();
 
     const handleOnAuth = useCallback(() => navigate('/'), [navigate]);
+/** 
     const u: User = {
         id: 8,
         username: "Pasjtene",
@@ -63,6 +77,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             Description: "a super admin"
         }]
     }
+    */
 
    // setUser(u);
     //setToken("myToken");
@@ -103,8 +118,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             if (storedToken && storedUser) {
             setToken(storedToken);
             setUser(JSON.parse(storedUser));
-            }
-        
+            }       
     };
 
     const login = async (email: string, password: string): Promise<User> => {
@@ -192,19 +206,21 @@ axios.interceptors.response.use(
         return user.Roles?.some(r => roles.includes(r.Name));
     }
 
-    const isShopOwner = (shop: Shop): boolean => {
-        if (!user) return false;
-        return shop.OwnerID == user.id;
-    }
+  
 
-    const isShopEmployee = (shop: Shop): boolean => {
-        const employeeIDs: number[] = shop.Employees.map(e => e.id);
+    const isShopOwner = ( shop: Shop): boolean => {
         if (!user) return false;
-        return employeeIDs?.some(e=>employeeIDs.includes(user.id))
+        return user.ID == shop.owner.ID;
+    }
+    
+    const isShopEmployee = (shop: Shop): boolean => {
+        if (!user) return false;
+        return shop?.Employees.some(employee => employee.id === user.id);
     }
 
     const value: AuthContextType = {
         user,
+        //shopUser,
         token,
         loading,
         login,

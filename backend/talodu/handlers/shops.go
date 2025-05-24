@@ -298,7 +298,16 @@ func GetShop(db *gorm.DB) gin.HandlerFunc {
 		var shop models.Shop
 		id := c.Param("id")
 
-		if err := db.First(&shop, id).Error; err != nil {
+		query := db.Preload("Owner").Preload("Products").Preload("Employees")
+
+		/**
+		if err := db.First(&shop, id).Preload("Owner").Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Shop not found"})
+			return
+		}
+		*/
+
+		if err := query.First(&shop, id).Error; err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Shop not found"})
 			return
 		}

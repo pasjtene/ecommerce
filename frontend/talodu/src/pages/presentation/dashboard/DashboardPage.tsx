@@ -98,7 +98,7 @@ const DashboardPage = () => {
 				</SubHeaderLeft>
 				<SubHeaderRight>
 					<CommonAvatarTeam>
-						<strong>Marketing 1</strong> Team
+						<strong>Marketing 12</strong> Team
 					</CommonAvatarTeam>
 				</SubHeaderRight>
 			</SubHeader>

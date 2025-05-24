@@ -85,7 +85,7 @@ func main() {
 	// Auth routes
 	r.POST("/register", auth.RegisterUser(s.DB))
 	r.POST("/user", auth.CreateUser(s.DB))
-	r.POST("/login", auth.Login2(s.DB))
+	r.POST("/login", auth.Login(s.DB))
 	r.POST("/logout", auth.AuthMiddleware(), auth.Logout(s.DB))
 	r.POST("/refresh", auth.RefreshToken(s.DB))
 

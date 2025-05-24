@@ -24,6 +24,7 @@ type User struct {
 	OwnedShops    []Shop    `json:"owned_shops" gorm:"foreignKey:OwnerID"`
 	EmployedAt    []Shop    `json:"employed_at" gorm:"many2many:shop_employees;"`
 	Roles         []Role    `gorm:"many2many:user_roles;"`
+	Pin           uint
 }
 
 type FrontendUserResponse struct {
@@ -35,6 +36,7 @@ type FrontendUserResponse struct {
 	Roles     []FrontendRole `json:"roles"`
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
+	Pin       uint
 }
 
 // FrontendRole matches the frontend Role interface
@@ -67,6 +69,7 @@ func (u *User) ToFrontend() FrontendUserResponse {
 		Roles:     roles,
 		CreatedAt: u.CreatedAt,
 		UpdatedAt: u.UpdatedAt,
+		Pin:       u.Pin,
 	}
 }
 

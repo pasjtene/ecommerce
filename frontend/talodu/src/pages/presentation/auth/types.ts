@@ -1,6 +1,7 @@
 
   export interface User {
     id: number;
+    ID: number;
     username: string;
     first_name: string;
     last_name: string;
@@ -10,6 +11,7 @@
 
    export interface ShopUser {
       id: number;
+      ID: number;
       username: string;
       FirstName: string;
       LastName: string;

@@ -243,7 +243,7 @@ func Logout(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func Login2(db *gorm.DB) gin.HandlerFunc {
+func Login(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var input struct {
 			Email    string `json:"email" binding:"required"`
@@ -271,6 +271,7 @@ func Login2(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		// Update user with refresh token
+
 		user.RefreshToken = refreshToken
 		user.RefreshExpiry = time.Now().Add(RefreshTokenExpiry)
 		if err := db.Save(&user).Error; err != nil {
@@ -278,13 +279,7 @@ func Login2(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		// You might want to store the refresh token in your database
-		/**
-		if err := db.Model(&user).Update("refresh_token", refreshToken).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to store refresh token"})
-			return
-		}
-		*/
+		user.Pin = user.ID
 
 		c.JSON(http.StatusOK, gin.H{
 			"access_token":  accessToken,
@@ -292,35 +287,6 @@ func Login2(db *gorm.DB) gin.HandlerFunc {
 			"user":          user,
 			"expires_in":    int(AccessTokenExpiry.Seconds()),
 		})
-	}
-}
-
-func Login(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		//var input LoginRequest
-		var input struct {
-			Username string `json:"username" binding:"required"`
-			Password string `json:"password" binding:"required"`
-		}
-
-		if err := c.ShouldBindJSON(&input); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-		// Fetch user WITH roles
-		var user User
-		if err := db.Preload("Roles").Where("username = ?", input.Username).First(&user).Error; err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
-			return
-		}
-
-		if !CheckPassword(input.Password, user.Password) {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
-			return
-		}
-
-		token, _ := GenerateToken(&user)
-		c.JSON(http.StatusOK, gin.H{"token": token, "user": user})
 	}
 }
 
