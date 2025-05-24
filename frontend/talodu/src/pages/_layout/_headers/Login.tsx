@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 //import { useAuth } from '../auth/AuthContext';
 import { useAuth} from '../../presentation/auth/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faUser, faLock, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faUser, faLock, faUserPlus, faEye } from '@fortawesome/free-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
@@ -17,6 +17,7 @@ interface LoginProps {
 const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -85,12 +86,18 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister }) => {
                 <FontAwesomeIcon icon={faLock} />
               </span>
               <Form.Control
-                type="password"
+                //type="password"
+                type={showPassword ? 'text' : 'password'}
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+              <span className="input-group-text text-success"
+              onMouseUp={()=>{setShowPassword(false)}}
+              onMouseDown={()=>{setShowPassword(true)}}>
+                <FontAwesomeIcon icon={faEye} />
+              </span>
             </div>
           </Form.Group>
 
