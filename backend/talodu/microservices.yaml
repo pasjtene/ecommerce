@@ -1,0 +1,277 @@
+#Micro service architecture for my React frontend, Go backend, 
+#and PostgreSQL database on Kubernetes, including Pod definitions, Services, and Configs:
+
+# postgresql-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgresql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgresql
+  template:
+    metadata:
+      labels:
+        app: postgresql
+    spec:
+      containers:
+      - name: postgresql
+        image: postgres:15
+        env:
+        - name: POSTGRES_DB
+          value: "talodu_db"
+        - name: POSTGRES_USER
+          value: "admin"
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: password
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgres-data
+      volumes:
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: postgres-pvc
+
+---
+# postgresql-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql
+spec:
+  selector:
+    app: postgresql
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+
+
+
+
+# go-backend-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: go-backend
+  template:
+    metadata:
+      labels:
+        app: go-backend
+    spec:
+      containers:
+      - name: go-backend
+        image: your-go-backend-image:latest
+        env:
+        - name: DB_HOST
+          value: "postgresql"  # Uses Kubernetes Service DNS
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: username
+        ports:
+        - containerPort: 8080
+
+---
+# go-backend-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-backend
+spec:
+  selector:
+    app: go-backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+
+
+# react-frontend-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: react-frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: react-frontend
+  template:
+    metadata:
+      labels:
+        app: react-frontend
+    spec:
+      containers:
+      - name: react-frontend
+        image: your-react-image:latest
+        env:
+        - name: API_URL
+          value: "http://go-backend"  # Points to Go Service
+        ports:
+        - containerPort: 3000
+
+---
+# react-frontend-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: react-frontend
+spec:
+  selector:
+    app: react-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+
+---
+# ingress.yaml (for external access)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: talodu-ingress
+spec:
+  rules:
+  - host: talodu.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: react-frontend
+            port:
+              number: 80
+
+
+# react-frontend-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: react-frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: react-frontend
+  template:
+    metadata:
+      labels:
+        app: react-frontend
+    spec:
+      containers:
+      - name: react-frontend
+        image: your-react-image:latest
+        env:
+        - name: API_URL
+          value: "http://go-backend"  # Points to Go Service
+        ports:
+        - containerPort: 3000
+
+---
+# react-frontend-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: react-frontend
+spec:
+  selector:
+    app: react-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+
+---
+# ingress.yaml (for external access)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: talodu-ingress
+spec:
+  rules:
+  - host: talodu.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: react-frontend
+            port:
+              number: 80
+
+
+# postgres-secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-secrets
+type: Opaque
+data:
+  username: YWRtaW4=  # "admin" base64-encoded
+  password: cGFzc3dvcmQxMjM=  # "password123" base64-encoded
+
+
+# postgres-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+
+# Apply all configurations
+kubectl apply -f postgres-secrets.yaml
+kubectl apply -f postgres-pvc.yaml
+kubectl apply -f postgresql-deployment.yaml
+kubectl apply -f postgresql-service.yaml
+kubectl apply -f go-backend-deployment.yaml
+kubectl apply -f go-backend-service.yaml
+kubectl apply -f react-frontend-deployment.yaml
+kubectl apply -f react-frontend-service.yaml
+kubectl apply -f ingress.yaml
+
+# Verify
+kubectl get pods,svc,ingress
+
+
+4. Key Concepts Applied
+Pods: Each microservice (React, Go, PostgreSQL) runs in separate pods.
+
+PostgreSQL uses a PersistentVolume to retain data.
+
+Services: Internal DNS5. Next Steps
+
+Add autoscaling (e.g., kubectl autoscale deployment go-backend --min=2 --max=5).
+
+Set up CI/CD (e.g., ArgoCD or GitHub Actions).
+
+Monitor with Prometheus/Grafana.
+
+Need help with Dockerizing your Go/React apps or debugging? Let me know! names (postgresql, go-backend) enable communication.
+
+Ingress: Exposes the React app to the internet via talodu.com.
+
+Secrets: Securely stores database credentials.
+
+

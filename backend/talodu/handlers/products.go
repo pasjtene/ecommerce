@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"talodu/models"
 
 	"github.com/google/uuid"
@@ -30,15 +31,93 @@ func ListProducts(db *gorm.DB) gin.HandlerFunc {
 		})
 
 		// 1. Search (by name)
+		/**
 		if search := c.Query("search"); search != "" {
 			//query = query.Where("name LIKE ?", "%"+search+"%" )
-
-			query = query.Where(
-				"name ILIKE ? OR description ILIKE ?",
-				"%"+search+"%", "%"+search+"%",
-			)
+			if len(search) < 5 {
+				query = query.Where(
+					"name ILIKE ? OR description ILIKE ?",
+					"%"+search+"%", "%"+search+"%",
+				)
+			} else {
+				query = query.Where(
+					"to_tsvector('english', name || ' ' || description) @@ to_tsquery('english', ?)",
+					strings.Join(strings.Fields(search), " & "),
+				)
+			}
 
 		}
+		*/
+
+		/**
+		if search := c.Query("search"); search != "" {
+			searchTerms := strings.Fields(search)
+			termPatterns := make([]string, len(searchTerms))
+			for i, term := range searchTerms {
+				termPatterns[i] = "%" + term + "%"
+			}
+
+			query = query.Where(
+				`(name ILIKE ANY(?) OR description ILIKE ANY(?))`,
+				pq.Array(termPatterns), pq.Array(termPatterns),
+			)
+		}
+		*/
+
+		if search := c.Query("search"); search != "" {
+			search = strings.TrimSpace(search)
+
+			if len(search) < 5 {
+				// Use trigram-optimized ILIKE for short searches
+				query = query.Where(
+					"name ILIKE ? OR description ILIKE ?",
+					"%"+search+"%", "%"+search+"%",
+				)
+			} else {
+				// Use FTS with OR logic for longer queries
+				//index is added to db for fts to work
+				//CREATE EXTENSION IF NOT EXISTS pg_trgm;
+				//CREATE INDEX idx_products_name_trgm ON products USING gin(name gin_trgm_ops);
+				//CREATE INDEX idx_products_description_trgm ON products USING gin(description gin_trgm_ops);
+				//terms := strings.Join(strings.Fields(search), " | ") // Changed from " & " to " | "
+				terms := strings.Join(strings.Fields(search), " & ") // Changed from " & " to " | "
+				query = query.Where(
+					"to_tsvector('french', coalesce(name,'') || ' ' || coalesce(description,'')) @@ to_tsquery('french', ?)",
+					terms,
+				)
+			}
+		}
+
+		/**
+		if search := c.Query("search"); search != "" {
+			search = strings.TrimSpace(search)
+
+			if len(search) < 5 {
+				// Use trigram-optimized ILIKE for short searches
+				query = query.Where(
+					"name ILIKE ? OR description ILIKE ?",
+					"%"+search+"%", "%"+search+"%",
+				)
+			} else {
+
+			// Use FTS for longer queries with proper tokenization
+			terms := strings.Join(strings.Fields(search), " & ")
+			query = query.Where(
+				"to_tsvector('english', coalesce(name,'') || ' ' || coalesce(description,'')) @@ to_tsquery('english', ?)",
+				terms,
+			)
+			}
+		}
+		*/
+
+		/**
+		if search := c.Query("search"); search != "" {
+			query = query.Where(
+				"to_tsvector('english', name || ' ' || description) @@ to_tsquery('english', ?)",
+				strings.Join(strings.Fields(search), " & "),
+			)
+		}
+		*/
 
 		// ---- 3. PRICE RANGE FILTER ----
 		// Minimum price (e.g., ?min_price=50)
