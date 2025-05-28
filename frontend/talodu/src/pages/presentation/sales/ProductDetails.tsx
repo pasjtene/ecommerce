@@ -196,6 +196,11 @@ const ProductDetails = () => {
               console.log("The shop fetched response is: ",response.data.shop)
              // setShop(response.data.shop);
               setProduct(response.data.product);
+              const metaDescription = document.querySelector('meta[name="description"]');
+                if (metaDescription) {
+                  console.log("description found.. setting description", metaDescription);
+                metaDescription.setAttribute('content', `Buy ${response.data.product.name} - ${response.data.product.description}`);
+                 }
               setError(null);
             } catch (err) {
               setError('Failed to load product details');
@@ -338,19 +343,10 @@ const ProductDetails = () => {
             <SubHeader>
                 <SubHeaderLeft>
                     <Button color='info' isLink icon='ArrowBack' onClick={() => navigate(-1)}>
-                        Back to List
+                        Retour a la Liste
                     </Button>
                     <SubheaderSeparator />
-                    <Avatar
-                        srcSet={USERS.RYAN.srcSet}
-                        src={USERS.RYAN.src}
-                        size={32}
-                        color={USERS.RYAN.color}
-                    />
-                    <span>
-                        <strong>{`${USERS.RYAN.name} ${USERS.RYAN.surname}`}</strong>
-                    </span>
-                    <span className='text-muted'>Owner</span>
+                    
                 </SubHeaderLeft>
                 <SubHeaderRight>
                     <span className='text-muted fst-italic me-2'>Last update:</span>

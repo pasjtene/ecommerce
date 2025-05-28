@@ -26,9 +26,9 @@ const PageWrapper = forwardRef<HTMLDivElement, IPageWrapperProps>(
 			console.log("In page wripper, the description is: ",description);
 			console.log("In page wripper, the title is: ",title);
 			// @ts-ignore
-			document
-				?.querySelector('meta[name="description"]')
-				?.setAttribute('content', description || process.env.REACT_APP_META_DESC || '');
+			//document?.querySelector('meta[name="description"]')
+				
+				//?.setAttribute('content', description || process.env.REACT_APP_META_DESC || '');
 		});
 
 		const { user } = useContext(AuthContext);
