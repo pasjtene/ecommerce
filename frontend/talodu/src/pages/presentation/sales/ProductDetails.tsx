@@ -175,6 +175,11 @@ const ProductDetails = () => {
             // if (stateProduct && stateProduct.Slug === slug) {
             console.log("The product is: ",stateProduct)
               setProduct(stateProduct);
+              const metaDescription = document.querySelector('meta[name="description"]');
+                if (metaDescription) {
+                  console.log("description found.. setting description", metaDescription);
+                metaDescription.setAttribute('content', `Buy ${stateProduct.name} - ${stateProduct.description}`);
+                 }
         
             }
           }, []);
@@ -319,15 +324,11 @@ const ProductDetails = () => {
 
     return (
         <>
-         <Helmet>
-                <title>{product.name} | Otantic Packaging</title>
-                <meta name="description" content={product.description} />
-                <meta property="og:title" content={product.name} />
-                <meta property="og:description" content={product.description} />
-                
-                <meta property="og:url" content={`https://yourstore.com/products/${product.Slug}`} />
-                <link rel="canonical" href={`https://yourstore.com/products/${product.Slug}`} />
-            </Helmet>
+        <Helmet>
+        <meta name="description" content={`Buy ${product.name} - ${product.description}`} />
+        <title>{product.name} | Talodu</title>
+      </Helmet>
+         
          
             {/**
              * <PageWrapper title={demoPagesMenu.sales.subMenu.product.text}>

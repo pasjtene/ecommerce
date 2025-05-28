@@ -23,10 +23,12 @@ const PageWrapper = forwardRef<HTMLDivElement, IPageWrapperProps>(
 			document.getElementsByTagName('TITLE')[0].text = `${title ? `${title} | ` : ''}${
 				process.env.REACT_APP_SITE_NAME
 			}`;
+			console.log("In page wripper, the description is: ",description);
+			console.log("In page wripper, the title is: ",title);
 			// @ts-ignore
 			document
 				?.querySelector('meta[name="description"]')
-				.setAttribute('content', description || process.env.REACT_APP_META_DESC || '');
+				?.setAttribute('content', description || process.env.REACT_APP_META_DESC || '');
 		});
 
 		const { user } = useContext(AuthContext);
