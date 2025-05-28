@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { User, Product, ProductImage, Shop} from '../auth/types';
 import axios from 'axios';
 import { API_BASE_URL } from '../auth/api'
@@ -10,6 +11,8 @@ import SubHeader, {
 import Icon from '../../../components/icon/Icon';
 import Input from '../../../components/bootstrap/forms/Input';
 import Button from '../../../components/bootstrap/Button';
+import { handleViewProductDetailsLug } from '../sales/Navigation'
+import { demoPagesMenu } from '../../../menu';
 
 interface ImageDisplayProps {
   shop: Shop;
@@ -23,6 +26,7 @@ const AllProductsDisplay  = () => {
     const [error, setError] = useState<string | null>(null);
     const [hoveredCard, setHoveredCard] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const navigate = useNavigate();
     const [pagination, setPagination] = useState({
             page: 1,
             limit: 10,
@@ -94,7 +98,7 @@ const AllProductsDisplay  = () => {
   }
 
   const handleImageClick = (productSlug: string, productId: number) => {
-    // navigate(`/products/${productSlug || productId}`);
+   // navigate(`/products/${productSlug || productId}`);
    };
 
 // Flatten all product images from the shop
@@ -107,6 +111,11 @@ const AllProductsDisplay  = () => {
       productId: product.ID
     }))
   );
+
+ 
+  const handleViewproductDetails = (product: Product) => {
+       navigate(`../${demoPagesMenu.sales.subMenu.productID.path}/${product.Slug}`, { state: { product } })
+      };
 
   {/** 
   if (!allImages || allImages.length === 0) {
@@ -144,6 +153,7 @@ const AllProductsDisplay  = () => {
     </SubHeader>
 
     {/** Products */}
+    <div className='m-4'>Tous les produits</div>
     {(products?.length > 0) && (
     <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
         {products.map((prod) => (
@@ -158,7 +168,10 @@ const AllProductsDisplay  = () => {
               }}
               onMouseEnter={() => setHoveredCard(prod.images[0]?.ID)}
               onMouseLeave={() => setHoveredCard(null)}
-              onClick={() => handleImageClick(prod.Slug, prod.ID)}
+              //onClick={() => handleViewProductDetailsLug(prod)}
+              //onClick={() => handleViewProductDetailsLug(prod)}
+              onClick={() => handleViewproductDetails(prod)}
+              
             
             >
               <img 
@@ -200,6 +213,7 @@ const AllProductsDisplay  = () => {
     {/** End product */}
 
 
+        <div className='m-4'>Toutes les images</div>
 
 
     {(allImages?.length > 0) && (

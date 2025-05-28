@@ -16,7 +16,7 @@ export const handleViewDetailsLug = (shop: Shop) => {
    }
   };
 
-   export const handleViewShopProducts = (shop: Shop) => {
+ export const handleViewShopProducts = (shop: Shop) => {
       console.log("The shop is: ",shop);
      if(shop.Slug) {
       navigate(`../${demoPagesMenu.sales.subMenu.shopProducts.path}/${shop.Slug}`, { state: { shop } })
@@ -24,3 +24,10 @@ export const handleViewDetailsLug = (shop: Shop) => {
       navigate(`../${demoPagesMenu.sales.subMenu.shopProducts.path}/${shop.ID}`, { state: { shop } })
      }
     };
+
+
+export const handleViewProductDetailsLug = (product: Product) => {
+    navigate(`../${demoPagesMenu.sales.subMenu.productID.path}/${product.Slug}`, { state: { product } })
+  };
+
+

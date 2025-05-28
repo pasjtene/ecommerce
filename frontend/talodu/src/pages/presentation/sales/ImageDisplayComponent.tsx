@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { User, Product, ProductImage, Shop} from '../auth/types';
 import axios from 'axios';
 import { API_BASE_URL } from '../auth/api'
@@ -10,6 +11,7 @@ import SubHeader, {
 import Icon from '../../../components/icon/Icon';
 import Input from '../../../components/bootstrap/forms/Input';
 import Button from '../../../components/bootstrap/Button';
+import { demoPagesMenu } from '../../../menu';
 
 interface ImageDisplayProps {
   shop: Shop;
@@ -23,6 +25,7 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
     const [error, setError] = useState<string | null>(null);
     const [hoveredCard, setHoveredCard] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const navigate = useNavigate();
     const [pagination, setPagination] = useState({
             page: 1,
             limit: 10,
@@ -92,8 +95,16 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
     return <div className="alert alert-danger my-5">{error}</div>;
   }
 
-  const handleImageClick = (productSlug: string, productId: number) => {
+  const handleImageClick1 = (productSlug: string, productId: number) => {
     // navigate(`/products/${productSlug || productId}`);
+    //navigate(`../${demoPagesMenu.sales.subMenu.productID.path}/${product.Slug}`, { state: { product } })
+   
+   };
+
+   const handleImageClick = (product: Product) => {
+    // navigate(`/products/${productSlug || productId}`);
+    navigate(`../${demoPagesMenu.sales.subMenu.productID.path}/${product.Slug}`, { state: { product } })
+   
    };
 
 // Flatten all product images from the shop
@@ -103,7 +114,8 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
       productName: product.name,
       productPrice: product.price,
       productSlug: product.Slug,
-      productId: product.ID
+      productId: product.ID,
+      product: product
     }))
   );
 
@@ -172,7 +184,8 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
               }}
               onMouseEnter={() => setHoveredCard(image.ID)}
               onMouseLeave={() => setHoveredCard(null)}
-              onClick={() => handleImageClick(image.productSlug, image.productId)}
+              //onClick={() => handleImageClick(image.productSlug, image.productId)}
+              onClick={() => handleImageClick(image.product)}
             
             >
               <img 
