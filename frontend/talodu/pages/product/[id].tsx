@@ -129,7 +129,9 @@ const ProductDetailNext = ({ product, error: propError }: ProductDetailNextProps
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const API_URL = process.env.API_BASE_URL || "http://127.0.0.1:8888";
+       //const API_URL = process.env.API_BASE_URL || "http://127.0.0.1:8888";
+        const API_URL = "/api"
+
         //const API_URL2 = API_BASE_URL; // Use API_BASE_URL from your config
         const productId = id?.toString().split('-').pop();
         if (!productId) {
@@ -182,8 +184,9 @@ const ProductDetailNext = ({ product, error: propError }: ProductDetailNextProps
     });
 
     try {
+      const API_URL = "/api"
       const response = await axios.post(
-        `${API_BASE_URL}/images/product/${currentProduct?.ID}/batch`,
+        `${API_URL}/images/product/${currentProduct?.ID}/batch`,
         formData,
         {
           headers: {
@@ -454,7 +457,8 @@ export const getServerSideProps: GetServerSideProps<ProductDetailNextProps> = as
   }
 
   try {
-    const API_URL = process.env.API_BASE_URL || "http://127.0.0.1:8888"; // Use environment variable
+    //const API_URL = process.env.API_BASE_URL || "http://127.0.0.1:8888"; // Use environment variable
+    const API_URL = "/api"
     const response = await axios.get<{ product: Product; shop: Shop }>(
       `${API_URL}/products/${productId}`,
     );

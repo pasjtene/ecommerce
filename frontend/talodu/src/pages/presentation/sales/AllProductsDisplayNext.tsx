@@ -39,7 +39,8 @@ const AllProductsDisplay  = () => {
 
       const fetchShopProducts = async (page = 1, limit = 10, search = ''):Promise<void> => {
             try {
-                const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8888";
+                //const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8888";
+                 const API_BASE_URL = "/api"
                 setApibaseUrl(API_BASE_URL);
                     if (!API_BASE_URL) {
                 throw new Error("NEXT_PUBLIC_API_BASE_URL is not defined.");
@@ -90,7 +91,8 @@ const AllProductsDisplay  = () => {
   
   
     useEffect(() => {
-        const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8888";
+        //const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8888";
+         const API_URL = "/api"
                 setApibaseUrl(API_BASE_URL);
                     if (!API_BASE_URL) {
                 throw new Error("NEXT_PUBLIC_API_BASE_URL is not defined.");
