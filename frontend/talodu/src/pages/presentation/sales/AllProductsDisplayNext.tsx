@@ -93,7 +93,7 @@ const AllProductsDisplay  = () => {
   
     useEffect(() => {
         //const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8888";
-         const API_URL = "/api"
+         const API_BASE_URL = "/api"
                 setApibaseUrl(API_BASE_URL);
                     if (!API_BASE_URL) {
                 throw new Error("NEXT_PUBLIC_API_BASE_URL is not defined.");
