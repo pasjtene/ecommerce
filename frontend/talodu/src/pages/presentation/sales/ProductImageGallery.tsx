@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import './ProductImageGallery.css'; // We'll create this CSS file
+//import './ProductImageGallery.css'; // We'll create this CSS file
 import { ProductImage, Product } from '../auth/types';
 import { API_IMAGES, API_BASE_URL } from '../auth/api'
 import ProductEditComponent from './ProductEditComponent'
