@@ -38,7 +38,7 @@ import Head from 'next/head';
 import Button from 'react-bootstrap/Button';
 import { GetServerSideProps } from 'next'; // Import GetServerSideProps type
 import  DashboardBookingHeader  from  '../../src/pages/_layout/_headers/DashboardBookingHeader'
-import HeaderNext from  '../../src/pages/_layout/_headers/Headernext'
+import HeaderNext from  '../../src/pages/_layout/_headers/HeaderNext'
 
 // --- Import dynamic for client-only components if needed ---
 import dynamic from 'next/dynamic';
