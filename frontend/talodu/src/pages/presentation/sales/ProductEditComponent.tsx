@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { User, Role, Product, Shop, ProductCategory } from '../auth/types'
 import axios from 'axios';
-import { API_BASE_URL } from '../auth/api'
+//import { API_BASE_URL } from '../auth/api'
 
 interface ProductEditProps {
   product: Product;
@@ -24,6 +24,7 @@ const ProductEditComponent = ({ product, onSave, onCancel }: ProductEditProps) =
     // Fetch available categories and shops
     const fetchData = async () => {
       try {
+        const API_BASE_URL = process.env.API_BASE_URL || "http://127.0.0.1:8888";
         const [categoriesRes, shopsRes] = await Promise.all([
           axios.get(API_BASE_URL+'/categories'),
           axios.get(API_BASE_URL+'/shops')

@@ -5,3 +5,8 @@ public/
 src/assets
 src/components/icon/
 #src/pages/documentation
+node_modules
+build
+dist
+*.config.js
+public

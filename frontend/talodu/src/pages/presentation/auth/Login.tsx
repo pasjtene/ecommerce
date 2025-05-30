@@ -14,7 +14,7 @@ import AuthContext from '../../../contexts/authContext';
 import USERS, { getUserDataWithUsername } from '../../../common/data/userDummyData';
 import Spinner from '../../../components/bootstrap/Spinner';
 import Alert from '../../../components/bootstrap/Alert';
-import {useAuth, AuthProvider } from './AuthContext'
+import {useAuth, AuthProvider } from './AuthContextNext'
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 interface ILoginHeaderProps {
@@ -100,34 +100,10 @@ useEffect(() => {
 		validateOnChange: false,
 		onSubmit: (values) => {
 
-			/** 
-			if (usernameCheck(values.loginUsername)) {
-				if (passwordCheck(values.loginUsername, values.loginPassword)) {
-
-					login(values.loginUsername, values.loginPassword)
-					if(user?.FirstName) {
-						console.log("Yes user: ",user.LastName)
-					}
-					handleOnClick();
-
-					if (setUser) {
-						console.log("Yes user: ",user?.LastName)
-						// setUser(values.loginUsername);
-						//login(values.loginUsername, values.loginPassword)
-						//setUser(u);
-					}
-
-					handleOnClick();
-				} else {
-					formik.setFieldError('loginPassword', 'Username and password do not match.');
-				}
-			}
-		},
-			*/
 
 		try {
 			//await 
-			const user = login(values.loginUsername, values.loginPassword);
+			//const user = login(values.loginUsername, values.loginPassword);
 			
 			navigate('/'); // Redirect after successful login
 			//loaddata();
@@ -136,38 +112,15 @@ useEffect(() => {
 			formik.setFieldError('loginPassword', 'Username and password do not match.');
 		  }
 		},
-
-
-
-
 	});
 
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const handleContinue = async () => {
-		/** 
-		setIsLoading(true);
-		setTimeout(() => {
-			if (!Object.keys(USERS).find((f) => USERS[f].username.toString() === formik.values.loginUsername,))	
-			 {
-				login(formik.values.loginUsername, formik.values.loginPassword)
-				//formik.setFieldError('loginUsername', 'No such user found in the system.');
-				if(user?.FirstName) {
-					console.log("Yes user: ",user.LastName)
-				}
-			} else {
-				//setSignInPassword(true);
-				handleOnClick();
-			}
-			setIsLoading(false);
-		}, 1000);
-	};
-*/
-
-	//e.preventDefault();
+		
 
     try {
-		const user =  await login(formik.values.loginUsername, formik.values.loginPassword);
+		const user =  await login(formik.values.loginUsername, formik.values.loginPassword, "url");
 	  setTimeout(() => {
 		console.log("Ready to navigate...", user);
       navigate('/'); // Redirect after successful login
@@ -180,12 +133,7 @@ useEffect(() => {
     }
 
   };
-/** 
-  if (isAuthenticated) {
-    navigate('/dashboard'); // Redirect if already logged in
-    return null;
-  }
-*/
+
 
 
 	return (

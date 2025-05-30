@@ -15,6 +15,7 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[], prod
   const imageRef = useRef<HTMLDivElement>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Product>(product);
+  const API_URL2 = "http://127.0.0.1:8888"
  
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -74,8 +75,8 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[], prod
             {selectedImage ? (
               <>
                 <img
-                  src={API_BASE_URL+selectedImage.url}
-                  alt={selectedImage.altText || 'Product image1'}
+                  src={API_URL2+selectedImage.url}
+                  alt={selectedImage.altText || 'Product image'}
                   className="main-product-image"
                 />
                 {/* Magnifying glass lens */}
@@ -112,7 +113,7 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[], prod
                     onMouseEnter={() => setSelectedImage(image)}
                   >
                     <img
-                      src={API_BASE_URL+image.url}
+                      src={API_URL2+image.url}
                       alt={image.altText || 'Product thumbnail'}
                       className={`img-thumbnail ${selectedImage?.ID === image.ID ? 'active-thumbnail' : ''}`}
                     />
@@ -139,7 +140,7 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[], prod
             <div 
               className="magnified-preview"
               style={{
-                backgroundImage: `url(${API_BASE_URL+selectedImage.url})`,
+                backgroundImage: `url(${API_URL2+selectedImage.url})`,
                 backgroundPosition: `${hoverPosition.x}% ${hoverPosition.y}%`,
               }}
             />

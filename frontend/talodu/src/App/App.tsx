@@ -16,10 +16,11 @@ import { getOS } from '../helpers/helpers';
 import steps, { styles } from '../steps';
 import AsideRoutes from '../layout/Aside/AsideRoutes';
 import { ToastCloseButton } from '../components/bootstrap/Toasts';
-import { useAuth, AuthProvider } from '../pages/presentation/auth/AuthContext';
+import { useAuth, AuthProvider } from '../pages/presentation/auth/AuthContextNext';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 //import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 
 
 const App = () => {
@@ -106,6 +107,7 @@ const App = () => {
 		</ThemeProvider>
 		</AuthProvider>
 		</HelmetProvider>
+		
 		
 	);
 };

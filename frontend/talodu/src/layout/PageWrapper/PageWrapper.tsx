@@ -1,6 +1,6 @@
 import React, { forwardRef, ReactElement, useContext, useEffect, useLayoutEffect } from 'react';
 import classNames from 'classnames';
-import { useNavigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 import { ISubHeaderProps } from '../SubHeader/SubHeader';
 import { IPageProps } from '../Page/Page';
 import AuthContext from '../../contexts/authContext';
@@ -20,9 +20,13 @@ const PageWrapper = forwardRef<HTMLDivElement, IPageWrapperProps>(
 	({ isProtected = true, title, description, className, children }, ref) => {
 		useLayoutEffect(() => {
 			// @ts-ignore
-			document.getElementsByTagName('TITLE')[0].text = `${title ? `${title} | ` : ''}${
+			if (typeof document !== 'undefined') {
+				if (document.getElementsByTagName('TITLE')[0]) {
+			document.getElementsByTagName('TITLE')[0].innerHTML = `${title ? `${title} | ` : ''}${
 				process.env.REACT_APP_SITE_NAME
 			}`;
+		}
+		}
 			console.log("In page wripper, the description is: ",description);
 			console.log("In page wripper, the title is: ",title);
 			// @ts-ignore
@@ -33,7 +37,7 @@ const PageWrapper = forwardRef<HTMLDivElement, IPageWrapperProps>(
 
 		const { user } = useContext(AuthContext);
 
-		const navigate = useNavigate();
+		//const navigate = useNavigate();
 		useEffect(() => {
 			console.log("in useEffect route..user is:..",user)
 			if (isProtected && user === '') {

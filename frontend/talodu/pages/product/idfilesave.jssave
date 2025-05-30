@@ -1,0 +1,22 @@
+import ProductDetailNext from '../../src/pages/presentation/sales/ProductDetailNext';
+import Button from 'react-bootstrap/Button';
+import { GetServerSideProps } from 'next';
+
+interface ProductDetailNextProps {
+  // Now 'product' is always provided as a prop from getServerSideProps
+  product: Product | null; // Make it null if not found, or directly Product if you redirect
+  error?: string; // Prop for error message if fetching fails
+}
+
+export const getServerSideProps: GetServerSideProps<ProductDetailNextProps> = async(context) => {
+  const { id } = context.params;
+  const res = await fetch(`http://127.0.0.1:8888/products/${id}`);
+  const product = await res.json();
+  return { props: { product } };
+}
+
+export default function ProductPage({ product }) {
+  return <ProductDetailNext product={product} />;
+}
+
+

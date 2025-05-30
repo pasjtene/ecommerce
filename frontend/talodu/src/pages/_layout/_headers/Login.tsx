@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 //import { useAuth } from '../auth/AuthContext';
-import { useAuth} from '../../presentation/auth/AuthContext';
+import { useAuth} from '../../presentation/auth/AuthContextNext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faUser, faLock, faUserPlus, faEye } from '@fortawesome/free-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
@@ -12,18 +12,20 @@ interface LoginProps {
   show: boolean;
   onClose: () => void;
   onSwitchToRegister: () => void;
+  url: string;
 }
 
-const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister }) => {
+const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister, url }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
+  //const [url, setUrl ] = useState(url)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login(email, password);
+      await login(email, password, url || "127.0.0.1:8888" );
       onClose();
       toast.success('Succes vous etes connecté');
       window.location.reload();

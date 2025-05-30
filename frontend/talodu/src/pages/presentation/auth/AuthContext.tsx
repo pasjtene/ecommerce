@@ -236,7 +236,8 @@ axios.interceptors.response.use(
 
     return (
         <AuthContext.Provider value={value}>
-            {!loading && children }
+            
+            {!loading ? children : <div>Authenticating...</div>}
         </AuthContext.Provider>
     );
 };

@@ -62,7 +62,8 @@ func main() {
 			"http://162.19.227.240:3000", // React dev server
 			"https://talodu.com",
 			"https://www.talodu.com",
-			"http://localhost:3000", // Add other domains as needed
+			"http://localhost:3000",
+			"http://localhost:3001", // Add other domains as needed
 		}
 		origin := c.Request.Header.Get("Origin")
 		for _, allowedOrigin := range allowedOrigins {

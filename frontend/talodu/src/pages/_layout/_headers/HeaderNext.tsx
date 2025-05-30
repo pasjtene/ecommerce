@@ -1,14 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../presentation/auth/AuthContextNext';
+import { useRouter } from 'next/router'; // <-- IMPORTANT: Use Next.js useRouter
+//import Link from 'next/link';         // <-- IMPORTANT: Use Next.js Link for navigation
+import { useAuth } from '../../presentation/auth/AuthContextNext'; // Assuming AuthContext is correctly set up for Next.js SSR
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faUser, 
+import {
+  faUser,
   faShoppingCart,
-  faSearch, 
-  faCog, 
+  faSearch,
+  faCog,
   faSignOutAlt,
-  faChevronDown 
+  faChevronDown
 } from '@fortawesome/free-solid-svg-icons';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
@@ -16,38 +17,49 @@ import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 import Badge from 'react-bootstrap/Badge';
-import Login from './Login'
-import Register from './Register'
 import { toast } from 'react-toastify';
 
-const ProductsListHeader = () => {
+// --- Use dynamic import for modals that might have client-side dependencies ---
+// This is crucial if Login/Register components have direct browser API access
+import dynamic from 'next/dynamic';
+
+const Login = dynamic(() => import('./Login'), { ssr: false });
+const Register = dynamic(() => import('./Register'), { ssr: false });
+// --- END dynamic import ---
+
+
+const HeaderNext = () => {
+    //const url1 = process.env.API_BASE_URL | 'undefined';
     const { user, logout } = useAuth();
-    const navigate = useNavigate();
+    const router = useRouter(); // <-- Replaced useNavigate with useRouter
     const [searchQuery, setSearchQuery] = useState('');
-    const [cartItemCount, setCartItemCount] = useState(7);
+    const [cartItemCount, setCartItemCount] = useState(7); // This should ideally come from global state/context
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
-    const [showLogin, setShowLogin] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState<'login' | 'register' | null>(null);
+    //const [apiBaseURL, setApiBaseUrl] = useState<process.env.API_BASE_URL >(null);
 
-    // Close dropdown when clicking outside
+    // Close dropdown when clicking outside - This needs to be in useEffect
     useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setShowDropdown(false);
-            }
-        };
+        // Ensure this code only runs in the browser environment
+        if (typeof document !== 'undefined') {
+            const handleClickOutside = (event: MouseEvent) => {
+                if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                    setShowDropdown(false);
+                }
+            };
 
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
+            document.addEventListener('mousedown', handleClickOutside);
+            return () => {
+                document.removeEventListener('mousedown', handleClickOutside);
+            };
+        }
     }, []);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         if (searchQuery.trim()) {
-            navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+            router.push(`/search?q=${encodeURIComponent(searchQuery)}`); // <-- Use router.push
         }
     };
 
@@ -55,7 +67,10 @@ const ProductsListHeader = () => {
         logout();
         toast.success('Succes vous etes déconnecté');
         setShowDropdown(false);
-        //window.location.reload();
+        // Next.js equivalent to window.location.reload() if needed:
+        // router.reload();
+        // Or if you want to navigate to home after logout:
+        router.push('/');
     };
 
     const toggleDropdown = (e: React.MouseEvent) => {
@@ -69,17 +84,20 @@ const ProductsListHeader = () => {
                 <Container fluid className="px-3">
                     {/* First row - logo, desktop search, and user controls */}
                     <div className="d-flex w-100 align-items-center">
-                        {/* Logo on the left */}
-                        <Navbar.Brand 
-                            href="/" 
-                            className="fw-bold fs-4 text-primary me-3"
-                            style={{ fontFamily: "'Pacifico', cursive", minWidth: '100px' }}
-                        >
-                            Talodu
-                        </Navbar.Brand>
+                        
+                            {/* Ensure Navbar.Brand's content is a single, direct child */}
+                            <Navbar.Brand
+                                className="fw-bold fs-4 text-primary me-3"
+                                style={{ fontFamily: "'Pacifico', cursive", minWidth: '100px' }}
+                            >
+                                {/* Wrap "Talodu" in a <span> or <div> to make it a single child */}
+                                <span>Talodu</span>
+                            </Navbar.Brand>
+                        
+                        
 
                         {/* Desktop search form - hidden on mobile */}
-                        <Form 
+                        <Form
                             onSubmit={handleSearch}
                             className="d-none d-lg-flex flex-grow-1 mx-3"
                         >
@@ -92,8 +110,8 @@ const ProductsListHeader = () => {
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 style={{ fontSize: '0.9rem' }}
                             />
-                            <Button 
-                                variant="outline-primary" 
+                            <Button
+                                variant="outline-primary"
                                 type="submit"
                                 className="py-1 px-3"
                             >
@@ -105,29 +123,29 @@ const ProductsListHeader = () => {
                         <div className="d-flex  align-items-center ms-auto">
                             {user ? (
                                 <div className="d-flex w-100 align-items-center position-relative me-2" ref={dropdownRef}>
-                                    <div 
+                                    <div
                                         onClick={toggleDropdown}
                                         style={{ cursor: 'pointer' }}
                                         className="d-flex align-items-center"
                                     >
-                                        <FontAwesomeIcon 
-                                            icon={faUser} 
-                                            className="me-1" 
-                                            style={{ fontSize: '1rem' }} 
+                                        <FontAwesomeIcon
+                                            icon={faUser}
+                                            className="me-1"
+                                            style={{ fontSize: '1rem' }}
                                         />
                                         <span className="ms-1" style={{ fontSize: '0.9rem' }}>
                                             {user.FirstName}
                                         </span>
-                                        <FontAwesomeIcon 
-                                            icon={faChevronDown} 
-                                            className="ms-1" 
-                                            style={{ fontSize: '0.7rem' }} 
+                                        <FontAwesomeIcon
+                                            icon={faChevronDown}
+                                            className="ms-1"
+                                            style={{ fontSize: '0.7rem' }}
                                         />
                                     </div>
-                                    
+
                                     {/* Dropdown menu */}
                                     {showDropdown && (
-                                        <div 
+                                        <div
                                             className="position-absolute bg-white rounded shadow mt-1 border"
                                             style={{
                                                 top: '100%',
@@ -136,10 +154,10 @@ const ProductsListHeader = () => {
                                                 minWidth: '160px'
                                             }}
                                         >
-                                            <div 
+                                            <div
                                                 className="dropdown-item py-2 px-3"
                                                 onClick={() => {
-                                                    navigate('/account/settings');
+                                                    router.push('/account/settings'); // <-- Use router.push
                                                     setShowDropdown(false);
                                                 }}
                                                 style={{ cursor: 'pointer', fontSize: '0.9rem' }}
@@ -148,7 +166,7 @@ const ProductsListHeader = () => {
                                                 Settings
                                             </div>
                                             <div className="dropdown-divider my-1"></div>
-                                            <div 
+                                            <div
                                                 className="dropdown-item py-2 px-3"
                                                 onClick={handleLogout}
                                                 style={{ cursor: 'pointer', fontSize: '0.9rem' }}
@@ -160,10 +178,8 @@ const ProductsListHeader = () => {
                                     )}
                                 </div>
                             ) : (
-                                <Button 
+                                <Button
                                     variant="outline-danger"
-                                    //onClick={() => navigate('/auth-pages/login')}
-                                    //onClick={() => setShowLogin(true)}
                                     onClick={() => setShowAuthModal('login')}
                                     className="me-2 py-1 px-2"
                                     style={{ fontSize: '0.9rem' }}
@@ -174,19 +190,19 @@ const ProductsListHeader = () => {
                             )}
 
                             {/* Shopping cart */}
-                            <div 
+                            <div
                                 className="position-relative"
-                                onClick={() => navigate('/cart')}
+                                onClick={() => router.push('/cart')} // <-- Use router.push
                                 style={{ cursor: 'pointer' }}
                             >
-                                <FontAwesomeIcon 
-                                    icon={faShoppingCart} 
-                                    style={{ fontSize: '1.1rem' }} 
+                                <FontAwesomeIcon
+                                    icon={faShoppingCart}
+                                    style={{ fontSize: '1.1rem' }}
                                 />
                                 {cartItemCount > 0 && (
-                                    <Badge 
-                                        pill 
-                                        bg="danger" 
+                                    <Badge
+                                        pill
+                                        bg="danger"
                                         className="position-absolute top-0 start-100 translate-middle"
                                         style={{ fontSize: '0.6rem' }}
                                     >
@@ -199,7 +215,7 @@ const ProductsListHeader = () => {
 
                     {/* Mobile search form - hidden on desktop */}
                     <div className="d-lg-none mt-2 w-100">
-                        <Form 
+                        <Form
                             onSubmit={handleSearch}
                             className="d-flex w-100"
                         >
@@ -212,8 +228,8 @@ const ProductsListHeader = () => {
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 style={{ fontSize: '0.9rem' }}
                             />
-                            <Button 
-                                variant="outline-primary" 
+                            <Button
+                                variant="outline-primary"
                                 type="submit"
                                 className="py-1 px-3"
                             >
@@ -224,25 +240,25 @@ const ProductsListHeader = () => {
                 </Container>
             </Navbar>
 
-
+            {/* Modals are rendered here */}
             {showAuthModal === 'login' && (
-                <Login 
+                <Login
                     show={true}
                     onClose={() => setShowAuthModal(null)}
                     onSwitchToRegister={() => setShowAuthModal('register')}
                     url={process.env.API_BASE_URL || 'http://localhost:8888'}
                 />
-                )}
+            )}
 
-                {showAuthModal === 'register' && (
-                <Register 
+            {showAuthModal === 'register' && (
+                <Register
                     show={true}
                     onClose={() => setShowAuthModal(null)}
                     onSwitchToLogin={() => setShowAuthModal('login')}
                 />
-                )}
+            )}
         </>
     );
 };
 
-export default ProductsListHeader;
+export default HeaderNext;

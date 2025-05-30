@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "next": "^15.3.2"
+  },
+  "scripts": {
+  "lint": "eslint .",
+  "lint:fix": "eslint --fix .",
+  "format": "prettier --write .",
+  "format:check": "prettier --check ."
+},
+
+  "type": "module"
+
+}
