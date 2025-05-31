@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useFormik } from 'formik';
 import Page from '../../src/layout/Page/Page';
-import PageWrapper from '../../src/layout/PageWrapper/PageWrapper';
+//import PageWrapper from '../../src/layout/PageWrapper/PageWrapper';
 import Card, {
   CardBody,
   CardHeader,
@@ -275,7 +275,7 @@ const ProductDetailNext = ({ product, error: propError }: ProductDetailNextProps
         {/* Add more Open Graph tags as needed, e.g., og:url, og:type */}
       </Head>
 
-      <PageWrapper>
+      <div>
         <HeaderNext/>
         {loading ? (
             <div>Loading product details...</div>
@@ -440,7 +440,7 @@ const ProductDetailNext = ({ product, error: propError }: ProductDetailNextProps
             
             </div>
         
-      </PageWrapper>
+      </div>
     </>
   );
 };
