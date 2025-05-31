@@ -1,5 +1,6 @@
 import React from 'react';
 //import './globals.css'; // Your global styles
+import 'bootstrap/dist/css/bootstrap.min.css'; 
 import '../src/pages/presentation/sales/ProductImageGallery.css'
 import { AuthProvider} from '../src/pages/presentation/auth/AuthContextNext';
 
