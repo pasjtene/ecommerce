@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/router'; // <-- IMPORTANT: Use Next.js useRouter
+//import { useRouter } from 'next/router'; // <-- IMPORTANT: Use Next.js useRouter
+import { useRouter } from 'next/navigation';
 //import Link from 'next/link';         // <-- IMPORTANT: Use Next.js Link for navigation
 //import { useAuth } from '../../presentation/auth/AuthContextNext'; // Assuming AuthContext is correctly set up for Next.js SSR
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

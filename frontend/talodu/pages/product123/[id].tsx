@@ -1,6 +1,7 @@
 // pages/product/[id].tsx
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+//import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import Page from '../../src/layout/Page/Page';
 //import PageWrapper from '../../src/layout/PageWrapper/PageWrapper';

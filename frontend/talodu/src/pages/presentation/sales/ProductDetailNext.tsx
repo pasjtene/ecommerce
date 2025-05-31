@@ -1,6 +1,8 @@
 // components/ProductDetailNext.js
+"use client";
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+//import { useRouter } from 'next/router';
+import { useRouter, useParams } from 'next/navigation';
 import { useFormik } from 'formik';
 import Page from '../../../layout/Page/Page';
 import PageWrapper from '../../../layout/PageWrapper/PageWrapper';
@@ -77,14 +79,28 @@ interface ITabs {
   [key: string]: TTabs;
 }
 
-interface ProductDetailNextProps {
-  product?: Product; // 'product' is the prop name, and it's of type 'Product' (which you already defined). The '?' makes it optional.
+
+
+interface ProductPageProps1 {
+  // `params` prop is automatically passed by Next.js App Router for dynamic segments
+  params: {
+    id: string; // This corresponds to [id] in the folder name
+  };
 }
 
-const ProductDetailNext = ({ product: initialProduct }: ProductDetailNextProps) => {
+interface ProductDetailNextProps {
+  initialProduct: Product | null; // This would be from the `props` passed down from a Server Component that rendered this.
+  error?: string;
+}
+
+const ProductDetailNext = ({ initialProduct, error: propError }: ProductDetailNextProps) => {
   const { darkModeStatus } = useDarkMode();
   const router = useRouter();
-  const { id } = router.query;
+  //const { id } = router.query;
+  //const { id } = params;
+  //const router = useRouter(); // This is fine in a Client Component
+  const params = useParams(); // <-- Get params here
+  const id = params.id as string; 
   
   const [images, setImages] = useState<ProductImage[]>([]);
   const [files, setFiles] = useState<File[]>([]);
@@ -134,7 +150,7 @@ const ProductDetailNext = ({ product: initialProduct }: ProductDetailNextProps) 
    // }
   }, [id, initialProduct]);
 
-
+{/** 
   useEffect(() => {
     // Check if product is in router query (from client-side navigation)
     if (router.query) {
@@ -150,6 +166,7 @@ const ProductDetailNext = ({ product: initialProduct }: ProductDetailNextProps) 
      // fetchProduct(id?.toString().split('-').pop() as string);
     }
   }, [id, router.query.product]);
+  **/}
 
   const fetchProduct = async (productId: string) => {
     try {

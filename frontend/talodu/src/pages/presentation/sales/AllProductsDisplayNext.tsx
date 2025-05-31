@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter, useParams } from 'next/navigation';
+//import { useParams } from 'next/navigation';
 import { User, Product, ProductImage, Shop} from '../auth/types';
 import axios from 'axios';
 import { API_BASE_URL } from '../auth/api'
@@ -14,6 +15,8 @@ import Input from '../../../components/bootstrap/forms/Input';
 interface ImageDisplayProps {
   shop: Shop;
 }
+
+
 
 
 
@@ -124,12 +127,9 @@ const AllProductsDisplay  = () => {
 
  
   const handleViewproductDetails = (product: Product) => {
-       //router.push(`/product/${product.Slug}`)
-       router.push({
-       // pathname: `/products/${product.Slug}`,
-        pathname: `/product/${product.Slug}`,
-        //query: { product: JSON.stringify(product) },
-      }, undefined, { shallow: true });
+    
+    const url =   `/product/${product.Slug}`;
+    router.push(url);
        
       };
 
