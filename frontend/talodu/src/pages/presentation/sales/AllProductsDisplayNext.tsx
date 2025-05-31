@@ -1,19 +1,15 @@
 import React, { useEffect, useState } from 'react';
-//import { useNavigate } from 'react-router-dom';
 import { useRouter } from 'next/router';
 import { User, Product, ProductImage, Shop} from '../auth/types';
 import axios from 'axios';
 import { API_BASE_URL } from '../auth/api'
 import SubHeader, {
     SubHeaderLeft,
-    SubHeaderRight,
-    SubheaderSeparator,
+   
 } from '../../../layout/SubHeader/SubHeader';
 import Icon from '../../../components/icon/Icon';
 import Input from '../../../components/bootstrap/forms/Input';
-import Button from '../../../components/bootstrap/Button';
-import { handleViewProductDetailsLug } from '../sales/Navigation'
-import { demoPagesMenu } from '../../../menu';
+
 
 interface ImageDisplayProps {
   shop: Shop;
@@ -128,23 +124,14 @@ const AllProductsDisplay  = () => {
 
  
   const handleViewproductDetails = (product: Product) => {
-       //router.push(`../${demoPagesMenu.sales.subMenu.productID.path}/${product.Slug}`, { state: { product } })
-       router.push(`/product/${product.Slug}`)
-       //router.push(API_BASE_URL+`/${product.Slug}`, { state: { product } })
+       //router.push(`/product/${product.Slug}`)
+       router.push({
+        pathname: `/products/${product.Slug}`,
+        query: { product: JSON.stringify(product) },
+      }, undefined, { shallow: true });
        
       };
 
-  {/** 
-  if (!allImages || allImages.length === 0) {
-    return (
-      <div className="container-fluid mt-4">
-        
-        <h2 className="mb-4">Aucune image trouvée</h2>
-     
-      </div>
-    );
-  }
-*/}
   return (
     <div className="container-fluid mt-4">
       <h2 className="mb-4"> {allImages.length} images</h2>

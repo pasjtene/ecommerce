@@ -99,7 +99,9 @@ const ProductDetailNext = ({ product: initialProduct }: ProductDetailNextProps) 
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const API_URL2 = "http://127.0.0.1:8888"
+        //const API_URL2 = "http://127.0.0.1:8888"
+        const API_URL2 = "/api"
+
         const productId = id?.toString().split('-').pop();
         if (!productId) return;
 
@@ -132,10 +134,27 @@ const ProductDetailNext = ({ product: initialProduct }: ProductDetailNextProps) 
    // }
   }, [id, initialProduct]);
 
+
+  useEffect(() => {
+    // Check if product is in router query (from client-side navigation)
+    if (router.query.product) {
+      try {
+        setProduct(JSON.parse(router.query.product as string));
+      } catch (e) {
+        console.error('Error parsing product data', e);
+      }
+    } else {
+      // Fetch product if page is refreshed or accessed directly
+      fetchProduct(id?.toString().split('-').pop() as string);
+    }
+  }, [id, router.query.product]);
+
   const fetchProduct = async (productId: string) => {
     try {
       setLoading(true);
-      const API_URL2 = "http://127.0.0.1:8888"
+      //const API_URL2 = "http://127.0.0.1:8888"
+      const API_URL2 = "/api"
+
       const response = await axios.get<{ product: Product; shop: Shop }>(
         `${API_URL2}/products/${productId}`,
         //`${API_BASE_URL}/products/${productId}`,
