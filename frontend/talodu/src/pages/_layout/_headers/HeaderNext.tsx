@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router'; // <-- IMPORTANT: Use Next.js useRouter
 //import Link from 'next/link';         // <-- IMPORTANT: Use Next.js Link for navigation

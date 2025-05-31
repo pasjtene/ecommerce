@@ -286,7 +286,7 @@ const ProductDetailNext = ({ product, error: propError }: ProductDetailNextProps
         ) : (
             <>
         
-        <HeaderNext/>
+        
         <div className='row'>
           <div className='col-md-6 col-lg-6 col-sm-6'>
             <Button color='info' onClick={() => router.back()}>

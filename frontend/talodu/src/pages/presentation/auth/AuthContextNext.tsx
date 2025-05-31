@@ -1,5 +1,5 @@
 // presentation/auth/AuthContext.tsx
-
+"use client"
 import React, { createContext, useCallback, useContext, useState, useEffect, ReactNode } from "react";
 import axios from 'axios';
 import { Shop } from './types'
