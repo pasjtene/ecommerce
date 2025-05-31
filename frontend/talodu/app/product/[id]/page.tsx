@@ -6,12 +6,12 @@ import axios from 'axios';
 import { Product } from '../../../src/pages/presentation/auth/types'; // Import necessary types
 import ProductDetailsClient from './ProductDetailsClient'; // Import the new Client Component
 
-interface ProductPageProps {
-  params: {
-    id: string; // The dynamic segment from the URL, e.g., 'product-name-123'
-  };
+//interface ProductPageProps {
+ // params: {
+  //  id: string; // The dynamic segment from the URL, e.g., 'product-name-123'
+ // };
   // searchParams: { [key: string]: string | string[] | undefined }; // If you use search params
-}
+//}
 
 // --- Data Fetching for Metadata and Page Content ---
 async function getProduct(id: string): Promise<Product | null> {
@@ -34,15 +34,15 @@ async function getProduct(id: string): Promise<Product | null> {
 }
 
 // --- Dynamic Metadata Generation (Server-Side) ---
-export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
-  const product = await getProduct(params.id);
-
-  if (!product) {
-    return {
-      title: 'Product Not Found | Talodu',
-      description: 'The requested product could not be found.',
-    };
-  }
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+    const product = await getProduct(params.id);
+  
+    if (!product) {
+      return {
+        title: 'Product Not Found | Talodu',
+        description: 'The requested product could not be found.',
+      };
+    }
 
   const metadataBase = new URL('https://talodu.com');
 
@@ -78,22 +78,21 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   };
 }
 
+
 // --- Page Component (Server Component) ---
-export default async function ProductDetailPage({ params }: ProductPageProps) {
-  const product = await getProduct(params.id);
-
-  if (!product) {
-    // Next.js can handle `notFound()` in App Router for 404
-    // Alternatively, you can render a specific error UI
-    return (
-      <div className="container my-5 text-center">
-        <h1>Product Not Found</h1>
-        <p>The product you are looking for does not exist or is unavailable.</p>
-        <p><a href="/">Go back to homepage</a></p>
-      </div>
-    );
+// And here, directly type the destructured params:
+export default async function ProductDetailPage({ params }: { params: { id: string } }) {
+    const product = await getProduct(params.id);
+  
+    if (!product) {
+      return (
+        <div className="container my-5 text-center">
+          <h1>Product Not Found</h1>
+          <p>The product you are looking for does not exist or is unavailable.</p>
+          <p><a href="/">Go back to homepage</a></p>
+        </div>
+      );
+    }
+  
+    return <ProductDetailsClient initialProduct={product} />;
   }
-
-  // Pass the fetched product data to the Client Component
-  return <ProductDetailsClient initialProduct={product} />;
-}
