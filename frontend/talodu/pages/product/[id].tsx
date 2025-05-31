@@ -17,13 +17,10 @@ import showNotification from '../../src/components/extras/showNotification';
 import useDarkMode from '../../src/hooks/useDarkMode';
 import { Product, ProductImage, Shop } from '../../src/pages/presentation/auth/types'; // Ensure Shop is imported
 import axios from 'axios';
-import { API_BASE_URL } from '../../src/pages/presentation/auth/api';
-import ProductImageGallery from '../../src/pages/presentation/sales/ProductImageGallery';
 import { toast } from 'react-toastify';
 import Head from 'next/head';
 import Button from 'react-bootstrap/Button';
 import { GetServerSideProps } from 'next'; // Import GetServerSideProps type
-import  DashboardBookingHeader  from  '../../src/pages/_layout/_headers/DashboardBookingHeader'
 import HeaderNext from  '../../src/pages/_layout/_headers/HeaderNext'
 
 // --- Import dynamic for client-only components if needed ---
@@ -234,8 +231,8 @@ const ProductDetailNext = ({ product, error: propError }: ProductDetailNextProps
         </span>,
         'Product has been updated successfully',
       );
-      // In a real app, you'd send 'values' to your backend to update the product
-      // then likely refresh the currentProduct state or images if necessary.
+      // send 'values' to your backend to update the product
+      // then refresh the currentProduct state or images if necessary.
     },
   });
 
@@ -266,9 +263,11 @@ const ProductDetailNext = ({ product, error: propError }: ProductDetailNextProps
   return (
     <>
       <Head>
-        {/* Now product.name and product.description will be available on SSR */}
-        <meta name='description' content={`Buy ${product?.name} - ${product?.description}`} />
         <title>{product?.name} | Talodu</title>
+        <meta 
+          name="description" 
+          content={`Buy ${product?.name} - ${product?.description}`} 
+        />
       </Head>
 
       <PageWrapper>
@@ -450,6 +449,7 @@ export const getServerSideProps: GetServerSideProps<ProductDetailNextProps> = as
       `${API_URL}/products/${productId}`,
     );
     const productData = response.data.product;
+    console.log("The product data is: ",productData);
 
     if (!productData) {
       return {
