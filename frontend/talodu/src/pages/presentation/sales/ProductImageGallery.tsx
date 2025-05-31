@@ -15,7 +15,8 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[], prod
   const imageRef = useRef<HTMLDivElement>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Product>(product);
-  const API_URL2 = "http://127.0.0.1:8888"
+  //const API_URL2 = "http://127.0.0.1:8888"
+  const API_URL2 = "/api" //this should be routed to back end ip address via nginx proxy
  
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
