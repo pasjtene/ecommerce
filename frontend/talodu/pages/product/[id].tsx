@@ -1,4 +1,3 @@
-
 // pages/product/[id].tsx
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
@@ -7,24 +6,11 @@ import Page from '../../src/layout/Page/Page';
 import PageWrapper from '../../src/layout/PageWrapper/PageWrapper';
 import Card, {
   CardBody,
-  CardFooter,
-  CardFooterLeft,
-  CardFooterRight,
   CardHeader,
   CardLabel,
   CardSubTitle,
   CardTitle,
 } from '../../src/components/bootstrap/Card';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faUser,
-  faShoppingCart,
-  faSearch,
-  faCog,
-  faSignOutAlt,
-  faChevronDown,
-  faEdit
-} from '@fortawesome/free-solid-svg-icons';
 import Icon from '../../src/components/icon/Icon';
 import Input from '../../src/components/bootstrap/forms/Input';
 import showNotification from '../../src/components/extras/showNotification';
@@ -281,8 +267,8 @@ const ProductDetailNext = ({ product, error: propError }: ProductDetailNextProps
     <>
       <Head>
         {/* Now product.name and product.description will be available on SSR */}
-        <meta name='description' content={`Buy ${currentProduct.name} - ${currentProduct.description}`} />
-        <title>{currentProduct.name} | Talodu</title>
+        <meta name='description' content={`Buy ${product?.name} - ${product?.description}`} />
+        <title>{product?.name} | Talodu</title>
       </Head>
 
       <PageWrapper>

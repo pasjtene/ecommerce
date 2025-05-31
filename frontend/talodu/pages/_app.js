@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
+import '../src/pages/presentation/sales/ProductImageGallery.css'
 import { useEffect } from 'react';
 import { AuthProvider} from '../src/pages/presentation/auth/AuthContextNext';
 import { ToastContainer } from 'react-toastify'; // <-- ADD THIS LINE
