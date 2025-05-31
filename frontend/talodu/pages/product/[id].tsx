@@ -263,12 +263,16 @@ const ProductDetailNext = ({ product, error: propError }: ProductDetailNextProps
   return (
     <>
       <Head>
-        <title>{product?.name} | Talodu</title>
-        <meta 
-          name="description" 
-          content={`Buy ${product?.name} - ${product?.description}`} 
-        />
-      </Head>
+      <title>{product?.name || 'Product'} | Talodu</title>
+      <meta 
+        name="description" 
+        content={product?.description || 'Default product description'} 
+        key="description"
+      />
+      {/* Other important meta tags */}
+      <meta property="og:title" content={product?.name || 'Product'} key="og:title" />
+      <meta property="og:description" content={product?.description || 'Default product description'} key="og:description" />
+    </Head>
 
       <PageWrapper>
         <HeaderNext/>
