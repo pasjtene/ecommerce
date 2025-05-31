@@ -263,18 +263,29 @@ const ProductDetailNext = ({ product, error: propError }: ProductDetailNextProps
   return (
     <>
       <Head>
-      <title>{product?.name || 'Product'} | Talodu</title>
-      <meta 
-        name="description" 
-        content={product?.description || 'Default product description'} 
-        key="description"
-      />
-      {/* Other important meta tags */}
-      <meta property="og:title" content={product?.name || 'Product'} key="og:title" />
-      <meta property="og:description" content={product?.description || 'Default product description'} key="og:description" />
-    </Head>
+        <title>{product?.name || 'Product'} | Talodu</title>
+        <meta
+          name="description"
+          content={product?.description || 'Explore this product and more on Talodu, your online supermarket.'}
+          key="description" // Using key ensures it's replaced if props change
+        />
+        <meta property="og:title" content={product?.name || 'Product'} key="og:title" />
+        <meta property="og:description" content={product?.description || 'Explore this product and more on Talodu, your online supermarket.'} key="og:description" />
+        
+        {/* Add more Open Graph tags as needed, e.g., og:url, og:type */}
+      </Head>
 
       <PageWrapper>
+        <HeaderNext/>
+        {loading ? (
+            <div>Loading product details...</div>
+        ) : displayError ? (
+            <div>Error: {displayError}</div>
+        ) : !currentProduct ? (
+            <div>Product not found</div>
+        ) : (
+            <>
+        
         <HeaderNext/>
         <div className='row'>
           <div className='col-md-6 col-lg-6 col-sm-6'>
@@ -398,6 +409,8 @@ const ProductDetailNext = ({ product, error: propError }: ProductDetailNextProps
             </div>
           </div>
         </Page>
+        </>
+        )}
         <div className="card h-100 mt-4 "
              style={{ 
                 border: 'none',
