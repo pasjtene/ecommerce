@@ -458,7 +458,8 @@ export const getServerSideProps: GetServerSideProps<ProductDetailNextProps> = as
 
   try {
     //const API_URL = process.env.API_BASE_URL || "http://127.0.0.1:8888"; // Use environment variable
-    const API_URL = "/api"
+    // /api is used for proxy. This request is going directly to the backend so must tartget the destination server
+    const API_URL = "http://127.0.0.1:8888"
     const response = await axios.get<{ product: Product; shop: Shop }>(
       `${API_URL}/products/${productId}`,
     );
