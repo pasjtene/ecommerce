@@ -127,7 +127,7 @@ const AllProductsDisplay  = () => {
        //router.push(`/product/${product.Slug}`)
        router.push({
         pathname: `/products/${product.Slug}`,
-        query: { product: JSON.stringify(product) },
+        //query: { product: JSON.stringify(product) },
       }, undefined, { shallow: true });
        
       };

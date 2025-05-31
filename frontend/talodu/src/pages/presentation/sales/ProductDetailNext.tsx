@@ -137,15 +137,17 @@ const ProductDetailNext = ({ product: initialProduct }: ProductDetailNextProps) 
 
   useEffect(() => {
     // Check if product is in router query (from client-side navigation)
-    if (router.query.product) {
+    if (router.query) {
+      //if (router.query.product) {
       try {
         setProduct(JSON.parse(router.query.product as string));
+        console.log("The query id is: ",router.query)
       } catch (e) {
         console.error('Error parsing product data', e);
       }
     } else {
       // Fetch product if page is refreshed or accessed directly
-      fetchProduct(id?.toString().split('-').pop() as string);
+     // fetchProduct(id?.toString().split('-').pop() as string);
     }
   }, [id, router.query.product]);
 
