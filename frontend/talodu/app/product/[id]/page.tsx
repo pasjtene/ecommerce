@@ -31,8 +31,8 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   const product = await getProduct(resolvedParams.id);
   
   return {
-    title: product ? `${product.name} | Talodu.com | by ${product.shop.name}` : 'Product Not Found | Talodu.com',
-    description: product ? `${product.description} | Talodu.com | by ${product.shop.name}` : 'Product Not Found | Talodu.com',
+    title: product ? `${product.name} | Talodu.com - Otantic Packaging | by ${product.shop.name}` : 'Product Not Found | Talodu.com',
+    description: product ? `${product.description} | Talodu.com - Otantic Packaging | by ${product.shop.name}` : 'Product Not Found | Talodu.com',
     //description: `product?.description + 'by' + ${product.shop.name}` || 'The requested product could not be found.',
     ...(product ? {
       openGraph: {
