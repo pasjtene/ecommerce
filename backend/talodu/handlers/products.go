@@ -217,7 +217,7 @@ func GetProduct(db *gorm.DB) gin.HandlerFunc {
 		var product models.Product
 		id := c.Param("id")
 
-		if err := db.First(&product, id).Error; err != nil {
+		if err := db.Preload("Images").First(&product, id).Error; err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
 			return
 		}
