@@ -39,7 +39,8 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
         url: `https://talodu.com/product/${resolvedParams.id}`,
         siteName: 'Talodu.com',
         images: product.images?.[0]?.url ? [{
-          url: SITE_NAME+product.images[0].url,
+          //url: SITE_NAME+product.images[0].url,
+          url: `https://talodu.com${product.images[0].url}`,
           alt: product.images[0].altText || product.name,
         }] : [],
       },
@@ -47,7 +48,7 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
         card: 'summary_large_image',
         title: product.name,
         description: product.description || `Discover ${product.name} on Talodu`,
-        images: SITE_NAME+product.images?.[0]?.url ? [product.images[0].url] : [],
+        images: product.images?.[0]?.url ? [SITE_NAME+product.images[0].url] : [],
       }
     } : {})
   };
