@@ -27,18 +27,19 @@ async function getProduct(id: string): Promise<Product | null> {
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
   const resolvedParams = await params;
+  const SITE_NAME = "https://talodu.com";
   const product = await getProduct(resolvedParams.id);
   
   return {
-    title: product ? `${product.name} | Talodu` : 'Product Not Found | Talodu',
+    title: product ? `${product.name} | Talodu.com` : 'Product Not Found | Talodu',
     description: product?.description || 'The requested product could not be found.',
     ...(product ? {
       openGraph: {
         type: 'website',
         url: `https://talodu.com/product/${resolvedParams.id}`,
-        siteName: 'Talodu',
+        siteName: 'Talodu.com',
         images: product.images?.[0]?.url ? [{
-          url: product.images[0].url,
+          url: SITE_NAME+product.images[0].url,
           alt: product.images[0].altText || product.name,
         }] : [],
       },
@@ -46,7 +47,7 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
         card: 'summary_large_image',
         title: product.name,
         description: product.description || `Discover ${product.name} on Talodu`,
-        images: product.images?.[0]?.url ? [product.images[0].url] : [],
+        images: SITE_NAME+product.images?.[0]?.url ? [product.images[0].url] : [],
       }
     } : {})
   };
