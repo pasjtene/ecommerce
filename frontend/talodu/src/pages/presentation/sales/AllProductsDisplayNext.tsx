@@ -215,7 +215,6 @@ const AllProductsDisplay  = () => {
 
         <div className='m-4'>Toutes les images</div>
 
-
     {(allImages?.length > 0) && (
       <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
         {allImages.map((image) => (

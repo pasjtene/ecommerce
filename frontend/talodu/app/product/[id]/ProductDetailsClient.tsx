@@ -16,7 +16,7 @@ import Icon from '../../../src/components/icon/Icon';
 import Input from '../../../src/components/bootstrap/forms/Input';
 import showNotification from '../../../src/components/extras/showNotification';
 import useDarkMode from '../../../src/hooks/useDarkMode';
-import { Product, ProductImage } from '../../../src/pages/presentation/auth/types'; // Note: Shop type might not be needed here directly
+import { Product, ProductImage, Shop } from '../../../src/pages/presentation/auth/types'; // Note: Shop type might not be needed here directly
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Button from 'react-bootstrap/Button';
@@ -141,6 +141,11 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
     }
   };
 
+  const handleShopNameClick = (shop:Shop) => {
+    const API_URL = "/api"
+    router.push(`${API_URL}/shop/${shop.ID}`);
+  }
+
   const handleUpload = async () => {
     if (files.length === 0 || !currentProduct?.ID) return;
 
@@ -260,7 +265,9 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
             </div>
 
             <Page>
-              <a className='text-decoration-none display-6 py-3 text-danger' style={{ cursor: 'pointer' }}>
+              <a className='text-decoration-none display-6 py-3 text-danger'
+              onClick={()=>{handleShopNameClick(currentProduct?.shop)}} 
+              style={{ cursor: 'pointer' }}>
                 By {currentProduct?.shop?.name || 'Unknown Shop'}
               </a>
               <div className='display-4 fw-bold py-3'>{currentProduct?.name}</div>
