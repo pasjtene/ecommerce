@@ -171,6 +171,13 @@ func GetShopProducts(db *gorm.DB) gin.HandlerFunc {
 		shopID := c.Param("id")
 		var products []models.Product
 
+		var shop models.Shop
+		if err := db.
+			First(&shop, shopID).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch updated shop"})
+			return
+		}
+
 		query := db.
 			Preload("Images").
 			Preload("Categories").
@@ -207,6 +214,7 @@ func GetShopProducts(db *gorm.DB) gin.HandlerFunc {
 
 		c.JSON(http.StatusOK, gin.H{
 			"products": products,
+			"shop":     shop,
 		})
 	}
 }

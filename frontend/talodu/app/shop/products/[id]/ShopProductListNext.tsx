@@ -1,36 +1,45 @@
+'use client';
 import React, { useState, useReducer, useEffect, useMemo} from 'react';
-import PageWrapper from '../../../layout/PageWrapper/PageWrapper';
-import Page from '../../../layout/Page/Page';
-import Card, { CardBody } from '../../../components/bootstrap/Card';
-import Button from '../../../components/bootstrap/Button';
-import useDarkMode from '../../../hooks/useDarkMode';
+import PageWrapper from '../../../../src/layout/PageWrapper/PageWrapper';
+import Page from '../../../../src/layout/Page/Page';
+import Card, { CardBody } from '../../../../src/components/bootstrap/Card';
+import Button from '../../../../src/components/bootstrap/Button';
 import axios from 'axios'
-import { useNavigate, Link, useLocation, useParams } from 'react-router-dom';
-import { updateUser, API_BASE_URL } from '../auth/api'
-import { Shop, ShopUser, Product, User } from '../auth/types'
+import { useLocation, useParams } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
+import { updateUser, API_BASE_URL } from '../../../../src/pages/presentation/auth/api'
+import { Shop, ShopUser, Product, User } from '../../../../src/pages/presentation/auth/types'; 
 import { toast } from 'react-toastify';
-import ImageDisplayComponent from './ImageDisplayComponent'
-import ProductAddComponent from './ProductAddComponent'
-import { useAuth } from '../../presentation/auth/AuthContext';
-import { demoPagesMenu } from '../../../menu';
+import ProductAddComponent from '../../../../src/pages/presentation/sales/ProductAddComponent'; 
+import ImageDisplayComponent from '../../../../src/pages/presentation/sales//ImageDisplayComponent'
+import { useAuth } from '../../../../src/pages/presentation/auth/AuthContext';
 
 
   interface LocationState {
     shop?: Shop;
   }
 
+  interface ProductDetailsClientProps {
+    initialProduct: Product[]; // Pass the fetched product from the Server Component
+  }
 
-const ShopProductList = () => {
-    const { darkModeStatus } = useDarkMode();
+  interface ShopDetailsClientProps {
+    shop: Shop; // Pass the fetched product from the Server Component
+  }
+
+
+    const ShopProductList = ({ shop }: ShopDetailsClientProps) => {
+    //const { darkModeStatus } = useDarkMode();
     const { id } = useParams<{ id: string }>();
     const [isAddingProduct, setisAddingProduct] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const { user, loaddata, isShopOwner, isShopEmployee} = useAuth();
     const [, forceUpdate] = useReducer(x => x + 1, 0);
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
+    const router = useRouter();
 
 
-    const [shop, setShop] = useState<Shop>({
+    const [shop1, setShop] = useState<Shop>({
         ID: 0,
         name: '',
         Slug: '',
@@ -67,13 +76,23 @@ const ShopProductList = () => {
 
   const handleCreateShop = () => {
    
-    navigate(`../${demoPagesMenu.sales.subMenu.shopCreate.path}`, { state:  { user } })
+    //navigate(`../${demoPagesMenu.sales.subMenu.shopCreate.path}`, { state:  { user } })
+    //const url =   `/product/${product.Slug}`;
+      //router.push(url);
     
   }
 
+  const handleViewproductDetails = (product: Product) => {
+      const url =   `/product/${shop.Slug}`;
+      router.push(url);
+         
+        };
+
+  
+
   const handleManageShop = () => {
    
-    navigate(`../${demoPagesMenu.sales.subMenu.shopsList.path}`, { state:  { user } })
+   // navigate(`../${demoPagesMenu.sales.subMenu.shopsList.path}`, { state:  { user } })
     
   }
 
@@ -150,7 +169,7 @@ const ShopProductList = () => {
 
      // Handle view details
             const handleViewDetailsLug = (product: Product) => {
-              navigate(`../${demoPagesMenu.sales.subMenu.productID.path}/${product.Slug}`, { state: { product } })
+             // navigate(`../${demoPagesMenu.sales.subMenu.productID.path}/${product.Slug}`, { state: { product } })
             };
 
     const handleSave = async (updatedProduct: Product) => {

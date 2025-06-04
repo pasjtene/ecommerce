@@ -16,10 +16,6 @@ interface ImageDisplayProps {
   shop: Shop;
 }
 
-
-
-
-
 const AllProductsDisplay  = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
@@ -127,7 +123,6 @@ const AllProductsDisplay  = () => {
 
  
   const handleViewproductDetails = (product: Product) => {
-    
     const url =   `/product/${product.Slug}`;
     router.push(url);
        
