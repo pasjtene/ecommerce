@@ -45,7 +45,7 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
                     search: search.length > 0 ? search : undefined 
                 },
                 headers: {
-                  //Authorization: `Bearer ${jwtToken}`, // Include the JWT token in the Authorization header
+                  //Authorization: `Bearer ${jwtToken}`, // Include the JWT token in the Authorization heade
                   //Authorization: `${jwtToken}`, // Include the JWT token in the Authorization header
                 },
               });

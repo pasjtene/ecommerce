@@ -8,4 +8,4 @@ frontend/talodu/.env
 **/node_modules/
 backend/talodu/uploads
 ./backend/talodu/uploads
-**/uploads/
+**/uploads/frontend/talodu/.savenext/cache/
