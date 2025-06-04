@@ -12,7 +12,7 @@ import { Shop, ShopUser, Product, User } from '../../../../src/pages/presentatio
 import { toast } from 'react-toastify';
 import ProductAddComponent from '../../../../src/pages/presentation/sales/ProductAddComponent'; 
 import ImageDisplayComponent from '../../../../src/pages/presentation/sales//ImageDisplayComponent'
-import { useAuth } from '../../../../src/pages/presentation/auth/AuthContext';
+import { useAuth, AuthProvider } from '../../../../src/pages/presentation/auth/AuthContext';
 
 
   interface LocationState {
@@ -209,6 +209,7 @@ import { useAuth } from '../../../../src/pages/presentation/auth/AuthContext';
     }
 
     return (
+        <AuthProvider>
         <PageWrapper title={shop.name}>
                
             <Page>
@@ -251,8 +252,6 @@ import { useAuth } from '../../../../src/pages/presentation/auth/AuthContext';
                     </Button>
             </div>
             )}
-            
-            
             </div>
               
 
@@ -303,6 +302,7 @@ import { useAuth } from '../../../../src/pages/presentation/auth/AuthContext';
             </Page>
             
         </PageWrapper>
+        </AuthProvider>
     );
 };
 

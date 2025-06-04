@@ -143,7 +143,7 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
 
   const handleShopNameClick = (shop:Shop) => {
     const API_URL = "/api"
-    router.push(`${API_URL}/shop/${shop.ID}`);
+    router.push(`/shop/products/${shop.ID}`);
   }
 
   const handleUpload = async () => {
