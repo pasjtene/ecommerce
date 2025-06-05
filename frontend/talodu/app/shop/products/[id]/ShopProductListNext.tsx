@@ -11,10 +11,9 @@ import { updateUser, API_BASE_URL } from '../../../../src/pages/presentation/aut
 import { Shop, ShopUser, Product, User } from '../../../../src/pages/presentation/auth/types'; 
 import { toast } from 'react-toastify';
 //import ProductAddComponent from '../../../../src/pages/presentation/sales/ProductAddComponent'; 
-//import ImageDisplayComponent from '../../../../src/pages/presentation/sales/ImageDisplayComponent'
 import ImageDisplayComponent from './ImageDisplayComponentNext'
-//import { useAuth, AuthProvider } from '../../../../src/pages/presentation/auth/AuthContext';
 import { useAuth, AuthProvider } from '../../../AuthContextNext';
+import HeaderNext from '../../../HeaderNext';
 
 
   interface LocationState {
@@ -214,7 +213,7 @@ import { useAuth, AuthProvider } from '../../../AuthContextNext';
     return (
         
         <PageWrapper title={shop.name}>
-               
+               <HeaderNext/>
             <Page>
             <div className='row'>
             {isShopOwner(shop) &&(
