@@ -20,7 +20,8 @@ import { Product, ProductImage, Shop } from '../../../src/pages/presentation/aut
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Button from 'react-bootstrap/Button';
-import HeaderNext from '../../../src/pages/_layout/_headers/HeaderNext';
+//import HeaderNext from '../../../src/pages/_layout/_headers/HeaderNext';
+import HeaderNext from '../../HeaderNext';
 
 // Dynamic import for client-only components
 import dynamic from 'next/dynamic';
@@ -142,8 +143,13 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
   };
 
   const handleShopNameClick = (shop:Shop) => {
-    const API_URL = "/api"
-    router.push(`/shop/products/${shop.ID}`);
+    console.log("The shop is:",shop);
+    if(shop.Slug) {
+      router.push(`/shop/products/${shop.Slug}`);
+    } else {
+      router.push(`/shop/products/${shop.ID}`);
+    }
+    
   }
 
   const handleUpload = async () => {

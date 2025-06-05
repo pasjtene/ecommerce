@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import dayjs from 'dayjs';
 import classNames from 'classnames';
@@ -15,7 +16,7 @@ import { demoPagesMenu } from '../../menu';
 import Chart, { IChartOptions } from '../../components/extras/Chart';
 import useDarkMode from '../../hooks/useDarkMode';
 
-const CommonPercentageOfLoadChart = () => {
+const CommonPercentageOfLoadChart1 = () => {
 	const { darkModeStatus } = useDarkMode();
 	const percentageOfLoad: IChartOptions = {
 		series: [
@@ -121,4 +122,4 @@ const CommonPercentageOfLoadChart = () => {
 	);
 };
 
-export default CommonPercentageOfLoadChart;
+export default CommonPercentageOfLoadChart1;

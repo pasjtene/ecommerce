@@ -1,3 +1,4 @@
+'use client';
 import { useState, useEffect } from 'react';
 import { User, Role, Product, Shop, ProductCategory } from '../auth/types'
 import axios from 'axios';

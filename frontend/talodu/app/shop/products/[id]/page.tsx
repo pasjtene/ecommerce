@@ -2,9 +2,10 @@
 import React from 'react';
 import { Metadata } from 'next';
 import axios from 'axios';
-import { Product, Shop } from '../../../../src/pages/presentation/auth/types';
+//import { Product, Shop } from '../../../../src/pages/presentation/auth/types';
+import { Product, Shop } from '../../../types';
 //import ProductDetailsClient from './ShopProductListNext';
-import ShopProductList from './ShopProductListNext';
+import ShopProductListNext from './ShopProductListNext';
 
 
 // Define the expected params type
@@ -71,7 +72,7 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
     );
   }
 
-  return <ShopProductList shop={shop} />;
+  return <ShopProductListNext shop={shop} />;
 
 
 }

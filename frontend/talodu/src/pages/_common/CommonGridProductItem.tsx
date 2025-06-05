@@ -1,3 +1,4 @@
+'use client';
 import React, { FC } from 'react';
 import { ApexOptions } from 'apexcharts';
 import Card, {
@@ -34,7 +35,7 @@ interface ICommonGridProductItemProps {
 	editAction: any;
 	deleteAction: any;
 }
-const CommonGridProductItem: FC<ICommonGridProductItemProps> = ({
+const CommonGridProductItem1: FC<ICommonGridProductItemProps> = ({
 	id,
 	name,
 	category,
@@ -173,4 +174,4 @@ const CommonGridProductItem: FC<ICommonGridProductItemProps> = ({
 	);
 };
 
-export default CommonGridProductItem;
+export default CommonGridProductItem1;

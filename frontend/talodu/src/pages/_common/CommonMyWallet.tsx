@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 // @ts-ignore
 import ReactCreditCards, { Focused } from 'react-credit-cards-2';

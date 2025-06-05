@@ -1,3 +1,4 @@
+'use client';
 import React, { FC, useState } from 'react';
 import classNames from 'classnames';
 import dayjs from 'dayjs';
@@ -38,7 +39,7 @@ import useDarkMode from '../../hooks/useDarkMode';
 interface ICommonUpcomingEventsProps {
 	isFluid?: boolean;
 }
-const CommonUpcomingEvents: FC<ICommonUpcomingEventsProps> = ({ isFluid }) => {
+const CommonUpcomingEvents1: FC<ICommonUpcomingEventsProps> = ({ isFluid }) => {
 	const { themeStatus, darkModeStatus } = useDarkMode();
 
 	// BEGIN :: Upcoming Events
@@ -416,4 +417,4 @@ const CommonUpcomingEvents: FC<ICommonUpcomingEventsProps> = ({ isFluid }) => {
 	);
 };
 
-export default CommonUpcomingEvents;
+export default CommonUpcomingEvents1;

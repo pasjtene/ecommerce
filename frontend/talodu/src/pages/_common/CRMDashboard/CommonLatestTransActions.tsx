@@ -1,3 +1,4 @@
+'use client';
 import React, { FC } from 'react';
 import dayjs from 'dayjs';
 import classNames from 'classnames';

@@ -1,3 +1,4 @@
+'use client';
 import React, { FC } from 'react';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
@@ -23,7 +24,7 @@ interface ICommonTableRowProps {
 	selectChecked: any;
 	selectName: string;
 }
-const CommonTableRow: FC<ICommonTableRowProps> = ({
+const CommonTableRow1: FC<ICommonTableRowProps> = ({
 	id,
 	image,
 	name,
@@ -149,4 +150,4 @@ const CommonTableRow: FC<ICommonTableRowProps> = ({
 	);
 };
 
-export default CommonTableRow;
+export default CommonTableRow1;

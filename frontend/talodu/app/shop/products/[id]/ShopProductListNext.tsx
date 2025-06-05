@@ -5,14 +5,16 @@ import Page from '../../../../src/layout/Page/Page';
 import Card, { CardBody } from '../../../../src/components/bootstrap/Card';
 import Button from '../../../../src/components/bootstrap/Button';
 import axios from 'axios'
-import { useLocation, useParams } from 'react-router-dom';
+//import { useLocation, useParams } from 'react-router-dom';
 import { useRouter } from 'next/navigation';
 import { updateUser, API_BASE_URL } from '../../../../src/pages/presentation/auth/api'
 import { Shop, ShopUser, Product, User } from '../../../../src/pages/presentation/auth/types'; 
 import { toast } from 'react-toastify';
-import ProductAddComponent from '../../../../src/pages/presentation/sales/ProductAddComponent'; 
-import ImageDisplayComponent from '../../../../src/pages/presentation/sales//ImageDisplayComponent'
-import { useAuth, AuthProvider } from '../../../../src/pages/presentation/auth/AuthContext';
+//import ProductAddComponent from '../../../../src/pages/presentation/sales/ProductAddComponent'; 
+//import ImageDisplayComponent from '../../../../src/pages/presentation/sales/ImageDisplayComponent'
+import ImageDisplayComponent from './ImageDisplayComponentNext'
+//import { useAuth, AuthProvider } from '../../../../src/pages/presentation/auth/AuthContext';
+import { useAuth, AuthProvider } from '../../../AuthContextNext';
 
 
   interface LocationState {
@@ -28,15 +30,16 @@ import { useAuth, AuthProvider } from '../../../../src/pages/presentation/auth/A
   }
 
 
-    const ShopProductList = ({ shop }: ShopDetailsClientProps) => {
+    const ShopProductListNext = ({ shop }: ShopDetailsClientProps) => {
     //const { darkModeStatus } = useDarkMode();
-    const { id } = useParams<{ id: string }>();
+    //const { id } = useParams<{ id: string }>();
     const [isAddingProduct, setisAddingProduct] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const { user, loaddata, isShopOwner, isShopEmployee} = useAuth();
     const [, forceUpdate] = useReducer(x => x + 1, 0);
     //const navigate = useNavigate();
     const router = useRouter();
+    const [stateShop, setStateShop] = useState<Shop>(shop); 
 
 
     const [shop1, setShop] = useState<Shop>({
@@ -52,7 +55,7 @@ import { useAuth, AuthProvider } from '../../../../src/pages/presentation/auth/A
         City: ''
       });
     
-    const { state } = useLocation();
+    //const { state } = useLocation();
 
     const useDropdownActions = () => {
     const handleActionClick = (e: React.MouseEvent<HTMLDivElement>, action: () => void) => {
@@ -103,8 +106,8 @@ import { useAuth, AuthProvider } from '../../../../src/pages/presentation/auth/A
 
 
     useEffect(() => {
-        const stateShop = state?.shop;
-        console.log("Shop owner",state?.shop.owner)
+        //const stateShop = state?.shop;
+        //console.log("Shop owner",state?.shop.owner)
         console.log("The user in shop products list is: ",user)
         if (stateShop) {
         // if (stateProduct && stateProduct.Slug === slug) {
@@ -112,12 +115,12 @@ import { useAuth, AuthProvider } from '../../../../src/pages/presentation/auth/A
         setShop(stateShop);
         setLoading(false);
         } else {
-            const shopid = id?.split('-').pop();
-            if (!shopid) {
+           // const shopid = id?.split('-').pop();
+            //if (!shopid) {
             setError('Invalid product URL');
             return;
-            }
-            fetchShop(shopid);
+           // }
+            //fetchShop(shopid);
         }
     }, []);
 
@@ -209,7 +212,7 @@ import { useAuth, AuthProvider } from '../../../../src/pages/presentation/auth/A
     }
 
     return (
-        <AuthProvider>
+        
         <PageWrapper title={shop.name}>
                
             <Page>
@@ -254,8 +257,8 @@ import { useAuth, AuthProvider } from '../../../../src/pages/presentation/auth/A
             )}
             </div>
               
-
-            <div className="container mt-4">
+            {/**
+             * <div className="container mt-4">
                 {isAddingProduct ? (
                 <ProductAddComponent 
                     shop={shop}
@@ -265,6 +268,8 @@ import { useAuth, AuthProvider } from '../../../../src/pages/presentation/auth/A
                 ) : (<></>)
                 }
             </div>
+             */}
+            
           
                 <div className='row h-100'>
                     <div className='col-12'>
@@ -302,8 +307,8 @@ import { useAuth, AuthProvider } from '../../../../src/pages/presentation/auth/A
             </Page>
             
         </PageWrapper>
-        </AuthProvider>
+       
     );
 };
 
-export default ShopProductList;
+export default ShopProductListNext;

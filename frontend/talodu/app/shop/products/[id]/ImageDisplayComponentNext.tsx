@@ -1,30 +1,33 @@
+// ImageDisplayComponentNext.tsx
+'use client';
 import React, { useEffect, useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-//import { useParams } from 'next/navigation';
-import { User, Product, ProductImage, Shop} from '../auth/types';
+//import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
+import { User, Product, ProductImage, Shop} from '../../../types';
 import axios from 'axios';
-import { API_BASE_URL } from '../auth/api'
-import SubHeader, {
-    SubHeaderLeft,
-   
-} from '../../../layout/SubHeader/SubHeader';
-import Icon from '../../../components/icon/Icon';
-import Input from '../../../components/bootstrap/forms/Input';
+//import { API_BASE_URL } from '../auth/api'
 
+//import Icon from '../../../components/icon/Icon';
+//import Input from '../../../components/bootstrap/forms/Input';
+//import Button from '../../../components/bootstrap/Button';
+import Icon from 'react-bootstrap/Button';
+import Button from 'react-bootstrap/Button';
+//import { demoPagesMenu } from '../../../menu';
 
 interface ImageDisplayProps {
   shop: Shop;
 }
 
-const AllProductsDisplay  = () => {
+
+
+const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [hoveredCard, setHoveredCard] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
-    const [API_BASE_URL, setApibaseUrl] = useState<string | null>(null);
-    //const navigate = useNavigate();
     const router = useRouter();
+    //const [API_BASE_URL, setAPI_BASE_URL] = useState('');
     const [pagination, setPagination] = useState({
             page: 1,
             limit: 10,
@@ -32,18 +35,16 @@ const AllProductsDisplay  = () => {
             totalPages: 1
           });
 
+          const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8888";
+
       const fetchShopProducts = async (page = 1, limit = 10, search = ''):Promise<void> => {
             try {
-                //const API_BASE_URL = process.env.REACT_APP_API_PRODUCTION_BASE_URL || "/api";
-                const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
-                //const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8888";
-                 //const API_BASE_URL = "/api"
-                setApibaseUrl(API_BASE_URL);
-                    if (!API_BASE_URL) {
-                throw new Error("NEXT_PUBLIC_API_BASE_URL is not defined.");
-                }
-                    const response = await axios.get(API_BASE_URL+`/products`,{
-                        //const response = await axios.get(API_BASE_URL+`/shops/${shop.ID}/products`,{
+                //const response = await axios.get<ApiResponse>('/users',{
+                //const response = await axios.get<ApiResponse>(API_BASE_URL+'/users',{
+                    //const API_BASE_URL = process.env.API_BASE_URL || "http://127.0.0.1:8888";
+                    //const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8888";
+                    //setAPI_BASE_URL(API_BASE_URL);
+                    const response = await axios.get(API_BASE_URL+`/shops/${shop.ID}/products`,{
                 
                 params: { 
                     page,
@@ -51,7 +52,7 @@ const AllProductsDisplay  = () => {
                     search: search.length > 0 ? search : undefined 
                 },
                 headers: {
-                  //Authorization: `Bearer ${jwtToken}`, // Include the JWT token in the Authorization header
+                  //Authorization: `Bearer ${jwtToken}`, // Include the JWT token in the Authorization heade
                   //Authorization: `${jwtToken}`, // Include the JWT token in the Authorization header
                 },
               });
@@ -88,19 +89,13 @@ const AllProductsDisplay  = () => {
   
   
     useEffect(() => {
-       //const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8888";
-       const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
-       //console.log ("The process 2 is: ",process.env.API_BASE_URL);
-       console.log ("The process is: ", API_BASE_URL);
-         //const API_BASE_URL = "/api"; //This is the api for production
-                setApibaseUrl(API_BASE_URL);
-                    if (!API_BASE_URL) {
-                throw new Error("NEXT_PUBLIC_API_BASE_URL is not defined.");
-                }
+        //const API_BASE_URL = process.env.API_BASE_URL || "http://127.0.0.1:8888";
+        //const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8888";
+        //setAPI_BASE_URL(API_BASE_URL);
        
     fetchShopProducts(1, pagination.limit, searchTerm);
     
-  }, []);
+  }, [shop.ID]);
 
   if (loading) {
     return <div className="text-center my-5">Loading products...</div>;
@@ -110,8 +105,16 @@ const AllProductsDisplay  = () => {
     return <div className="alert alert-danger my-5">{error}</div>;
   }
 
-  const handleImageClick = (productSlug: string, productId: number) => {
-   // navigate(`/products/${productSlug || productId}`);
+  const handleImageClick1 = (productSlug: string, productId: number) => {
+    // navigate(`/products/${productSlug || productId}`);
+    //navigate(`../${demoPagesMenu.sales.subMenu.productID.path}/${product.Slug}`, { state: { product } })
+   
+   };
+
+   const handleImageClick = (product: Product) => {
+   router.push(`/product/${product.Slug}`);
+    //navigate(`../${demoPagesMenu.sales.subMenu.productID.path}/${product.Slug}`, { state: { product } })
+   
    };
 
 // Flatten all product images from the shop
@@ -121,21 +124,19 @@ const AllProductsDisplay  = () => {
       productName: product.name,
       productPrice: product.price,
       productSlug: product.Slug,
-      productId: product.ID
+      productId: product.ID,
+      product: product
     }))
   );
 
- 
-  const handleViewproductDetails = (product: Product) => {
-    const url =   `/product/${product.Slug}`;
-    router.push(url);
-       
-      };
-
-  return (
-    <div className="container-fluid mt-4">
-      <h2 className="mb-4"> {allImages.length} images</h2>
-      <SubHeader>
+  if (!allImages || allImages.length === 0) {
+    return (
+      <div className="container-fluid mt-4">
+        
+        <h2 className="mb-4">Aucune image trouvée</h2>
+        {/*
+        
+         <SubHeader>
             <SubHeaderLeft>
                 <label
                     className='border-0 bg-transparent cursor-pointer me-0'
@@ -147,7 +148,7 @@ const AllProductsDisplay  = () => {
                     //type='search'
                     type='text'
                     className='border-0 shadow-none bg-transparent'
-                    placeholder='search....'
+                    placeholder='Shop search....'
                     value={searchTerm}
                     onChange={(e:React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
                     
@@ -156,70 +157,39 @@ const AllProductsDisplay  = () => {
         
     </SubHeader>
 
-    {/** Products */}
-    <div className='m-4'>Tous les produits</div>
-    {(products?.length > 0) && (
-    <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-        {products.map((prod) => (
-          <div key={prod.ID} className="col">
-            <div className="card h-100 "
-             style={{ 
-                border: 'none',
-                cursor: 'pointer',
-                boxShadow: hoveredCard == prod.images[0]?.ID ? '0 0 20px rgba(13, 89, 219, 0.2)' : '0 0 15px rgba(0,0,0,0.2)',
-                transition: 'box-shadow 0.3s ease',
-                padding: hoveredCard == prod.images[0]?.ID ? '7px' : '12px', // Space between image and shadow
-              }}
-              onMouseEnter={() => setHoveredCard(prod.images[0]?.ID)}
-              onMouseLeave={() => setHoveredCard(null)}
-              //onClick={() => handleViewProductDetailsLug(prod)}
-              //onClick={() => handleViewProductDetailsLug(prod)}
-              onClick={() => handleViewproductDetails(prod)}
-              
-            
-            >
-              <img 
-               src={API_BASE_URL+prod.images[0]?.url}
-                alt={prod.images[0]?.altText || `Product: ${prod.name}`}
-                className="card-img-top img-fluid"
-                style={{ 
-                  height: '350px',
-                  objectFit: 'cover',
-                  width: '100%',
-                  borderRadius: '0'
-                }}
-              />
-              <div className="card-body">
-                <h5 className="card-title text-truncate">
-                  {prod.description || prod.name}
-                </h5>
-                <p className="card-text">
-                  <span className="fw-bold">
-                    {(prod.price).toFixed(0)} FCFA
-                  </span>
-                </p>
-                {prod.description && (
-                  <p className="card-text small text-muted">
-                    {prod.description}
-                  </p>
-                )}
-              </div>
-              {!prod.images[0] && (
-                <div className="card-footer bg-primary bg-opacity-10">
-                  <small className="text-primary">Pas d'image</small>
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>)}
+        */}
+     
+      </div>
+    );
+  }
 
-    {/** End product */}
+  return (
+    <div className="container-fluid mt-4">
+      <h2 className="mb-4"> {allImages.length} images</h2>
+{/**
+ *  <div>
+            <SubHeaderLeft>
+                <label
+                    className='border-0 bg-transparent cursor-pointer me-0'
+                    htmlFor='searchInput'>
+                    <Icon icon='Search' size='2x' color='primary' />
+                </label>
+                <Input
+                    id='searchInput'
+                    //type='search'
+                    type='text'
+                    className='border-0 shadow-none bg-transparent'
+                    placeholder='Shop search....'
+                    value={searchTerm}
+                    onChange={(e:React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+                    
+                />
+            </SubHeaderLeft>
+        
+    </div>
+ */}
+     
 
-
-        <div className='m-4'>Toutes les images</div>
-
-    {(allImages?.length > 0) && (
       <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
         {allImages.map((image) => (
           <div key={image.ID} className="col">
@@ -233,7 +203,8 @@ const AllProductsDisplay  = () => {
               }}
               onMouseEnter={() => setHoveredCard(image.ID)}
               onMouseLeave={() => setHoveredCard(null)}
-              onClick={() => handleImageClick(image.productSlug, image.productId)}
+              //onClick={() => handleImageClick(image.productSlug, image.productId)}
+              onClick={() => handleImageClick(image.product)}
             
             >
               <img 
@@ -270,9 +241,9 @@ const AllProductsDisplay  = () => {
             </div>
           </div>
         ))}
-      </div>)}
+      </div>
     </div>
   );
 };
 
-export default AllProductsDisplay;
+export default ImageDisplayComponent;

@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useRef, useState } from 'react';
 import { useHoverDirty } from 'react-use';
 import classNames from 'classnames';
@@ -33,7 +34,7 @@ import Dropdown, {
 } from '../../components/bootstrap/Dropdown';
 import useDarkMode from '../../hooks/useDarkMode';
 
-const CommonTransActions = () => {
+const CommonTransActions1 = () => {
 	const { themeStatus, darkModeStatus } = useDarkMode();
 
 	const ref = useRef<HTMLAnchorElement>(null);
@@ -562,4 +563,4 @@ const CommonTransActions = () => {
 	);
 };
 
-export default CommonTransActions;
+export default CommonTransActions1;

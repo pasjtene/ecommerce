@@ -5,7 +5,8 @@ import Head from 'next/head'; // For meta tags and page title
 import Footer from '../src/pages/presentation/footers/Footer'
 //import HeaderNext from  '../src/pages/_layout/_headers/HeaderNext'
 import AllProductDisplay from '../src/pages/presentation/sales/AllProductsDisplayNext'
-import HeaderNext from '../src/pages/_layout/_headers/HeaderNext';
+//import HeaderNext from '../src/pages/_layout/_headers/HeaderNext';
+import HeaderNext from './HeaderNext';
 
 
 const HomePage = () => {

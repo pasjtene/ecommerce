@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import dayjs from 'dayjs';
 import classNames from 'classnames';
@@ -15,7 +16,7 @@ import { demoPagesMenu } from '../../menu';
 import Chart, { IChartOptions } from '../../components/extras/Chart';
 import useDarkMode from '../../hooks/useDarkMode';
 
-const CommonApprovedAppointmentChart = () => {
+const CommonApprovedAppointmentChart1 = () => {
 	const { darkModeStatus } = useDarkMode();
 	const approvedAppointments: IChartOptions = {
 		series: [
@@ -133,4 +134,4 @@ const CommonApprovedAppointmentChart = () => {
 	);
 };
 
-export default CommonApprovedAppointmentChart;
+export default CommonApprovedAppointmentChart1;

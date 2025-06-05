@@ -1,9 +1,10 @@
+"use client"
 import React, { forwardRef, ReactElement, useContext, useEffect, useLayoutEffect } from 'react';
 import classNames from 'classnames';
 //import { useNavigate } from 'react-router-dom';
 import { ISubHeaderProps } from '../SubHeader/SubHeader';
 import { IPageProps } from '../Page/Page';
-import AuthContext from '../../contexts/authContext';
+//import AuthContext from '../../contexts/authContext';
 import { demoPagesMenu } from '../../menu';
 
 interface IPageWrapperProps {
@@ -35,13 +36,14 @@ const PageWrapper = forwardRef<HTMLDivElement, IPageWrapperProps>(
 				//?.setAttribute('content', description || process.env.REACT_APP_META_DESC || '');
 		});
 
-		const { user } = useContext(AuthContext);
+		//const { user } = useContext(AuthContext);
 
 		//const navigate = useNavigate();
 		useEffect(() => {
-			console.log("in useEffect route..user is:..",user)
-			if (isProtected && user === '') {
-				console.log("Protected route..user is:..",user)
+			//console.log("in useEffect route..user is:..",user)
+			//if (isProtected && user === '') {
+				if (isProtected ) {
+				//console.log("Protected route..user is:..",user)
 				//navigate(`../${demoPagesMenu.login.path}`);
 				
 			}
