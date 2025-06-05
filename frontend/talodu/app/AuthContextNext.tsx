@@ -150,10 +150,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     const login = async (email: string, password: string): Promise<User> => {
-        const API_BASE_URL = process.env.API_BASE_URL || "http://127.0.0.1:8888";
+        const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8888";
         console.log("The API base URL is: ",API_BASE_URL);
         try {
-            const API_BASE_URL = process.env.API_BASE_URL || "http://127.0.0.1:8888";
+            //const API_BASE_URL = process.env.API_BASE_URL || "http://127.0.0.1:8888";
             const response = await axios.post<{
                 access_token: string;
                 refresh_token: string;

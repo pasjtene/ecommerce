@@ -14,10 +14,10 @@ interface LoginProps {
   show: boolean;
   onClose: () => void;
   onSwitchToRegister: () => void;
-  url: string;
+  //url: string;
 }
 
-const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister, url }) => {
+const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -27,7 +27,9 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister, url })
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      //await login(email, password, url || "127.0.0.1:8888" );
+        if (typeof window !== 'undefined') {
+            await login(email, password);
+        }
       //await login(email, password, "127.0.0.1:8888" );
       onClose();
       toast.success('Succes vous etes connecté');

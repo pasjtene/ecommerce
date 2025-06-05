@@ -5,7 +5,6 @@ import Page from '../../../../src/layout/Page/Page';
 import Card, { CardBody } from '../../../../src/components/bootstrap/Card';
 import Button from '../../../../src/components/bootstrap/Button';
 import axios from 'axios'
-//import { useLocation, useParams } from 'react-router-dom';
 import { useRouter } from 'next/navigation';
 import { updateUser, API_BASE_URL } from '../../../../src/pages/presentation/auth/api'
 import { Shop, ShopUser, Product, User } from '../../../../src/pages/presentation/auth/types'; 
@@ -31,7 +30,6 @@ import HeaderNext from '../../../HeaderNext';
 
     const ShopProductListNext = ({ shop }: ShopDetailsClientProps) => {
     //const { darkModeStatus } = useDarkMode();
-    //const { id } = useParams<{ id: string }>();
     const [isAddingProduct, setisAddingProduct] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const { user, loaddata, isShopOwner, isShopEmployee} = useAuth();
@@ -237,7 +235,7 @@ import HeaderNext from '../../../HeaderNext';
                         color='primary'
                         isLight
                         onClick={() => {handleManageShop();}}>
-                        Gerer ma boutique
+                        Gerer ma boutique 
                     </Button>
                 </div>
 

@@ -249,7 +249,7 @@ const HeaderNext = () => {
                     show={true}
                     onClose={() => setShowAuthModal(null)}
                     onSwitchToRegister={() => setShowAuthModal('register')}
-                    url={process.env.API_BASE_URL || 'http://localhost:8888'}
+                   // url={process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8888'}
                 />
             )}
 
