@@ -9,3 +9,4 @@ frontend/talodu/.env
 backend/talodu/uploads
 ./backend/talodu/uploads
 **/uploads/frontend/talodu/.savenext/cache/
+frontend/talodu/.env.local
