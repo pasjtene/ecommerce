@@ -91,7 +91,9 @@ const HeaderNext = () => {
                             {/* Ensure Navbar.Brand's content is a single, direct child */}
                             <Navbar.Brand
                                 className="fw-bold fs-4 text-primary me-3"
-                                style={{ fontFamily: "'Pacifico', cursive", minWidth: '100px' }}
+                                style={{ fontFamily: "'Pacifico', cursive", 
+                                    minWidth: '100px', cursor: 'pointer', }}
+                                    onClick={()=>router.push("/")}
                             >
                                 {/* Wrap "Talodu" in a <span> or <div> to make it a single child */}
                                 <span>Talodu</span>

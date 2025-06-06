@@ -20,7 +20,6 @@ import { Product, ProductImage, Shop } from '../../../src/pages/presentation/aut
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Button from 'react-bootstrap/Button';
-import HeaderNext from '../../HeaderNext';
 
 // Dynamic import for client-only components
 import dynamic from 'next/dynamic';
@@ -254,15 +253,38 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
   return (
     <>
       <div>
-        <HeaderNext/>
+        
         {/* Removed redundant loading/error checks, assuming initialProduct is valid */}
         <>
             <div className='row'>
-              <div className='col-md-6 col-lg-6 col-sm-6'>
-                <Button color='info' onClick={() => router.back()}>
-                  Retour a la Liste
-                </Button>
-              </div>
+
+            <div className='col-md-4 col-6 ms-4 mt-2'>
+                <button
+
+                    className="bg-transparent border-0 p-0 text-primary"
+                    style={{
+                    cursor: 'pointer',
+                    textDecoration: 'none',
+                    transition: 'all 0.2s ease'
+                    }}
+                    onMouseOver={(e) => {
+                    e.currentTarget.style.textDecoration = 'underline';
+                    e.currentTarget.style.color = '#bd2130'; // darker red
+                    }}
+                    onMouseOut={(e) => {
+                        e.currentTarget.style.textDecoration = 'none';
+                        e.currentTarget.style.color = '#dc3545'; // original red
+                      }}
+                        
+                        //color='warning'
+                        //className="btn btn-warning me-2 mb-2"
+                        //isLight
+                        onClick={() => router.back()}>
+                        Retour a la Liste
+                    </button>
+                </div>
+
+
               <div className='col-lg-6 col-md-6 col-sm-6'>
                 <span className='text-muted fst-italic me-2'>Last update:</span>
                 <span className='fw-bold'>13 hours ago</span> {/* This needs to be dynamic */}

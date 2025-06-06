@@ -16,7 +16,6 @@ import { User, Role, Product, Shop } from '../../types';
 import { toast } from 'react-toastify';
 import { useAuth, AuthProvider } from '../../AuthContextNext';
 //import {  API_BASE_URL } from '../../api/api'
-import HeaderNext from '../../HeaderNext';
 
 interface ShopsResponse {
 	shops: Shop[];
@@ -187,7 +186,7 @@ const ShopsList = () => {
 					Authorization: `${jwtToken}`, // Include the JWT token in the Authorization header
 				},
 			});
-			console.log('The response shops: ', response.data.shops);
+			//console.log('The response shops: ', response.data.shops);
 			//console.log("The auth owner_id 2 is: ",owner_id);
 			setShops(response.data.shops);
 			setPagination({
@@ -439,7 +438,7 @@ const ShopsList = () => {
 
 	return (
 		<PageWrapper>
-			<HeaderNext />
+			
 			<Button color='info' isLink onClick={() => handleCreateShop()}>
 				Créer une boutique
 			</Button>

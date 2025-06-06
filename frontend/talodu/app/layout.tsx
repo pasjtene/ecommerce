@@ -5,6 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../src/pages/presentation/sales/ProductImageGallery.css'
 //import { AuthProvider} from '../src/pages/presentation/auth/AuthContextNext';
 import { AuthProvider} from './AuthContextNext';
+import HeaderNext from './HeaderNext';
+import './css/global.css'
 
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -12,6 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <AuthProvider>
+          <HeaderNext/>
           {/* Optional: Add a loading state */}
           {children}
         </AuthProvider>

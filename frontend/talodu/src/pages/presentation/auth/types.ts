@@ -15,7 +15,7 @@
       username: string;
       FirstName: string;
       LastName: string;
-      email: string;
+      Email: string;
       roles: Role[];
     }
 

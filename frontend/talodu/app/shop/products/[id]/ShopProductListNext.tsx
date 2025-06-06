@@ -7,12 +7,12 @@ import Button from '../../../../src/components/bootstrap/Button';
 import axios from 'axios'
 import { useRouter } from 'next/navigation';
 import { updateUser, API_BASE_URL } from '../../../../src/pages/presentation/auth/api'
-import { Shop, ShopUser, Product, User } from '../../../../src/pages/presentation/auth/types'; 
+import { Shop, ShopUser, Product, User } from '../../../types'; 
 import { toast } from 'react-toastify';
-//import ProductAddComponent from '../../../../src/pages/presentation/sales/ProductAddComponent'; 
+import ProductAddComponent from '../../../../src/pages/presentation/sales/ProductAddComponent'; 
 import ImageDisplayComponent from './ImageDisplayComponentNext'
 import { useAuth, AuthProvider } from '../../../AuthContextNext';
-import HeaderNext from '../../../HeaderNext';
+
 
 
   interface LocationState {
@@ -213,11 +213,11 @@ import HeaderNext from '../../../HeaderNext';
     return (
         
         <PageWrapper title={shop.name}>
-               <HeaderNext/>
+               
             <Page>
 
             <div className='row'>
-            <span>Le propriétaire de cette boutique c'est {shop.owner.FirstName} id: {shop.owner.ID} email: {shop.owner.email}</span> 
+            <span>Le propriétaire de cette boutique c'est {shop.owner.FirstName} id: {shop.owner.ID} email: {shop.owner.Email}</span> 
             {isShopOwner(shop) &&(
                 <div>
                     <span>Vous etes propriétaire de cette boutique</span> 
@@ -234,13 +234,29 @@ import HeaderNext from '../../../HeaderNext';
 
             {user && (
                 <div className='col-md-4 col-6 mt-4'>
-                <Button
+                <button
+
+                    className="bg-transparent border-0 p-0 text-danger"
+                    style={{
+                    cursor: 'pointer',
+                    textDecoration: 'none',
+                    transition: 'all 0.2s ease'
+                    }}
+                    onMouseOver={(e) => {
+                    e.currentTarget.style.textDecoration = 'underline';
+                    e.currentTarget.style.color = '#bd2130'; // darker red
+                    }}
+                    onMouseOut={(e) => {
+                        e.currentTarget.style.textDecoration = 'none';
+                        e.currentTarget.style.color = '#dc3545'; // original red
+                      }}
                         
-                        color='primary'
-                        isLight
+                        //color='warning'
+                        //className="btn btn-warning me-2 mb-2"
+                        //isLight
                         onClick={() => {handleManageShop();}}>
                         Gerer ma boutique 
-                    </Button>
+                    </button>
                 </div>
 
             )}
@@ -249,7 +265,7 @@ import HeaderNext from '../../../HeaderNext';
             <div className='col-md-4 col-6 mt-4'>
                     <Button
                         
-                        color='primary'
+                        color='danger'
                         isLight
                         onClick={() => {handleCreateShop();}}>
                         Créer ma boutique

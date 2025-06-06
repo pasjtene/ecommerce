@@ -6,7 +6,7 @@ import Footer from '../src/pages/presentation/footers/Footer'
 //import HeaderNext from  '../src/pages/_layout/_headers/HeaderNext'
 import AllProductDisplay from '../src/pages/presentation/sales/AllProductsDisplayNext'
 //import HeaderNext from '../src/pages/_layout/_headers/HeaderNext';
-import HeaderNext from './HeaderNext';
+
 
 
 const HomePage = () => {
@@ -65,7 +65,7 @@ const [opacity, setOpacity] = useState(1); // 1 for visible, 0 for hidden
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <HeaderNext /> {/* the header component */}
+      {/* the header component */}
 
       <main style={{ minHeight: '20vh', padding: '20px' }}>
         <h1>Bienvenue chez Talodu!</h1>

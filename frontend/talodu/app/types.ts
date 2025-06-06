@@ -5,7 +5,7 @@ export interface User {
     username: string;
     first_name: string;
     last_name: string;
-    email: string;
+    Email: string;
     roles: Role[];
   }
 
@@ -15,7 +15,7 @@ export interface User {
       username: string;
       FirstName: string;
       LastName: string;
-      email: string;
+      Email: string;
       roles: Role[];
     }
 
