@@ -5,15 +5,6 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { User, Product, ProductImage, Shop} from '../../../types';
 import axios from 'axios';
-//import { API_BASE_URL } from '../auth/api'
-
-//import Icon from '../../../components/icon/Icon';
-//import Input from '../../../components/bootstrap/forms/Input';
-//import Button from '../../../components/bootstrap/Button';
-import Icon from 'react-bootstrap/Button';
-import Button from 'react-bootstrap/Button';
-//import { demoPagesMenu } from '../../../menu';
-
 interface ImageDisplayProps {
   shop: Shop;
 }

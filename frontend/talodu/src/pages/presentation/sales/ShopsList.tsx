@@ -9,17 +9,15 @@ import SubHeader, {
 import Page from '../../../layout/Page/Page';
 import { demoPagesMenu } from '../../../menu';
 import Card, { CardBody } from '../../../components/bootstrap/Card';
-//import data from '../../../common/data/dummyCustomerData';
 import Button from '../../../components/bootstrap/Button';
 import Icon from '../../../components/icon/Icon';
-import Input from '../../../components/bootstrap/forms/Input';
+
 import Dropdown, {
     DropdownItem,
     DropdownMenu,
     DropdownToggle,
 } from '../../../components/bootstrap/Dropdown';
-import FormGroup from '../../../components/bootstrap/forms/FormGroup';
-import Checks, { ChecksGroup } from '../../../components/bootstrap/forms/Checks';
+
 import PAYMENTS from '../../../common/data/enumPaymentMethod';
 import useDarkMode from '../../../hooks/useDarkMode';
 import axios from 'axios'

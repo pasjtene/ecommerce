@@ -2,8 +2,8 @@
 import React from 'react';
 import { Metadata } from 'next';
 import axios from 'axios';
-import { Product, Shop } from '../../../types';
-import ShopProductListNext from './ShopProductListNext';
+import { Product, Shop } from '../../types';
+import ShopsList from './ShopListNext';
 
 
 // Define the expected params type
@@ -58,9 +58,10 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
 export default async function Page({ params }: { params: Promise<PageParams> }) {
   const resolvedParams = await params;
   //const product = await getProduct(resolvedParams.id);
-  const shop= await getShop(resolvedParams.id);
+  //const shop= await getShop(resolvedParams.id);
 
-  if (!shop) {
+  {/**
+     if (!shop) {
     return (
       <div className="container my-5 text-center">
         <h1>Shop Not Found</h1>
@@ -69,8 +70,10 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
       </div>
     );
   }
+    */}
+ 
 
-  return <ShopProductListNext shop={shop} />;
+  return <ShopsList/>;
 
 
 }

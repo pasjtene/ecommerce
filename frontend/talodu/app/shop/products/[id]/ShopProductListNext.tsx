@@ -93,6 +93,8 @@ import HeaderNext from '../../../HeaderNext';
   const handleManageShop = () => {
    
    // navigate(`../${demoPagesMenu.sales.subMenu.shopsList.path}`, { state:  { user } })
+   router.push("/shop/listshops");
+   //shop/listshops
     
   }
 
@@ -213,10 +215,12 @@ import HeaderNext from '../../../HeaderNext';
         <PageWrapper title={shop.name}>
                <HeaderNext/>
             <Page>
+
             <div className='row'>
+            <span>Le propriétaire de cette boutique c'est {shop.owner.FirstName} id: {shop.owner.ID} email: {shop.owner.email}</span> 
             {isShopOwner(shop) &&(
                 <div>
-                    <span>Vous etes propriétaire de cette boutique</span>
+                    <span>Vous etes propriétaire de cette boutique</span> 
                 <div className='col-md-4 col-6 mt-4'>
                 <Button
                         color='primary'
