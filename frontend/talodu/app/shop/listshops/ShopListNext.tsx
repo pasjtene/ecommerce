@@ -13,6 +13,7 @@ import Dropdown, {
 } from '../../../src/components/bootstrap/Dropdown';
 import axios from 'axios';
 import { User, Role, Product, Shop } from '../../types';
+import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify';
 import { useAuth, AuthProvider } from '../../AuthContextNext';
 //import {  API_BASE_URL } from '../../api/api'
@@ -49,12 +50,13 @@ const ShopsList = () => {
 	//const navigate = useNavigate();
 	// Available roles from your API or state
 	const { user } = useAuth();
+    const router = useRouter();
 
 	// State for edit modal
-	const [showEditModal, setShowEditModal] = useState(false);
-	const [isNewUser, setisNewUser] = useState(false);
+	//const [showEditModal, setShowEditModal] = useState(false);
+	//const [isNewUser, setisNewUser] = useState(false);
 
-	const [editingUser, setEditingUser] = useState<User | null>(null);
+	//const [editingUser, setEditingUser] = useState<User | null>(null);
 	const [editFormData, setEditFormData] = useState<EditFormData>({
 		id: 0,
 		username: '',
@@ -73,8 +75,8 @@ const ShopsList = () => {
 		roles: [],
 	});
 
-	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-	const [editingUserId, setEditingUserId] = useState<string | null>(null);
+	//const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+	//const [editingUserId, setEditingUserId] = useState<string | null>(null);
 	const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
 
 	//const [dropdownOpen, setDropdownOpen] = useState<Record<number, boolean>>({});
@@ -167,11 +169,7 @@ const ShopsList = () => {
 
 	const [createModalStatus, setCreateModalStatus] = useState<boolean>(false);
 	const fetchShops = async (page = 1, limit = 10, search = ''): Promise<void> => {
-		//console.log("The state user is: ",state?.user);
-		//console.log('The auth user is: ', user);
-		//console.log('The auth user id is: ', user?.id);
-		//console.log('The auth user name is: ', user?.LastName);
-		//console.log("The auth owner_id is: ",owner_id);
+		
 		try {
 			// const response = await axios.get<ApiResponse>('/api/products',{
 			const response = await axios.get<ShopsResponse>(API_BASE_URL + '/shops', {
@@ -186,8 +184,7 @@ const ShopsList = () => {
 					Authorization: `${jwtToken}`, // Include the JWT token in the Authorization header
 				},
 			});
-			//console.log('The response shops: ', response.data.shops);
-			//console.log("The auth owner_id 2 is: ",owner_id);
+			
 			setShops(response.data.shops);
 			setPagination({
 				page: response.data.page,
@@ -387,10 +384,13 @@ const ShopsList = () => {
 	// Handle view details
 	const handleViewDetailsLug = (shop: Shop) => {
 		console.log('The shop is: ', shop);
+        //const url =   `/shop/editshop/${shop.ID}`;
 		if (shop.Slug) {
-			//navigate(`../${demoPagesMenu.sales.subMenu.shopID.path}/${shop.Slug}`, { state: { shop } })
+            const url =   `/shop/editshop/${shop.Slug}`;
+            router.push(url)	
 		} else {
-			//navigate(`../${demoPagesMenu.sales.subMenu.shopID.path}/${shop.ID}`, { state: { shop } })
+			const url =   `/shop/editshop/${shop.ID}`;
+            router.push(url)
 		}
 	};
 

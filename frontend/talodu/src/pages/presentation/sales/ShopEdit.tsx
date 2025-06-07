@@ -10,9 +10,6 @@ import { demoPagesMenu } from '../../../menu';
 import Card, { CardBody } from '../../../components/bootstrap/Card';
 
 import Button from '../../../components/bootstrap/Button';
-import Icon from '../../../components/icon/Icon';
-import Input from '../../../components/bootstrap/forms/Input';
-
 import useDarkMode from '../../../hooks/useDarkMode';
 import axios from 'axios'
 import { useNavigate, Link, useLocation } from 'react-router-dom';
@@ -151,8 +148,6 @@ const ShopEdit = () => {
           }
         };
 
-
-   
 
       // Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
