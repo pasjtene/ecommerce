@@ -42,7 +42,7 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[], prod
     try {
       const response = await axios.put(API_BASE_URL+`/products/${product.ID}`, updatedProduct);
       setCurrentProduct(response.data.product);
-      router.push(`/product/${currentProduct.Slug}`);
+      router.push(`/product/${response.data.product.Slug}`);
       console.log("The updated prduct ...: ", response.data.product)
       console.log("The updated prduct shop is ...: ", response.data.ShopID)
       setIsEditing(false);
