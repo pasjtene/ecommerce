@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 //import { updateUser, API_BASE_URL } from '../auth/api'
 import { User, Role, Shop, ShopUser, Product } from '../../../types';
 import { toast } from 'react-toastify';
-//import ProductAddComponent  from './ProductAddComponent'
+import ProductAddComponent  from './ProductAddComponent'
 //import ShopProductDisplayComponent from './ShopProductDisplayComponent'
 //import { useAuth } from '../../presentation/auth/AuthContext';
 import { useAuth, AuthProvider } from '../../../AuthContextNext';
@@ -127,10 +127,18 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
 		// navigate(`../${demoPagesMenu.sales.subMenu.productID.path}/${product.Slug}`, { state: { product } })
 	};
 
-	const handleSave = async (updatedProduct: Product) => {
-		console.log('The prduct to update: ', updatedProduct);
+	const handleSave = async (newProduct: Product) => {
+		console.log('The prduct to update: ', newProduct);
+        console.log("The authenticated user is: ",user);
 		try {
-			const response = await axios.post(API_BASE_URL + `/products`, updatedProduct);
+            if (typeof window !== 'undefined') {
+                const access_token = localStorage.getItem('j_auth_token');
+                
+                localStorage.setItem('j_user', JSON.stringify(user));
+                //setLoading(false);
+                axios.defaults.headers.common['Authorization'] = `${access_token}`;
+                }
+			const response = await axios.post(API_BASE_URL + `/products`, newProduct);
 			//setCurrentProduct(response.data);
 			setisAddingProduct(false);
 			//handleViewShopProducts(shop)
@@ -220,7 +228,7 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
 				</div>
 			</div>
 			<Page>
-				{/**
+				
                  *  <div className="container mt-4">
                 {isAddingProduct ? (
                 <ProductAddComponent 
@@ -231,7 +239,7 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
                 ) : (<></>)
                 }
             </div>
-                 */}
+                
 
 				<div className='row h-100'>
 					<div className='col-12'>

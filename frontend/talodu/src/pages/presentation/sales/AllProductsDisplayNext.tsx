@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-//import { useParams } from 'next/navigation';
 import { User, Product, ProductImage, Shop} from '../auth/types';
 import axios from 'axios';
 import { API_BASE_URL } from '../auth/api'
@@ -34,10 +33,7 @@ const AllProductsDisplay  = () => {
 
       const fetchShopProducts = async (page = 1, limit = 10, search = ''):Promise<void> => {
             try {
-                //const API_BASE_URL = process.env.REACT_APP_API_PRODUCTION_BASE_URL || "/api";
                 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
-                //const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8888";
-                 //const API_BASE_URL = "/api"
                 setApibaseUrl(API_BASE_URL);
                     if (!API_BASE_URL) {
                 throw new Error("NEXT_PUBLIC_API_BASE_URL is not defined.");

@@ -532,7 +532,7 @@ func AuthMiddleware(requiredRoles ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := c.GetHeader("Authorization")
 		if tokenString == "" {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized Authentication required"})
 			return
 		}
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
