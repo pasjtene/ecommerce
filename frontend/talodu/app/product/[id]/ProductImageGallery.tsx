@@ -1,3 +1,4 @@
+//Copy rights Pascal J. Tene, all rights reserved
 'use client';
 import React, { useState, useRef } from 'react';
 //import './ProductImageGallery.css'; // We'll create this CSS file
@@ -7,6 +8,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import dynamic from 'next/dynamic';
 import LoadingSpinner from '../../api/LoadingSpinner';
+import { useAuth, AuthProvider } from '../../AuthContextNext';
 
 const ProductEditComponent = dynamic(() => import('./ProductEditComponent'), { ssr: false });
 
@@ -19,6 +21,7 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
 	const [currentProduct, setCurrentProduct] = useState<Product>(product);
 	const router = useRouter();
 	const [loading, setLoading] = useState(false);
+    const { user } = useAuth();
 	const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8888';
 	//const API_URL2 = "/api" //this should be routed to back end ip address via nginx proxy
 
@@ -150,7 +153,7 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
 					)}
 
 					{/* Product Details Card */}
-					<div className='card shadow-sm product-details-card'>
+                    {user && (	<div className='card shadow-sm product-details-card'>
 						<div className='card-body'>
 							<h4 className='card-title'>Product Details</h4>
 
@@ -177,7 +180,9 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
 								<div className='text-center text-muted py-4'>Select an image to see details</div>
 							)}
 						</div>
-					</div>
+					</div>)
+                    }
+				
 					{/* Product Details Card */}
 
 					{/* Product Details Card */}
