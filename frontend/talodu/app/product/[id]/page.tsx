@@ -2,7 +2,8 @@
 import React from 'react';
 import { Metadata } from 'next';
 import axios from 'axios';
-import { Product } from '../../../src/pages/presentation/auth/types';
+//import { Product } from '../../../src/pages/presentation/auth/types';
+import { Product } from '../../types';
 import ProductDetailsClient from './ProductDetailsClient';
 
 // Define the expected params type
