@@ -4,6 +4,7 @@ import React, { useState, useRef } from 'react';
 import { ProductImage, Product } from '../../types';
 //import { API_IMAGES, API_BASE_URL } from '../auth/api'
 //import ProductEditComponent from './ProductEditComponent'
+import { useRouter } from 'next/navigation'
 import axios  from 'axios';
 import { toast } from 'react-toastify'
 import dynamic from 'next/dynamic';
@@ -11,7 +12,8 @@ import dynamic from 'next/dynamic';
 const ProductEditComponent = dynamic(
     () => import('./ProductEditComponent'),
     {ssr: false}
-)
+);
+
 
 
 const ProductImageGallery = ({ images, product }: { images: ProductImage[], product: Product }) => {
@@ -21,6 +23,7 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[], prod
   const imageRef = useRef<HTMLDivElement>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Product>(product);
+  const router = useRouter();
   const API_BASE_URL  = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8888"
   //const API_URL2 = "/api" //this should be routed to back end ip address via nginx proxy
  
@@ -38,8 +41,9 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[], prod
     console.log("The prduct to update: ", updatedProduct)
     try {
       const response = await axios.put(API_BASE_URL+`/products/${product.ID}`, updatedProduct);
-      setCurrentProduct(response.data);
-      console.log("The updated prduct ...: ", response.data)
+      setCurrentProduct(response.data.product);
+      router.push(`/product/${currentProduct.Slug}`);
+      console.log("The updated prduct ...: ", response.data.product)
       console.log("The updated prduct shop is ...: ", response.data.ShopID)
       setIsEditing(false);
       // Show success toast

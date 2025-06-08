@@ -291,15 +291,15 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
               </a>
               <div className='display-4 fw-bold py-3'>{currentProduct?.name}</div>
 
-               {/**
-                *  <div className='container py-4'>
+               
+                <div className='container py-4'>
                 {images?.length > 0 ? (
                   <DynamicProductImageGallery images={images} product={currentProduct} />
                 ) : (
                   <div>No images</div>
                 )}
               </div>
-                */}       
+                      
              
 
               <div className='mt-4'>
