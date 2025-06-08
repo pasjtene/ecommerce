@@ -1,8 +1,7 @@
 // app/product/[id]/ProductDetailsClient.tsx
-'use client'; // This component is interactive, so it's a Client Component
-
+'use client';
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation'; // Only useRouter needed here
+import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import Page from '../../../src/layout/Page/Page';
 import Card, {
@@ -16,7 +15,7 @@ import Icon from '../../../src/components/icon/Icon';
 import Input from '../../../src/components/bootstrap/forms/Input';
 import showNotification from '../../../src/components/extras/showNotification';
 import useDarkMode from '../../../src/hooks/useDarkMode';
-import { Product, ProductImage, Shop } from '../../../src/pages/presentation/auth/types'; // Note: Shop type might not be needed here directly
+import { Product, ProductImage, Shop } from '../../types'; 
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Button from 'react-bootstrap/Button';
@@ -28,7 +27,6 @@ const DynamicProductImageGallery = dynamic(
   { ssr: false }
 );
 
-// (Keep IValues, validate, TTabs, ITabs interfaces here as they are part of the client logic)
 interface IValues {
     name: string;
     price: number;
@@ -87,9 +85,6 @@ interface ProductDetailsClientProps {
 const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => {
   const { darkModeStatus } = useDarkMode();
   const router = useRouter();
-  // No need for useParams here, as `id` is part of `initialProduct` or fetched internally if needed
-  // const params = useParams(); // REMOVE THIS LINE
-  // const id = params.id as string; // REMOVE THIS LINE
 
   const [images, setImages] = useState<ProductImage[]>([]);
   const [files, setFiles] = useState<File[]>([]);
@@ -103,11 +98,10 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
    // Initialize with initialProduct
   const [loading, setLoading] = useState(false); // Can be used for *client-side* re-fetches
 
-   // useEffect to fetch images (still relevant for client-side updates)
    useEffect(() => {
     const fetchImages = async () => {
       try {
-        const API_URL = "/api"; // Use relative path for client-side API calls
+        const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
         if (!currentProduct?.ID) {
           setClientError('Product ID not found.'); // Should ideally be handled before this component renders
           return;
@@ -161,7 +155,7 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
     });
 
     try {
-      const API_URL = "/api";
+      const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
       const response = await axios.post(
         `${API_URL}/images/product/${currentProduct?.ID}/batch`,
         formData,
@@ -248,7 +242,6 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
 
   // No loading/error states for the *initial* product here, as that's handled by the Server Component
   // This component assumes it receives a valid `initialProduct`.
-  // if (!currentProduct) return <div>Product data missing</div>; // This should ideally not happen if server component handles it.
 
   return (
     <>

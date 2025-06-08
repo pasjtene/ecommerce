@@ -171,6 +171,20 @@ const HeaderNext = () => {
                                                 Settings
                                             </div>
                                             <div className="dropdown-divider my-1"></div>
+                                            
+                                            <div
+                                                className="dropdown-item py-2 px-3"
+                                                onClick={() => {
+                                                    router.push('/shop/listshops'); // <-- Use router.push
+                                                    setShowDropdown(false);
+                                                }}
+                                                style={{ cursor: 'pointer', fontSize: '0.9rem' }}
+                                            >
+                                                <FontAwesomeIcon icon={faCog} className="me-2" />
+                                                List my shops
+                                            </div>
+
+                                            <div className="dropdown-divider my-1"></div>
                                             <div
                                                 className="dropdown-item py-2 px-3"
                                                 onClick={handleLogout}
