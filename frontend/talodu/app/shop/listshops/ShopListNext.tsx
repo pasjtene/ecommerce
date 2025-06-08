@@ -433,7 +433,7 @@ const ShopsList = () => {
 		);
 
 	if (error) {
-		return <div>Error loading users: {error}</div>;
+		return <div>Error loading shops: {error}</div>;
 	}
 
 	return (
