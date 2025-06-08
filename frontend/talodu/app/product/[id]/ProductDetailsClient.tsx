@@ -14,7 +14,6 @@ import Card, {
 import Icon from '../../../src/components/icon/Icon';
 import Input from '../../../src/components/bootstrap/forms/Input';
 import showNotification from '../../../src/components/extras/showNotification';
-import useDarkMode from '../../../src/hooks/useDarkMode';
 import { Product, ProductImage, Shop } from '../../types'; 
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -22,8 +21,9 @@ import Button from 'react-bootstrap/Button';
 
 // Dynamic import for client-only components
 import dynamic from 'next/dynamic';
+
 const DynamicProductImageGallery = dynamic(
-  () => import('../../../src/pages/presentation/sales/ProductImageGallery'),
+  () => import('./ProductImageGallery'),
   { ssr: false }
 );
 
@@ -83,14 +83,13 @@ interface ProductDetailsClientProps {
 }
 
 const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => {
-  const { darkModeStatus } = useDarkMode();
+  //const { darkModeStatus } = useDarkMode();
   const router = useRouter();
 
   const [images, setImages] = useState<ProductImage[]>([]);
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
-  //const [clientError, setClientError] = useState<string | null>(null);
   const [refresh, setRefresh] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Product>(initialProduct); // <--- CHANGE IS HERE
   //const [loading, setLoading] = useState(false); // Can be used for *client-side* re-fetches
@@ -292,13 +291,16 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
               </a>
               <div className='display-4 fw-bold py-3'>{currentProduct?.name}</div>
 
-              <div className='container py-4'>
+               {/**
+                *  <div className='container py-4'>
                 {images?.length > 0 ? (
                   <DynamicProductImageGallery images={images} product={currentProduct} />
                 ) : (
                   <div>No images</div>
                 )}
               </div>
+                */}       
+             
 
               <div className='mt-4'>
                 <h5 className='mb-3'>Current Images</h5>
