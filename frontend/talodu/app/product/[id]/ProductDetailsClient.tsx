@@ -101,6 +101,9 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
 
    useEffect(() => {
     const fetchImages = async () => {
+      console.log("The shop is ",initialProduct.shop)
+      console.log("is it shop owner ",initialProduct.shop.owner.ID == user?.ID)
+      console.log("is it shop owner 2 ", isShopOwner(initialProduct.shop))
       try {
         const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
         if (!currentProduct?.ID) {
@@ -335,7 +338,7 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
               </div>
 
               {/** if shop owner */} 
-              {isShopOwner(currentProduct?.shop) &&(
+              {isShopOwner(initialProduct.shop) &&(
               <div className='row h-100 mt-5'>
                 <div className='col-lg-8'>
                   <Card>

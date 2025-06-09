@@ -23,6 +23,7 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
 	const [loading, setLoading] = useState(false);
     const { user } = useAuth();
 	const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8888';
+    
 	//const API_URL2 = "/api" //this should be routed to back end ip address via nginx proxy
 
 	const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
