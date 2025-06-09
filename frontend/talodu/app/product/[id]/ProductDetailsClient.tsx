@@ -102,7 +102,7 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
    useEffect(() => {
     const fetchImages = async () => {
       console.log("The shop is ",initialProduct.shop)
-      console.log("is it shop owner ",initialProduct.shop.owner.ID == user?.ID, +" "+  )
+      console.log("is it shop owner ",initialProduct.shop.owner.ID == user?.ID);
       console.log("is it shop owner 2 ", isShopOwner(initialProduct.shop))
       console.log("the shop owner id is ",initialProduct.shop.owner.ID )
       console.log("The user ID", user?.ID);
