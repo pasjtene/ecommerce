@@ -102,8 +102,12 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
    useEffect(() => {
     const fetchImages = async () => {
       console.log("The shop is ",initialProduct.shop)
-      console.log("is it shop owner ",initialProduct.shop.owner.ID == user?.ID)
+      console.log("is it shop owner ",initialProduct.shop.owner.ID == user?.ID, +" "+  )
       console.log("is it shop owner 2 ", isShopOwner(initialProduct.shop))
+      console.log("the shop owner id is ",initialProduct.shop.owner.ID )
+      console.log("The user ID", user?.ID);
+      console.log("the shop owner email is ",initialProduct.shop.owner.Email )
+      console.log("The user email", user?.Email);
       try {
         const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
         if (!currentProduct?.ID) {
