@@ -18,6 +18,7 @@ import { Product, ProductImage, Shop } from '../../types';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Button from 'react-bootstrap/Button';
+import { useAuth, AuthProvider } from '../../AuthContextNext';
 
 // Dynamic import for client-only components
 import dynamic from 'next/dynamic';
@@ -95,7 +96,8 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
   //const [loading, setLoading] = useState(false); // Can be used for *client-side* re-fetches
   const [clientError, setClientError] = useState<string | null>(null); 
    // Initialize with initialProduct
-  const [loading, setLoading] = useState(false); // Can be used for *client-side* re-fetches
+  const [loading, setLoading] = useState(false);
+  const { user, isShopOwner } = useAuth();
 
    useEffect(() => {
     const fetchImages = async () => {
@@ -276,7 +278,6 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
                     </button>
                 </div>
 
-
               <div className='col-lg-6 col-md-6 col-sm-6'>
                 <span className='text-muted fst-italic me-2'>Last update:</span>
                 <span className='fw-bold'>13 hours ago</span> {/* This needs to be dynamic */}
@@ -300,8 +301,6 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
                 )}
               </div>
                       
-             
-
               <div className='mt-4'>
                 <h5 className='mb-3'>Current Images</h5>
                 {images?.length > 0 ? (
@@ -335,6 +334,8 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
                 )}
               </div>
 
+              {/** if shop owner */} 
+              {isShopOwner(currentProduct?.shop) &&(
               <div className='row h-100 mt-5'>
                 <div className='col-lg-8'>
                   <Card>
@@ -390,7 +391,9 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
                         </CardBody>
                       </Card>
                 </div>
-              </div>
+              </div>)}
+              {/** end check */}
+
             </Page>
             </>
         
