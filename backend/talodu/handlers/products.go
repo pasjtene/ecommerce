@@ -232,7 +232,7 @@ func GetProduct(db *gorm.DB) gin.HandlerFunc {
 
 		// Fetch and return the fully updated product
 		var shop models.Shop
-		if err := db.
+		if err := db.Preload("Owner").Preload("Employees").
 			First(&shop, product.ShopID).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch updated shop"})
 			return

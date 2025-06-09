@@ -3,12 +3,17 @@ import React from 'react';
 import { Metadata } from 'next';
 import axios from 'axios';
 //import { Product } from '../../../src/pages/presentation/auth/types';
-import { Product } from '../../types';
+import { Product, Shop } from '../../types';
 import ProductDetailsClient from './ProductDetailsClient';
 
 // Define the expected params type
 type PageParams = {
   id: string;
+};
+
+type ProductData = {
+  product: Product
+  shop: Shop
 };
 
 async function getProduct(id: string): Promise<Product | null> {
@@ -27,6 +32,24 @@ async function getProduct(id: string): Promise<Product | null> {
     console.error("Error fetching product:", error);
     return null;
   }
+}
+
+async function getShop(id: string): Promise<Shop | null> {
+  //Id is the last part of product slug which is a string separated by "_". This string is constructed at the backend 
+  //When a product is created or updated
+const productId = id?.toString().split('-').pop();
+if (!productId) return null;
+
+try {
+  const API_URL = process.env.API_BASE_URL || "http://127.0.0.1:8888";
+  const response = await axios.get<{ shop: Shop }>(
+    `${API_URL}/products/${productId}`
+  );
+  return response.data.shop;
+} catch (error) {
+  console.error("Error fetching product:", error);
+  return null;
+}
 }
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
@@ -62,16 +85,17 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
 export default async function Page({ params }: { params: Promise<PageParams> }) {
   const resolvedParams = await params;
   const product = await getProduct(resolvedParams.id);
+  const shop = await getShop(resolvedParams.id);
 
-  if (!product) {
+  if (!product || !shop) {
     return (
       <div className="container my-5 text-center">
         <h1>Product Not Found</h1>
-        <p>The product you are looking for does not exist or is unavailable.</p>
+        <p>The product you are looking for does not exist or is unavailable. All products must belong to a shop</p>
         <p><a href="/">Go back to homepage</a></p>
       </div>
     );
   }
 
-  return <ProductDetailsClient initialProduct={product} />;
+  return <ProductDetailsClient initialProduct={product} shop={shop} />;
 }

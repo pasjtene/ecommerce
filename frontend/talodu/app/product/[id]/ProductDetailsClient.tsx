@@ -80,10 +80,11 @@ interface ITabs {
 
 
 interface ProductDetailsClientProps {
-  initialProduct: Product; // Pass the fetched product from the Server Component
+  initialProduct: Product;
+  shop: Shop;
 }
 
-const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => {
+const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProps) => {
   //const { darkModeStatus } = useDarkMode();
   const router = useRouter();
 
@@ -93,7 +94,6 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
   const [progress, setProgress] = useState(0);
   const [refresh, setRefresh] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Product>(initialProduct); // <--- CHANGE IS HERE
-  //const [loading, setLoading] = useState(false); // Can be used for *client-side* re-fetches
   const [clientError, setClientError] = useState<string | null>(null); 
    // Initialize with initialProduct
   const [loading, setLoading] = useState(false);
@@ -102,11 +102,11 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
    useEffect(() => {
     const fetchImages = async () => {
       console.log("The shop is ",initialProduct.shop)
-      console.log("is it shop owner ",initialProduct.shop.owner.ID == user?.ID);
+      console.log("is it shop owner ", shop.owner.ID == user?.ID);
       console.log("is it shop owner 2 ", isShopOwner(initialProduct.shop))
-      console.log("the shop owner id is ",initialProduct.shop.owner.ID )
+      console.log("the shop owner id is ",shop.owner.ID )
       console.log("The user ID", user?.ID);
-      console.log("the shop owner email is ",initialProduct.shop.owner.Email )
+      console.log("the shop owner email is ",shop.owner.Email )
       console.log("The user email", user?.Email);
       try {
         const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
@@ -342,7 +342,7 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
               </div>
 
               {/** if shop owner */} 
-              {isShopOwner(initialProduct.shop) &&(
+              {isShopOwner(shop) &&(
               <div className='row h-100 mt-5'>
                 <div className='col-lg-8'>
                   <Card>

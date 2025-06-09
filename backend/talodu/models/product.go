@@ -36,6 +36,7 @@ func (p *Product) AfterCreate(tx *gorm.DB) (err error) {
 	return tx.Save(p).Error
 }
 
+
 func generateSlug(s string) string {
 	// Convert to lowercase
 	s = strings.ToLower(s)

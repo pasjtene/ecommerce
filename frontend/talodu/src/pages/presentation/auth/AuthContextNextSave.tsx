@@ -3,7 +3,7 @@
 import React, { createContext, useCallback, useContext, useState, useEffect, ReactNode } from "react";
 import axios from 'axios';
 // import { useNavigate } from "react-router-dom"; // <-- REMOVE THIS IMPORT
-import { API_BASE_URL } from '../auth/api' // Make sure API_BASE_URL is properly defined (using process.env.API_BASE_URL)
+//import { API_BASE_URL } from '../auth/api' // Make sure API_BASE_URL is properly defined (using process.env.API_BASE_URL)
 import { Shop } from './types'
 
 

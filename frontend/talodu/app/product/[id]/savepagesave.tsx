@@ -84,7 +84,11 @@ interface ProductDetailNextProps {
   error?: string;
 }
 
-const ProductDetailNext = () => { 
+interface ProductDetailsClientProps {
+  initialProduct: Product; // Pass the fetched product from the Server Component
+}
+
+const ProductDetailNext = ({ initialProduct }: ProductDetailsClientProps) => { 
   const { darkModeStatus } = useDarkMode();
   const router = useRouter();
   const params = useParams();
@@ -135,8 +139,6 @@ const ProductDetailNext = () => {
 
   fetchProduct();
 }, [id]);
-
-
 
   useEffect(() => {
     const fetchImages = async () => {

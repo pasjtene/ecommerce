@@ -135,7 +135,7 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
                 const access_token = localStorage.getItem('j_auth_token');
                 
                 localStorage.setItem('j_user', JSON.stringify(user));
-                //setLoading(false);
+              
                 axios.defaults.headers.common['Authorization'] = `${access_token}`;
                 }
 			const response = await axios.post(API_BASE_URL + `/products`, newProduct);

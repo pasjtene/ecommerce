@@ -462,6 +462,7 @@ const handleEditUser = (user: User) => {
         last_name: user.last_name,
         roles: [...user.roles],
     });
+    
     setEditFormData2({
         id: user.id,
         username: user.username,

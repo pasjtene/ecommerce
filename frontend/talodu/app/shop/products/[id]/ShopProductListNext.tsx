@@ -15,13 +15,10 @@ import { useAuth, AuthProvider } from '../../../AuthContextNext';
 
 
 
-  interface LocationState {
-    shop?: Shop;
-  }
-
-  interface ProductDetailsClientProps {
-    initialProduct: Product[]; // Pass the fetched product from the Server Component
-  }
+  //interface LocationState {shop?: Shop;}
+  //interface ProductDetailsClientProps { initialProduct: Product[]; }
+    
+  
 
   interface ShopDetailsClientProps {
     shop: Shop; // Pass the fetched product from the Server Component

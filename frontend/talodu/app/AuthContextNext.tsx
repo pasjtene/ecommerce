@@ -162,6 +162,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             }>(API_BASE_URL+'/login',{ email, password }); 
 
             const { access_token, refresh_token, user } = response.data;
+            
             if (typeof window !== 'undefined') {
             setToken(access_token);
             setUser(response.data.user);
