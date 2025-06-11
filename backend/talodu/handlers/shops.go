@@ -2,6 +2,7 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
 	"math"
 	"math/rand"
@@ -323,6 +324,145 @@ func GetShop(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// DELETE /shops/:id
+func DeleteShop(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var shop models.Shop
+		id := c.Param("id")
+
+		// Get userID from auth context (preferred over URL param)
+		authUserID, exists := c.Get("userID")
+		if !exists {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Not authenticated"})
+			return
+		}
+
+		// Convert authUserID to uint regardless of original type
+		userID, err := convertToUint(authUserID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "Invalid user ID",
+				"details": fmt.Sprintf("Could not convert %v (%T) to uint", authUserID, authUserID),
+			})
+			return
+		}
+
+		// Preload Owner and include error handling
+		if err := db.Preload("Owner").Preload("Products").First(&shop, id).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				c.JSON(http.StatusNotFound, gin.H{"error": "Shop not found"})
+			} else {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"error":   "Failed to fetch shop details",
+					"details": err.Error(),
+				})
+			}
+			return
+		}
+
+		// Debug output (remove in production)
+		/**
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"debug": gin.H{
+				"shopOwnerID":     shop.Owner.ID,
+				"authUserID":      authUserID,
+				"convertedUserID": userID,
+				"types": gin.H{
+					"shopOwner": fmt.Sprintf("%T", shop.Owner.ID),
+					"authUser":  fmt.Sprintf("%T", authUserID),
+				},
+			},
+			"error":   "Operation not permitted",
+			"details": "Only the shop owner can perform this action",
+		})
+		*/
+
+		//userID, ok := authUserID.(uint)
+
+		if userID != shop.Owner.ID {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"error":                    "Operation not permitted",
+				"details":                  "Only the shop owner can perform this action",
+				"shop owner Id ":           shop.Owner.ID,
+				"user Id ":                 authUserID,
+				"Compared: ":               shop.Owner.ID == authUserID,
+				"The converted authUser: ": userID,
+				//"The ok value":             ok,
+				//"The authUserID type is: ": authUserID.(type),
+			})
+			return
+		}
+
+		if len(shop.Products) > 0 {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"error":                    "Operation not permitted",
+				"details":                  "There are still products in this shop. Remove all products first",
+				"shop owner Id ":           shop.Owner.ID,
+				"user Id ":                 authUserID,
+				"Compared: ":               shop.Owner.ID == authUserID,
+				"The converted authUser: ": userID,
+				"The number of products":   len(shop.Products),
+				//"The authUserID type is: ": authUserID.(type),
+			})
+			return
+		}
+
+		// Enhanced delete operation with error inspection
+		if err := db.Delete(&shop).Error; err != nil {
+			// Check for foreign key constraint violation
+			if strings.Contains(err.Error(), "foreign key constraint") {
+				c.JSON(http.StatusConflict, gin.H{
+					"error":   "Cannot delete shop",
+					"details": "This shop has associated products or other references. Please delete them first.",
+					"hint":    "You may need to delete associated products before deleting the shop",
+				})
+			} else {
+				// Generic database error
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"error":   "Failed to delete shop",
+					"details": err.Error(),
+				})
+			}
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "Shop deleted successfully"})
+	}
+}
+
+func DeleteShop2(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var shop Shop
+		id := c.Param("id")
+		userID := c.Param("userID") //this is added during authentication
+
+		// Convert userID from string to uint
+		userIDUint, err := strconv.ParseUint(userID, 10, 64)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+			return
+		}
+
+		if err := db.Preload("Owner").First(&shop, id).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Shop not found"})
+			return
+		}
+
+		if uint(userIDUint) != shop.Owner.ID {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Only the owner can delete this shop"})
+		}
+
+		//db.Delete(&shop)
+		if err := db.Delete(&shop).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete shop"})
+			return
+		}
+
+		//c.JSON(http.StatusOK, gin.H{"message": "Shop deleted successfully"})
+		c.JSON(http.StatusOK, gin.H{"message": "Success!!!  Shop deleted !"})
+	}
+}
+
 //##################
 
 func SeedShopsProductsAndCategories(db *gorm.DB) error {
@@ -497,4 +637,25 @@ func uniqueUints(input []uint) []uint {
 		}
 	}
 	return result
+}
+
+// Helper function for robust uint conversion
+func convertToUint(value interface{}) (uint, error) {
+	switch v := value.(type) {
+	case uint:
+		return v, nil
+	case int:
+		return uint(v), nil
+	case int64:
+		return uint(v), nil
+	case float32:
+		return uint(v), nil
+	case float64:
+		return uint(v), nil
+	case string:
+		parsed, err := strconv.ParseUint(v, 10, 64)
+		return uint(parsed), err
+	default:
+		return 0, fmt.Errorf("unsupported type: %T", value)
+	}
 }

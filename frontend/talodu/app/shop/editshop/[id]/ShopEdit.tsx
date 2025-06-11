@@ -9,20 +9,23 @@ import Button from '../../../../src/components/bootstrap/Button';
 import axios from 'axios';
 //import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useRouter } from 'next/navigation';
-
-//import { updateUser, API_BASE_URL } from '../auth/api'
 import { User, Role, Shop, ShopUser, Product } from '../../../types';
 import { toast } from 'react-toastify';
 import ProductAddComponent  from './ProductAddComponent'
-//import ShopProductDisplayComponent from './ShopProductDisplayComponent'
-//import { useAuth } from '../../presentation/auth/AuthContext';
 import { useAuth, AuthProvider } from '../../../AuthContextNext';
-//import { handleViewShopProducts } from './Navigation'
+import ConfirmDelete from '../../../utils/ConfirmDelete';
+import ErrorModal from '../../../utils/ErrorModal2';
 
 import ShopProductListNext from '../../../shop/products/[id]/ShopProductListNext';
 
 interface LocationState {
 	shop?: Shop;
+}
+
+interface AppError {
+  message: string;
+  details?: string;
+  code?: string;
 }
 
 interface ShopeditProps {
@@ -35,42 +38,44 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
 	const [isAddingProduct, setisAddingProduct] = useState(false);
 	//const { handleActionClick } = useDropdownActions();
 	const [loading, setLoading] = useState<boolean>(true);
-	const { user } = useAuth();
+	const { user, isShopOwner } = useAuth();
 	const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8888';
 
 	const [error, setError] = useState<string | null>(null);
-	const jwtToken = localStorage.getItem('j_auth_token'); // Assuming you store the token in localStorage
+
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [editedShop, setEditedShop] = useState<Shop>(shop);
 
-	{
-		/**
-    const [shop, setShop] = useState<Shop>({
-        ID: 0,
-        name: '',
-        Slug: '',
-        description: '',
-        moto: '',
-        OwnerID: 0,
-        owner: {} as ShopUser,
-        Employees: [],
-        products: [],
-        City: ''
-      });
-        */
-	}
-
-	//const { state } = useLocation();
+	//const [showConfirmModal, setShowConfirmModal] = useState<'confirm' | 'error' | null>(null);
 
 	const router = useRouter();
 
 	//const [dropdownOpen, setDropdownOpen] = useState<Record<number, boolean>>({});
 	const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
 
+	const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [errorDetails, setErrorDetails ] = useState('');
+  const [apiError, setApiError] = useState<AppError>();
+
+  const handleDeleteError = (error: AppError) => {
+	//const handleDeleteError = (error:any) => {
+	
+    //setErrorMessage(error.message || 'Failed to delete shop');
+	//setErrorDetails(error.details);
+	setApiError(error);
+    setShowErrorModal(true);
+  };
+
 	const toggleDropdown = (userId: number) => {
 		setOpenDropdownId((prevId) => (prevId === userId ? null : userId));
 	};
+
+	const handleConfirmDelete = () => {
+
+	}
 
 	const useDropdownActions = () => {
 		const handleActionClick = (e: React.MouseEvent<HTMLDivElement>, action: () => void) => {
@@ -227,9 +232,38 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
 					</Button>
 				</div>
 			</div>
+
+			<div>
+			  {isShopOwner(shop) && (
+                <div className='col-md-4 col-6 mt-4'>
+                <button
+
+                    className="bg-transparent border-0 p-0 text-danger"
+                    style={{
+                    cursor: 'pointer',
+                    textDecoration: 'none',
+                    transition: 'all 0.2s ease'
+                    }}
+                    onMouseOver={(e) => {
+                    e.currentTarget.style.textDecoration = 'underline';
+                    e.currentTarget.style.color = '#bd2130'; // darker red
+                    }}
+                    onMouseOut={(e) => {
+                        e.currentTarget.style.textDecoration = 'none';
+                        e.currentTarget.style.color = '#dc3545'; // original red
+                      }}
+                        
+                        onClick={() => {setShowConfirmModal(true);}}>
+                        Delete my shop
+                    </button>
+                </div>
+
+            )}
+			</div>
+			
 			<Page>
 				
-                 *  <div className="container mt-4">
+                 <div className="container mt-4">
                 {isAddingProduct ? (
                 <ProductAddComponent 
                     shop={shop}
@@ -372,9 +406,59 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
             </div>
              */}
 
+			 
 			<div>
+				<div>
 				<ShopProductListNext shop={shop} />
 			</div>
+
+		
+
+
+				 <ConfirmDelete 
+					shop={shop}
+					show={showConfirmModal}
+					onClose={() => setShowConfirmModal(false)}
+					onError={handleDeleteError}
+				/>
+
+				<ErrorModal 
+					show={showErrorModal}
+					onClose={() => setShowErrorModal(false)}
+					//errorMessage={errorMessage}
+					//errorDetails ={errorDetails}
+					error={apiError}
+				/>
+
+				{/**
+				 * {showConfirmModal === "confirm" && (
+                <ConfirmDelete
+                    show={true}
+                    onClose={() => setShowConfirmModal(null)}
+                    onError={() => setShowConfirmModal("error")}
+					shop={shop}
+                   
+                />
+            )}
+
+			
+			  {showConfirmModal === "error" && (
+                <ErrorModal
+                    show={true}
+                    onClose={() => setShowConfirmModal(null)}
+                    //onError={() => setShowConfirmModal(null)}
+					//shop={shop}
+                   
+                />
+            )}
+				 */}
+
+			
+			 
+			  
+
+			</div>
+
 		</PageWrapper>
 	);
 };
