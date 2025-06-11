@@ -380,7 +380,7 @@ func DeleteShop(db *gorm.DB) gin.HandlerFunc {
 		//userID, ok := authUserID.(uint)
 
 		if userID != shop.Owner.ID {
-			c.JSON(http.StatusUnauthorized, gin.H{
+			c.JSON(http.StatusForbidden, gin.H{
 				"error":                    "Operation not permitted",
 				"details":                  "Only the shop owner can perform this action",
 				"shop owner Id ":           shop.Owner.ID,
@@ -394,7 +394,7 @@ func DeleteShop(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		if len(shop.Products) > 0 {
-			c.JSON(http.StatusUnauthorized, gin.H{
+			c.JSON(http.StatusForbidden, gin.H{
 				"error":                    "Operation not permitted",
 				"details":                  "There are still products in this shop. Remove all products first",
 				"shop owner Id ":           shop.Owner.ID,
@@ -411,7 +411,7 @@ func DeleteShop(db *gorm.DB) gin.HandlerFunc {
 		if err := db.Delete(&shop).Error; err != nil {
 			// Check for foreign key constraint violation
 			if strings.Contains(err.Error(), "foreign key constraint") {
-				c.JSON(http.StatusConflict, gin.H{
+				c.JSON(http.StatusForbidden, gin.H{
 					"error":   "Cannot delete shop",
 					"details": "This shop has associated products or other references. Please delete them first.",
 					"hint":    "You may need to delete associated products before deleting the shop",

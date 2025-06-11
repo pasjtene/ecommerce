@@ -186,7 +186,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const refreshAccessToken = async () => {
         console.log("... in Refresh token.., ");
         try {
-            const API_BASE_URL = process.env.API_BASE_URL || "http://127.0.0.1:8888";
+            const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8888";
 
             if (typeof window !== 'undefined') {
           const refreshToken = localStorage.getItem('j_refresh_token');
