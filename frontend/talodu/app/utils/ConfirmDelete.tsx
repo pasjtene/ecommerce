@@ -12,20 +12,19 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation'
 import { handleApiError } from './errorHandler';
 
-interface LoginProps {
-  show: boolean;
-  onClose: () => void;
-  onError: () => void;
-  shop?: Shop
 
-  //url: string;
+interface AppError {
+  message: string;
+  details?: string;
+  code?: string;
 }
 
 interface ConfirmDeleteProps {
   shop?: Shop;
   show: boolean;
   onClose: () => void;
-  onError: (error: { message: string, details?: string | unknown }) => void;
+  //onError: (error: { message: string, details?: string | unknown }) => void;
+  onError: (error: AppError) => void;
 }
 
 const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({ shop, show, onClose, onError}) => {

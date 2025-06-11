@@ -15,7 +15,7 @@ interface ErrorModalProps {
   onClose: () => void;
   //errorMessage: string;
   //errorDetails?: string;
-  error: AppError; 
+  error?: AppError;
 }
 
 const ErrorModal: React.FC<ErrorModalProps> = ({ 
