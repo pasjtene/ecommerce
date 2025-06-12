@@ -97,7 +97,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
   const [clientError, setClientError] = useState<string | null>(null); 
    // Initialize with initialProduct
   const [loading, setLoading] = useState(false);
-  const { user, isShopOwner } = useAuth();
+  const { user, isShopOwner, hasRole, hasAnyRole } = useAuth();
    const [selectedImages, setSelectedImages] = useState<string[]>([]);
 
   const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
@@ -302,10 +302,31 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
                         Retour a la Liste
                     </button>
                 </div>
+                      {hasRole("SuperAdmin") && (
+                        <div className='col-lg-6 col-md-6 col-sm-6'>
+                        <span className='text-muted fst-italic me-2'>You are super Admin</span>
+                        <span className='fw-bold'>Enable Edit shop</span> {/* This needs to be dynamic */}
+                      </div>
+                      )}
 
+                      {hasAnyRole(["SuperAdmin","Admin"]) && (
+                        <div className='col-lg-6 col-md-6 col-sm-6'>
+                        <span className='text-muted fst-italic me-2'>You are superAdmin or Admin</span>
+                        <span className='fw-bold'>Enable Edit shop</span> {/* This needs to be dynamic */}
+                      </div>
+                      )}
+
+                      {isShopOwner(shop) && (
+                        <div className='col-lg-6 col-md-6 col-sm-6'>
+                        <span className='text-muted fst-italic me-2'>You are the owner of this shop</span>
+                        <span className='fw-bold'>Enable Edit shop</span> {/* This needs to be dynamic */}
+                      </div>
+                      )}
+                
+                      
               <div className='col-lg-6 col-md-6 col-sm-6'>
                 <span className='text-muted fst-italic me-2'>Last update:</span>
-                <span className='fw-bold'>13 hours ago</span> {/* This needs to be dynamic */}
+                <span className='fw-bold'>13 hours ago 1</span> {/* This needs to be dynamic */}
               </div>
             </div>
 
@@ -313,7 +334,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
               <a className='text-decoration-none display-6 py-3 text-danger'
               onClick={()=>{handleShopNameClick(currentProduct?.shop)}} 
               style={{ cursor: 'pointer' }}>
-                By {currentProduct?.shop?.name || 'Unknown Shop'}
+                By {currentProduct?.shop?.name || 'Unknown Shop'} 
               </a>
               <div className='display-4 fw-bold py-3'>{currentProduct?.name}</div>
 
