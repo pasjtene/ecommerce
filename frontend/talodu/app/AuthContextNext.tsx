@@ -100,7 +100,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         delete axios.defaults.headers.common['Authorization'];
         setToken(null);
         setUser(null);
-        router.push('/');
+        //router.push('/'); //ask user to log in..
       };
 
 

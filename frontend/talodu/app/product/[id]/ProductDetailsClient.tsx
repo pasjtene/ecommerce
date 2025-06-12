@@ -325,6 +325,10 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
                   <div>No images</div>
                 )}
               </div>
+
+              {/** if shop owner */} 
+              {isShopOwner(shop) &&(
+              <div className='row h-100 mt-5'>
                       
               <div className='mt-4'>
                 <h5 className='mb-3'>Current Images</h5>
@@ -387,9 +391,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
                 )}
               </div>
 
-              {/** if shop owner */} 
-              {isShopOwner(shop) &&(
-              <div className='row h-100 mt-5'>
+              
                 <div className='col-lg-8'>
                   <Card>
                     <CardHeader>
