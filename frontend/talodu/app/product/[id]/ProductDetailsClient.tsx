@@ -302,23 +302,14 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
                         Retour a la Liste
                     </button>
                 </div>
-                      {hasRole("SuperAdmin") && (
-                        <div className='col-lg-6 col-md-6 col-sm-6'>
-                        <span className='text-muted fst-italic me-2'>You are super Admin</span>
-                        <span className='fw-bold'>Enable Edit shop</span> {/* This needs to be dynamic */}
-                      </div>
-                      )}
+                     
 
-                      {hasAnyRole(["SuperAdmin","Admin"]) && (
-                        <div className='col-lg-6 col-md-6 col-sm-6'>
-                        <span className='text-muted fst-italic me-2'>You are superAdmin or Admin</span>
-                        <span className='fw-bold'>Enable Edit shop</span> {/* This needs to be dynamic */}
-                      </div>
-                      )}
 
-                      {isShopOwner(shop) && (
+                      {isShopOwner(shop) || hasAnyRole(["SuperAdmin","Admin"]) && (
                         <div className='col-lg-6 col-md-6 col-sm-6'>
-                        <span className='text-muted fst-italic me-2'>You are the owner of this shop</span>
+                        <span className='text-muted fst-italic me-2'>You can edit shop as:</span>
+                        {isShopOwner(shop)?<span>Shop owner</span>:<span></span>}
+                        {hasAnyRole(["SuperAdmin","Admin"])?<span>{user?.Roles.some(r=>r.Name)}</span>:<span></span>}
                         <span className='fw-bold'>Enable Edit shop</span> {/* This needs to be dynamic */}
                       </div>
                       )}
@@ -326,7 +317,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
                       
               <div className='col-lg-6 col-md-6 col-sm-6'>
                 <span className='text-muted fst-italic me-2'>Last update:</span>
-                <span className='fw-bold'>13 hours ago 1</span> {/* This needs to be dynamic */}
+                <span className='fw-bold'>13 hours ago 2</span> {/* This needs to be dynamic */}
               </div>
             </div>
 
