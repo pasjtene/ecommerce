@@ -98,7 +98,9 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
    // Initialize with initialProduct
   const [loading, setLoading] = useState(false);
   const { user, isShopOwner } = useAuth();
+   const [selectedImages, setSelectedImages] = useState<string[]>([]);
 
+  const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
    useEffect(() => {
     const fetchImages = async () => {
       try {
@@ -134,6 +136,29 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
       setFiles(Array.from(e.target.files));
     }
   };
+
+   // Toggle product selection
+	const toggleImageSelection = (imageId: string) => {
+		setSelectedImages((prev) =>
+			prev.includes(imageId) ? prev.filter((id) => id !== imageId) : [...prev, imageId],
+		);
+	};
+
+    const handleDeleteImages = async (imageIds: string[]) => {
+      try {
+        await axios.delete(API_URL + '/products/images/delete/batch', {
+          data: { ids: imageIds },
+        });
+        setImages((prev) => prev.filter((i) => !imageIds.includes(i.ID)));
+        setSelectedImages([]);
+  
+        // Show success message
+        //toast.success(`${productIds.length} products deleted successfully`);
+      } catch (error) {
+        //toast.error('Failed to delete products');
+        
+      }
+    };
 
   const handleShopNameClick = (shop:Shop) => {
     console.log("The shop is:",shop);
@@ -303,13 +328,29 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
                       
               <div className='mt-4'>
                 <h5 className='mb-3'>Current Images</h5>
+                <div className='d-flex justify-content-between align-items-center mb-3'>
+								<div>
+									{selectedImages.length > 0 && (
+										<button
+											onClick={() => handleDeleteImages(selectedImages)}
+											className='btn btn-danger me-2'>
+											Delete {selectedImages.length} selected
+										</button>
+									)}
+								</div>
+								<div>
+									<span className='text-muted'>
+										{selectedImages.length} of {images.length} selected
+									</span>
+								</div>
+							</div>
                 {images?.length > 0 ? (
                   <div className='row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4'>
                     {images.map((image) => (
                       <div key={image.ID} className='col'>
                         <div className='card h-100 shadow-sm'>
                           <img
-                            src={image.url}
+                            src={API_URL+image.url}
                             alt={image.altText || 'Product image'}
                             className='card-img-top img-thumbnail'
                             style={{ height: '200px', objectFit: 'cover' }}
@@ -323,6 +364,18 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
                           <div className='card-footer bg-white'>
                             <div className='d-flex justify-content-between'>
                               <button className='btn btn-sm btn-outline-primary'>Set as Primary</button>
+                              <small className="text-danger">delete image</small>
+                              <input
+															type='checkbox'
+															checked={selectedImages.includes(image.ID)}
+															//onChange={() => toggleImageSelection(image.ID)}
+                              onChange={(e) => {
+                              e.stopPropagation(); 
+                              toggleImageSelection(image.ID);
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+															className='form-check-input'
+														/>
                             </div>
                           </div>
                         </div>

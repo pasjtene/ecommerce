@@ -1,3 +1,4 @@
+//ImageDisplayComponent.tsx
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -14,6 +15,7 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
     const [hoveredCard, setHoveredCard] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const router = useRouter();
+    const [selectedImages, setSelectedImages] = useState<string[]>([]);
     const [pagination, setPagination] = useState({
             page: 1,
             limit: 10,
@@ -83,11 +85,7 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
     return <div className="alert alert-danger my-5">{error}</div>;
   }
 
-  const handleImageClick1 = (productSlug: string, productId: number) => {
-    // navigate(`/products/${productSlug || productId}`);
-    //navigate(`../${demoPagesMenu.sales.subMenu.productID.path}/${product.Slug}`, { state: { product } })
-   
-   };
+  
 
    const handleViewproductDetails = (product: Product) => {
     router.push(`/product/${product.Slug}`);
@@ -98,6 +96,32 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
     
    
    };
+
+
+
+	const handleDeleteImages = async (imageIds: string[]) => {
+		try {
+			await axios.delete(API_BASE_URL + '/images/delete/batch', {
+				data: { ids: imageIds },
+			});
+			//setProducts((prev) => prev.filter((p) => !imageIds.includes(p.ID)));
+			setSelectedImages([]);
+
+			// Show success message
+			//toast.success(`${productIds.length} products deleted successfully`);
+		} catch (error) {
+			//toast.error('Failed to delete products');
+			//setProducts(prev => prev.filter(p => !productIds.includes(p.ID)));
+		}
+	};
+
+
+   // Toggle product selection
+	const toggleImageSelection = (imageId: string) => {
+		setSelectedImages((prev) =>
+			prev.includes(imageId) ? prev.filter((id) => id !== imageId) : [...prev, imageId],
+		);
+	};
 
 // Flatten all product images from the shop
   const allImages = products.flatMap(product => 
@@ -141,8 +165,6 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
               }}
               onMouseEnter={() => setHoveredCard(prod.images[0]?.ID)}
               onMouseLeave={() => setHoveredCard(null)}
-              //onClick={() => handleViewProductDetailsLug(prod)}
-              //onClick={() => handleViewProductDetailsLug(prod)}
               onClick={() => handleViewproductDetails(prod)}
               
             
@@ -178,6 +200,7 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
                   <small className="text-primary">Pas d'image</small>
                 </div>
               )}
+             
             </div>
           </div>
         ))}
@@ -185,6 +208,22 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
 
     {/** End product */}
     <h2 className="mb-4"> {allImages.length} images</h2>
+    <div className='d-flex justify-content-between align-items-center mb-3'>
+								<div>
+									{selectedImages.length > 0 && (
+										<button
+											onClick={() => handleDeleteImages(selectedImages)}
+											className='btn btn-danger me-2'>
+											Delete {selectedImages.length} selected
+										</button>
+									)}
+								</div>
+								<div>
+									<span className='text-muted'>
+										{selectedImages.length} of {allImages.length} selected
+									</span>
+								</div>
+							</div>
 
       <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
         {allImages.map((image) => (
@@ -199,7 +238,6 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
               }}
               onMouseEnter={() => setHoveredCard(image.ID)}
               onMouseLeave={() => setHoveredCard(null)}
-              //onClick={() => handleImageClick(image.productSlug, image.productId)}
               onClick={() => handleImageClick(image.product)}
             
             >
@@ -234,6 +272,22 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
                   <small className="text-primary">Featured</small>
                 </div>
               )}
+               
+                <div className="card-footer bg-primary bg-opacity-10">
+                  <small className="text-danger">delete image</small>
+                  <input
+															type='checkbox'
+															checked={selectedImages.includes(image.ID)}
+															//onChange={() => toggleImageSelection(image.ID)}
+                              onChange={(e) => {
+                              e.stopPropagation(); 
+                              toggleImageSelection(image.ID);
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+															className='form-check-input'
+														/>
+                </div>
+             
             </div>
           </div>
         ))}

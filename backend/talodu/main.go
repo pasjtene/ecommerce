@@ -97,6 +97,8 @@ func main() {
 		products.POST("", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.CreateProduct(s.DB))
 		products.DELETE(":id", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.DeleteProduct(s.DB))
 		products.DELETE("/delete/batch", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.DeleteProductBatch(s.DB))
+		products.DELETE("/images/delete/batch", auth.AuthMiddleware(), handlers.DeleteProductImagesBatch(s.DB))
+
 		products.GET(":id", handlers.GetProduct(s.DB))    // Get single product
 		products.PUT(":id", handlers.UpdateProduct(s.DB)) // Update
 	}

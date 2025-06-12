@@ -512,6 +512,48 @@ func DeleteProductBatch(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+func DeleteProductImagesBatch(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var request struct {
+			IDs []uint `json:"ids"`
+		}
+
+		if err := c.ShouldBindJSON(&request); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+			return
+		}
+
+		if len(request.IDs) == 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "No images selected"})
+			return
+		}
+
+		// First, fetch the images to get their file paths
+		var images []ProductImage
+		if err := db.Where("id IN ?", request.IDs).Find(&images).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch images"})
+			return
+		}
+
+		if err := db.Where("id IN ?", request.IDs).Delete(&ProductImage{}).Error; err != nil {
+			c.JSON(http.StatusOK, gin.H{"error": "Images delete failed"})
+			return
+		}
+
+		// Delete the files from disk
+		for _, image := range images {
+			// Remove the leading slash from the URL to get the correct path
+			filePath := strings.TrimPrefix(image.URL, "/")
+			if err := os.Remove(filePath); err != nil {
+				// Log the error but continue with other files
+				fmt.Printf("Failed to delete file %s: %v\n", filePath, err)
+			}
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("%d images deleted", len(request.IDs))})
+	}
+}
+
 // Seed initial data
 func SeedProducts(db *gorm.DB) {
 	products := []Product{

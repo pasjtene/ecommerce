@@ -412,9 +412,6 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
 				<ShopProductListNext shop={shop} />
 			</div>
 
-		
-
-
 				 <ConfirmDelete 
 					shop={shop}
 					show={showConfirmModal}
@@ -430,33 +427,7 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
 					error={apiError}
 				/>
 
-				{/**
-				 * {showConfirmModal === "confirm" && (
-                <ConfirmDelete
-                    show={true}
-                    onClose={() => setShowConfirmModal(null)}
-                    onError={() => setShowConfirmModal("error")}
-					shop={shop}
-                   
-                />
-            )}
-
-			
-			  {showConfirmModal === "error" && (
-                <ErrorModal
-                    show={true}
-                    onClose={() => setShowConfirmModal(null)}
-                    //onError={() => setShowConfirmModal(null)}
-					//shop={shop}
-                   
-                />
-            )}
-				 */}
-
-			
-			 
-			  
-
+				
 			</div>
 
 		</PageWrapper>
