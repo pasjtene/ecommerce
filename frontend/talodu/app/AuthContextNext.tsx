@@ -3,7 +3,7 @@
 import React, {createContext, useCallback, useContext, useState, useEffect, ReactNode } from "react";
 import axios from 'axios';
 //import { useNavigate } from "react-router-dom";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 //import { API_BASE_URL } from '../auth/api'
 import { Shop } from './types'
 
@@ -65,7 +65,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
    // loaddata
     //const navigate = useNavigate();
 
-    //const router = useRouter();
+    const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -89,50 +89,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return null; // Or a loading spinner
   }
 
-    //const handleOnAuth = useCallback(() => navigate('/'), [navigate]);
-/*
-    useEffect(()=>{
-        const initializeAuth = async () => {
-            const storedToken = localStorage.getItem('j_auth_token');
-            const storedUser = localStorage.getItem('j_user');
-            //setUser(u);
-            if (storedToken && storedUser) {
-                setToken(storedToken);
-                setUser(JSON.parse(storedUser));
-                axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-                try {
-                   // const response = await axios.get<User>('http://127.0.0.1:8888/login');
-                }catch(error) {
-                   
-                }
-            }
-            setLoading(false);
-        };
-        
-     initializeAuth();
-    },[token]);
-    */
-
-    /*
-    const logout = (): void => {
-        localStorage.removeItem('j_auth_token')
-        localStorage.removeItem('j_user')
-        delete axios.defaults.headers.common['Authorization'];
-        setToken(null);
-        setUser(null);
-        window.location.reload();
-    };
-*/
 
     const logout = (): void => {
         if (typeof window !== 'undefined') {
           localStorage.removeItem('j_auth_token');
           localStorage.removeItem('j_user');
+          localStorage.removeItem('j_refresh_token');
+
         }
         delete axios.defaults.headers.common['Authorization'];
         setToken(null);
         setUser(null);
-        //router.push('/'); // Use Next.js router instead of window.location
+        router.push('/');
       };
 
 
