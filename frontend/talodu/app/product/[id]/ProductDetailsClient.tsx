@@ -99,6 +99,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
   const [loading, setLoading] = useState(false);
   const { user, isShopOwner, hasRole, hasAnyRole } = useAuth();
    const [selectedImages, setSelectedImages] = useState<string[]>([]);
+   const [enableEdit, setEnableEdit] = useState<boolean>(false);
 
   const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
    useEffect(() => {
@@ -142,6 +143,11 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 		setSelectedImages((prev) =>
 			prev.includes(imageId) ? prev.filter((id) => id !== imageId) : [...prev, imageId],
 		);
+	};
+
+   // Toggle product selection
+	const toggleEnableEdit= () => {
+		setEnableEdit(!enableEdit)
 	};
 
     const handleDeleteImages = async (imageIds: string[]) => {
@@ -301,23 +307,35 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
                         onClick={() => router.back()}>
                         Retour a la Liste
                     </button>
+
+                    
                 </div>
-                     
 
-
-                      {isShopOwner(shop) || hasAnyRole(["SuperAdmin","Admin"]) && (
-                        <div className='col-lg-6 col-md-6 col-sm-6'>
-                        <span className='text-muted fst-italic me-2'>You can edit shop as:</span>
-                        {isShopOwner(shop)?<span>Shop owner</span>:<span></span>}
-                        {hasAnyRole(["SuperAdmin","Admin"])?<span>{user?.Roles.some(r=>r.Name)}</span>:<span></span>}
-                        <span className='fw-bold'>Enable Edit shop</span> {/* This needs to be dynamic */}
+                 {(isShopOwner(shop) || hasAnyRole(["SuperAdmin","Admin"]))   && (
+                        <div className='col-md-4 col-6 ms-4 mt-2'>
+                        <span className='text-muted fst-italic me-2'>edit as:</span>
+                        
+                        <span className='fw-bold'>Shop owner or Admin</span>
+                        <input
+															type='checkbox'
+															checked={enableEdit}
+															
+                              onChange={(e) => {
+                              e.stopPropagation(); 
+                              toggleEnableEdit();
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+															className='form-check-input'
+														/>
                       </div>
                       )}
-                
+
                       
+
+                     
               <div className='col-lg-6 col-md-6 col-sm-6'>
                 <span className='text-muted fst-italic me-2'>Last update:</span>
-                <span className='fw-bold'>13 hours ago 2</span> {/* This needs to be dynamic */}
+                <span className='fw-bold'>13 hours ago 1</span> {/* This needs to be dynamic */}
               </div>
             </div>
 
@@ -338,8 +356,12 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
                 )}
               </div>
 
-              {/** if shop owner */} 
-              {isShopOwner(shop) &&(
+              {/** if shop owner */}
+              {enableEdit && (
+                <div>
+
+
+                  {isShopOwner(shop) &&(
               <div className='row h-100 mt-5'>
                       
               <div className='mt-4'>
@@ -459,6 +481,11 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
                       </Card>
                 </div>
               </div>)}
+
+
+                </div>
+              )}
+              
               {/** end check */}
 
             </Page>
