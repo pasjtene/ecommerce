@@ -359,7 +359,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
               {/** if shop owner */}
               {enableEdit && (
                 <div>
-                  {isShopOwner(shop) &&(
+                  {(isShopOwner(shop) || hasAnyRole(["SuperAdmin","Admin"]))  &&(
               <div className='row h-100 mt-5'>
                       
               <div className='mt-4'>
