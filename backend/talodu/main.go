@@ -99,8 +99,8 @@ func main() {
 		products.DELETE("/delete/batch", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.DeleteProductBatch(s.DB))
 		products.DELETE("/images/delete/batch", auth.AuthMiddleware(), handlers.DeleteProductImagesBatch(s.DB))
 
-		products.GET(":id", handlers.GetProduct(s.DB))    // Get single product
-		products.PUT(":id", handlers.UpdateProduct(s.DB)) // Update
+		products.GET(":id", handlers.GetProduct(s.DB))                           // Get single product
+		products.PUT(":id", auth.AuthMiddleware(), handlers.UpdateProduct(s.DB)) // Update
 	}
 
 	// Get product categories

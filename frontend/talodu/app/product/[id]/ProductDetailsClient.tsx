@@ -359,8 +359,6 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
               {/** if shop owner */}
               {enableEdit && (
                 <div>
-
-
                   {isShopOwner(shop) &&(
               <div className='row h-100 mt-5'>
                       
@@ -518,3 +516,4 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 };
 
 export default ProductDetailsClient;
+
