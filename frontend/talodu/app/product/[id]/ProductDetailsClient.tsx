@@ -14,11 +14,13 @@ import Card, {
 import Icon from '../../../src/components/icon/Icon';
 import Input from '../../../src/components/bootstrap/forms/Input';
 import showNotification from '../../../src/components/extras/showNotification';
-import { Product, ProductImage, Shop } from '../../types'; 
+import { Product, ProductImage, Shop, AppError } from '../../types'; 
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Button from 'react-bootstrap/Button';
 import { useAuth, AuthProvider } from '../../AuthContextNext';
+import ConfirmDelete from './ConfirmDeleteImages';
+import ErrorModal from '../../utils/ErrorModal';
 
 // Dynamic import for client-only components
 import dynamic from 'next/dynamic';
@@ -100,6 +102,17 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
   const { user, isShopOwner, hasRole, hasAnyRole } = useAuth();
    const [selectedImages, setSelectedImages] = useState<string[]>([]);
    const [enableEdit, setEnableEdit] = useState<boolean>(false);
+   const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [apiError, setApiError] = useState<AppError>();
+    const [showErrorModal, setShowErrorModal] = useState(false);
+  
+  
+  
+   const handleDeleteError = (error: AppError) => {
+	
+	setApiError(error);
+    setShowErrorModal(true);
+  };
 
   const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
    useEffect(() => {
@@ -152,9 +165,9 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 
     const handleDeleteImages = async (imageIds: string[]) => {
       try {
-        await axios.delete(API_URL + '/products/images/delete/batch', {
-          data: { ids: imageIds },
-        });
+        //await axios.delete(API_URL + '/products/images/delete/batch', {
+          //data: { ids: imageIds },
+        //});
         setImages((prev) => prev.filter((i) => !imageIds.includes(i.ID)));
         setSelectedImages([]);
   
@@ -368,7 +381,8 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 								<div>
 									{selectedImages.length > 0 && (
 										<button
-											onClick={() => handleDeleteImages(selectedImages)}
+											//onClick={() => handleDeleteImages(selectedImages)}
+                      onClick={() => {setShowConfirmModal(true);}}
 											className='btn btn-danger me-2'>
 											Delete {selectedImages.length} selected
 										</button>
@@ -485,6 +499,26 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
               )}
               
               {/** end check */}
+
+              <div>
+				
+                  <ConfirmDelete 
+                    shop={shop}
+                    show={showConfirmModal}
+                    onClose={() => setShowConfirmModal(false)}
+                    onError={handleDeleteError}
+                    imageIds={selectedImages}
+                    onImagesDeleted={handleDeleteImages}
+                  />
+
+                  <ErrorModal 
+                    show={showErrorModal}
+                    onClose={() => setShowErrorModal(false)}
+                    //errorMessage={errorMessage}
+                    //errorDetails ={errorDetails}
+                    error={apiError}
+                  />
+                </div>
 
             </Page>
             </>

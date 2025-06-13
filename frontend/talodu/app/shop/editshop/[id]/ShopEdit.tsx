@@ -7,14 +7,13 @@ import Card, { CardBody } from '../../../../src/components/bootstrap/Card';
 import Button from '../../../../src/components/bootstrap/Button';
 //import useDarkMode from '../../../hooks/useDarkMode';
 import axios from 'axios';
-//import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useRouter } from 'next/navigation';
 import { User, Role, Shop, ShopUser, Product } from '../../../types';
 import { toast } from 'react-toastify';
 import ProductAddComponent  from './ProductAddComponent'
 import { useAuth, AuthProvider } from '../../../AuthContextNext';
 import ConfirmDelete from '../../../utils/ConfirmDelete';
-import ErrorModal from '../../../utils/ErrorModal2';
+import ErrorModal from '../../../utils/ErrorModal';
 
 import ShopProductListNext from '../../../shop/products/[id]/ShopProductListNext';
 
@@ -42,29 +41,22 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
 	const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8888';
 
 	const [error, setError] = useState<string | null>(null);
-
-
 	const [isLoading, setIsLoading] = useState(false);
 	const [editedShop, setEditedShop] = useState<Shop>(shop);
 
-	//const [showConfirmModal, setShowConfirmModal] = useState<'confirm' | 'error' | null>(null);
-
 	const router = useRouter();
 
-	//const [dropdownOpen, setDropdownOpen] = useState<Record<number, boolean>>({});
 	const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
 
 	const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [showErrorModal, setShowErrorModal] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [errorDetails, setErrorDetails ] = useState('');
+  
+  //const [errorMessage, setErrorMessage] = useState('');
+  //const [errorDetails, setErrorDetails ] = useState('');
   const [apiError, setApiError] = useState<AppError>();
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   const handleDeleteError = (error: AppError) => {
-	//const handleDeleteError = (error:any) => {
 	
-    //setErrorMessage(error.message || 'Failed to delete shop');
-	//setErrorDetails(error.details);
 	setApiError(error);
     setShowErrorModal(true);
   };
@@ -410,7 +402,7 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
 			<div>
 				<div>
 				<ShopProductListNext shop={shop} />
-			</div>
+				</div>
 
 				 <ConfirmDelete 
 					shop={shop}

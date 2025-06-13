@@ -7,10 +7,10 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { toast } from 'react-toastify';
-import { Shop } from '../types';
+import { Shop } from '../../types';
 import axios from 'axios';
 import { useRouter } from 'next/navigation'
-import { handleApiError } from './errorHandler';
+import { handleApiError } from '../../utils/errorHandler';
 
 
 interface AppError {
@@ -23,11 +23,12 @@ interface ConfirmDeleteProps {
   shop?: Shop;
   show: boolean;
   onClose: () => void;
-  //onError: (error: { message: string, details?: string | unknown }) => void;
   onError: (error: AppError) => void;
+  imageIds: string[];
+  onImagesDeleted: (ids: string[]) => void
 }
 
-const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({ shop, show, onClose, onError}) => {
+const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({ shop, show, onClose, onError,imageIds,onImagesDeleted}) => {
   const router = useRouter();
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8888";
 
@@ -50,22 +51,42 @@ const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({ shop, show, onClose, onEr
 		}
 	};
 
+     const handleDeleteImages = async (imageIds: string[]) => {
+          try {
+            //await axios.delete(API_URL + '/products/images/delete/batch', {
+              //data: { ids: imageIds },
+            //});
+            //setImages((prev) => prev.filter((i) => !imageIds.includes(i.ID)));
+            //setSelectedImages([]);
+      
+            // Show success message
+            //toast.success(`${productIds.length} products deleted successfully`);
+          } catch (error) {
+            //toast.error('Failed to delete products');
+            
+          }
+        };
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
                 if (typeof window !== 'undefined') {
                 const token = localStorage.getItem('j_auth_token');
-				await axios.delete(API_BASE_URL+`/shops/${shop?.ID}`, {
+
+				await axios.delete(API_BASE_URL+'/products/images/delete/batch', {
+                    data: { ids: imageIds },
 					headers: {
 						//Authorization: `Bearer ${token}`,
                         Authorization: `${token}`,
 					},
 				});
+                onImagesDeleted(imageIds);
                 onClose();
                 
                 //toast.success('Succes vous etes connecté');
                 if(shop) {
-                    router.push('/shop/listshops');
+                   // router.push('/shop/listshops');
                 }
                 
             }
@@ -108,7 +129,7 @@ const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({ shop, show, onClose, onEr
           <FontAwesomeIcon icon={faTimes} />
         </Button>
 
-        <h4 className="mb-4 text-center">Delete shop {shop?.name}</h4>
+        <h4 className="mb-4 text-center">Delete {imageIds?.length} images ?</h4>
         
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
@@ -117,11 +138,25 @@ const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({ shop, show, onClose, onEr
                 <FontAwesomeIcon icon={faUser} />
               </span>
               <span className="input-group-text">
-                Owner: {shop?.owner.FirstName} {shop?.owner.LastName}
+               Shop Owner: {shop?.owner.FirstName} {shop?.owner.LastName}
               </span>
 
             </div>
           </Form.Group>
+
+           <Form.Group className="mb-3">
+            <div className="input-group">
+              <span className="input-group-text">
+                <FontAwesomeIcon icon={faUser} />
+              </span>
+              <span className="input-group-text">
+               Shop name: {shop?.name}
+              </span>
+
+            </div>
+          </Form.Group>
+
+
           <Form.Group className="mb-3">
             <div className="input-group">
               <span className="input-group-text">
@@ -129,6 +164,7 @@ const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({ shop, show, onClose, onEr
               </span>
               <span className="input-group-text">
                 owner email: {shop?.owner.Email}
+                
               </span>
 
             </div>

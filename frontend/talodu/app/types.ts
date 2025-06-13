@@ -9,6 +9,12 @@ export interface User {
     roles: Role[];
   }
 
+  export interface AppError {
+  message: string;
+  details?: string;
+  code?: string;
+}
+
    export interface ShopUser {
       id: number;
       ID: number;
