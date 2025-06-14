@@ -13,13 +13,6 @@ import ProductAddComponent from '../../../../src/pages/presentation/sales/Produc
 import ImageDisplayComponent from './ImageDisplayComponentNext'
 import { useAuth, AuthProvider } from '../../../AuthContextNext';
 
-
-
-  //interface LocationState {shop?: Shop;}
-  //interface ProductDetailsClientProps { initialProduct: Product[]; }
-    
-  
-
   interface ShopDetailsClientProps {
     shop: Shop; // Pass the fetched product from the Server Component
   }
@@ -214,7 +207,7 @@ import { useAuth, AuthProvider } from '../../../AuthContextNext';
             <Page>
 
             <div className='row'>
-            <span>Le propriétaire de cette boutique c'est {shop.owner.FirstName} id: {shop.owner.ID} email: {shop.owner.Email}</span> 
+            
             {isShopOwner(shop) &&(
                 <div>
                     <span>Vous etes propriétaire de cette boutique</span> 
