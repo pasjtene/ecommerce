@@ -22,7 +22,7 @@ export function handleApiError(error: unknown): AppError {
               'API request failed',
       details: error.response?.data?.details || 
               error.response?.statusText || 
-              `Status code: ${error.response?.status}`,
+              `Status code: ${error.response?.status}` || '',
       code: error.code
     };
   }
