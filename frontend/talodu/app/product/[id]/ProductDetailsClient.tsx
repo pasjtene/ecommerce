@@ -307,7 +307,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 						</div>
 
 						{(isShopOwner(shop) || hasAnyRole(['SuperAdmin', 'Admin'])) && (
-							<div className='col-md-6 col-6 ms-2 mt-2 mb-2'>
+							<div className='col-md-6 col-12 col-sm-12 col-lg-6 col-xs-12 ms-2 mt-2 mb-2'>
 								<span className='text-muted fst-italic me-2'>edit as:</span>
 								{isShopOwner(shop) && (
 									<span className='text-muted fst-italic me-2'>Shop owner</span>
