@@ -324,11 +324,15 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
                     
                 </div>
 
+               
+                       
                  {(isShopOwner(shop) || hasAnyRole(["SuperAdmin","Admin"]))   && (
                         <div className='col-md-4 col-6 ms-4 mt-2'>
                         <span className='text-muted fst-italic me-2'>edit as:</span>
+                         {isShopOwner(shop) && (<span className='text-muted fst-italic me-2'>Shop owner</span> )}
+                       {hasAnyRole(["Admin"])  && (<span className='text-muted fst-italic me-2'>Admin</span> )}
+                       {hasAnyRole(["SuperAdmin"])  && (<span className='text-muted fst-italic me-2'>Super Admin</span> )}
                         
-                        <span className='fw-bold'>Shop owner or Admin</span>
                         <input
 															type='checkbox'
 															checked={enableEdit}
@@ -343,13 +347,6 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
                       </div>
                       )}
 
-                      
-
-                     
-              <div className='col-lg-6 col-md-6 col-sm-6'>
-                <span className='text-muted fst-italic me-2'>Last update:</span>
-                <span className='fw-bold'>13 hours ago 1</span> {/* This needs to be dynamic */}
-              </div>
             </div>
 
             <Page>

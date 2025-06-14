@@ -515,11 +515,43 @@ func DeleteProductBatch(db *gorm.DB) gin.HandlerFunc {
 func DeleteProductImagesBatch(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var request struct {
-			IDs []uint `json:"ids"`
+			IDs  []uint `json:"ids"`
+			Shop Shop   `json:"shop"`
 		}
 
 		if err := c.ShouldBindJSON(&request); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+			return
+		}
+
+		// Get userID from auth context (preferred over URL param)
+		authUserID, exists := c.Get("userID")
+		if !exists {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Not authenticated"})
+			return
+		}
+
+		// Convert authUserID to uint regardless of original type
+		userID, err := convertToUint(authUserID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "Invalid user ID",
+				"details": fmt.Sprintf("Could not convert %v (%T) to uint", authUserID, authUserID),
+			})
+			return
+		}
+
+		if userID != request.Shop.Owner.ID {
+			c.JSON(http.StatusForbidden, gin.H{
+				"error":                    "Operation not permitted",
+				"details":                  "Only the shop owner can perform this action",
+				"shop owner Id ":           request.Shop.Owner.ID,
+				"user Id ":                 authUserID,
+				"Compared: ":               request.Shop.Owner.ID == authUserID,
+				"The converted authUser: ": userID,
+				//"The ok value":             ok,
+				//"The authUserID type is: ": authUserID.(type),
+			})
 			return
 		}
 

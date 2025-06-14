@@ -32,50 +32,16 @@ const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({ shop, show, onClose, onEr
   const router = useRouter();
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8888";
 
-  // Handle delete user
-	const handleDelete = async (userId: number) => {
-		if (window.confirm('Are you sure you want to delete this user?')) {
-			try {
-				const token = localStorage.getItem('authToken');
-				await axios.delete(`/api/users/${userId}`, {
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				});
-				
-                router.push('/shop/listshops');
-			} catch (err) {
-				console.error('Error deleting user:', err);
-				alert('Failed to delete user');
-			}
-		}
-	};
-
-     const handleDeleteImages = async (imageIds: string[]) => {
-          try {
-            //await axios.delete(API_URL + '/products/images/delete/batch', {
-              //data: { ids: imageIds },
-            //});
-            //setImages((prev) => prev.filter((i) => !imageIds.includes(i.ID)));
-            //setSelectedImages([]);
-      
-            // Show success message
-            //toast.success(`${productIds.length} products deleted successfully`);
-          } catch (error) {
-            //toast.error('Failed to delete products');
-            
-          }
-        };
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
                 if (typeof window !== 'undefined') {
                 const token = localStorage.getItem('j_auth_token');
+                console.log("The shop is: ",shop);
 
 				await axios.delete(API_BASE_URL+'/products/images/delete/batch', {
-                    data: { ids: imageIds },
+                    data: { ids: imageIds, shop: shop },
 					headers: {
 						//Authorization: `Bearer ${token}`,
                         Authorization: `${token}`,
@@ -178,8 +144,6 @@ const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({ shop, show, onClose, onEr
           >
             Yes Delete shop
           </Button>
-
-         
 
           <div className="text-center">
             <p className="mb-1">Not ready to delete?</p>
