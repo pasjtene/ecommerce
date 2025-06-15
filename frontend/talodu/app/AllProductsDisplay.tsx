@@ -127,7 +127,8 @@ const AllProductsDisplay  = () => {
   return (
     <div className="container-fluid mt-4">
       <h2 className="mb-4"> {allImages.length} images</h2>
-      <SubHeader>
+      {/**
+       *  <SubHeader>
             <SubHeaderLeft>
                 <label
                     className='border-0 bg-transparent cursor-pointer me-0'
@@ -147,6 +148,8 @@ const AllProductsDisplay  = () => {
             </SubHeaderLeft>
         
     </SubHeader>
+       */}
+     
 
     {/** Products */}
     <div className='m-4'>Tous les produits</div>
