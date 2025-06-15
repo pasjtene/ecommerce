@@ -264,6 +264,7 @@ func Login(db *gorm.DB) gin.HandlerFunc {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 			return
 		}
+
 		accessToken, refreshToken, err := GenerateTokens(&user)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate tokens"})
@@ -310,7 +311,8 @@ func RefreshToken(db *gorm.DB) gin.HandlerFunc {
 		})
 
 		if err != nil || !token.Valid {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid refresh token"})
+			//Invalid refresh token
+			c.JSON(http.StatusBadRequest, gin.H{"error": "You are not connected. Please login to continue"})
 			return
 		}
 
