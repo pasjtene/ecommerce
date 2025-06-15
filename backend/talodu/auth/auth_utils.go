@@ -310,14 +310,14 @@ func RefreshToken(db *gorm.DB) gin.HandlerFunc {
 		})
 
 		if err != nil || !token.Valid {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid refresh token"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid refresh token"})
 			return
 		}
 
 		// Check token type
 		claims, ok := token.Claims.(jwt.MapClaims)
 		if !ok || claims["type"] != "refresh" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token type"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid token type"})
 			return
 		}
 
@@ -332,14 +332,14 @@ func RefreshToken(db *gorm.DB) gin.HandlerFunc {
 
 		userID, ok := claims["user_id"].(float64) // JWT numbers are float64
 		if !ok {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid token claims"})
 			return
 		}
 
 		// Verify refresh token against stored token
 		var user User
 		if err := db.Preload("Roles").Where("id = ? AND refresh_token = ?", userID, input.RefreshToken).First(&user).Error; err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid refresh token"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid refresh token"})
 			return
 		}
 

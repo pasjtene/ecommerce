@@ -2,12 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import {Product} from './types';
 import axios from 'axios';
-import SubHeader, {
-    SubHeaderLeft,
-   
-} from '../src/layout/SubHeader/SubHeader';
-import Icon from '../src/components/icon/Icon';
-import Input from '../src/components/bootstrap/forms/Input';
+
 import { useSearchParams } from 'next/navigation';
 
 const AllProductsDisplay  = () => {
