@@ -36,9 +36,10 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   const shop = await getShop(resolvedParams.id);
   
   return {
-    title: shop ? `${shop.name} | Talodu.com }` : 'Product Not Found | Talodu.com',
-    description: shop ? `${shop.description} | Talodu.com - by ${shop.moto}` : 'Product Not Found | Talodu.com',
-    //description: `product?.description + 'by' + ${product.shop.name}` || 'The requested product could not be found.',
+    //title: shop ? `${shop.name} | Talodu.com }` : 'Product Not Found | Talodu.com',
+    title: 'Shops list - Talodu.com',
+    //description: shop ? `${shop.description} | Talodu.com - by ${shop.moto}` : 'Product Not Found | Talodu.com',
+    description: 'Shops list - Talodu.com',
     ...(shop ? {
       openGraph: {
         type: 'website',

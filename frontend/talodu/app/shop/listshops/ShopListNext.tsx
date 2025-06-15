@@ -49,14 +49,8 @@ const ShopsList = () => {
 
 	//const navigate = useNavigate();
 	// Available roles from your API or state
-	const { user } = useAuth();
+	const { user,isShopOwner, hasRole, hasAnyRole } = useAuth();
     const router = useRouter();
-
-	// State for edit modal
-	//const [showEditModal, setShowEditModal] = useState(false);
-	//const [isNewUser, setisNewUser] = useState(false);
-
-	//const [editingUser, setEditingUser] = useState<User | null>(null);
 	const [editFormData, setEditFormData] = useState<EditFormData>({
 		id: 0,
 		username: '',
@@ -75,11 +69,7 @@ const ShopsList = () => {
 		roles: [],
 	});
 
-	//const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-	//const [editingUserId, setEditingUserId] = useState<string | null>(null);
 	const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
-
-	//const [dropdownOpen, setDropdownOpen] = useState<Record<number, boolean>>({});
 	const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
 
 	const toggleDropdown = (userId: number) => {
@@ -117,13 +107,7 @@ const ShopsList = () => {
 	};
 
 	// Handle bulk delete
-	const handleDeleteProducts2 = () => {
-		if (selectedProducts.length > 0) {
-			//onDeleteProducts(selectedProducts);
-			setSelectedProducts([]);
-		}
-	};
-
+	
 	const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8888';
 
 	const handleDeleteProducts = async (productIds: number[]) => {
@@ -167,8 +151,12 @@ const ShopsList = () => {
 		setUsers((prev) => [...prev.slice(0, index), newUser, ...prev.slice(index)]);
 	};
 
-	const [createModalStatus, setCreateModalStatus] = useState<boolean>(false);
-	const fetchShops = async (page = 1, limit = 10, search = ''): Promise<void> => {
+	//const [createModalStatus, setCreateModalStatus] = useState<boolean>(false);
+	const handleListAllShops = () => {
+		fetchShops(pagination.page, pagination.limit, searchTerm,0);
+	}
+
+	const fetchShops = async (page = 1, limit = 10, search = '',owner_id=0): Promise<void> => {
 		
 		try {
 			// const response = await axios.get<ApiResponse>('/api/products',{
@@ -177,10 +165,10 @@ const ShopsList = () => {
 					page,
 					limit,
 					search: search.length > 0 ? search : undefined,
-					owner_id: user?.ID, // if there is no owner_id, all shops are displayed for Admin or SuperAdmin
+					owner_id:owner_id==0?undefined: user?.ID, // if there is no owner_id, all shops are displayed for Admin or SuperAdmin
 				},
 				headers: {
-					//Authorization: `Bearer ${jwtToken}`, // Include the JWT token in the Authorization header
+					//Authorization: `Bearer ${jwtToken}`, // Include the JWT  header
 					Authorization: `${jwtToken}`, // Include the JWT token in the Authorization header
 				},
 			});
@@ -228,6 +216,8 @@ const ShopsList = () => {
 			fetchShops(newPage, pagination.limit, searchTerm);
 		}
 	};
+
+	
 
 	// Handle limit change - maintains search term
 	const handleLimitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -415,6 +405,7 @@ const ShopsList = () => {
 				});
 				// Refresh user list after deletion
 				fetchShops(pagination.page, pagination.limit, searchTerm);
+				
 			} catch (err) {
 				console.error('Error deleting user:', err);
 				alert('Failed to delete user');
@@ -445,7 +436,25 @@ const ShopsList = () => {
 
 			<div>
 				<h3> Liste des boutiques</h3>
+				{( hasAnyRole(['SuperAdmin', 'Admin'])) && (
+							<div className='col-md-6 col-12 col-sm-12 col-lg-6 col-xs-12 ms-2 mt-2 mb-2'>
+								
+								{hasAnyRole(['Admin']) && <span className='text-muted fst-italic me-2'>Admin</span>}
+								{hasAnyRole(['SuperAdmin']) && (
+									<span className='text-muted fst-italic me-2'>Super Admin</span>
+								)}
+
+								<div
+								className='text-muted fst-italic me-2 link-button'
+								onClick={handleListAllShops}
+								>List all shops</div>
+
+							</div>
+						)}
 			</div>
+
+
+
 			{shops?.length > 5 ? (
 				<div className='row'>
 					<div className='col-sm-4 col-md-4 col-lg-4 mt-4 ms-sm-0 ms-md-4'>
