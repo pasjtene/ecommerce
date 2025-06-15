@@ -16,6 +16,7 @@ import { User, Role, Product, Shop } from '../../types';
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify';
 import { useAuth, AuthProvider } from '../../AuthContextNext';
+import { SpanStatus } from 'next/dist/trace';
 //import {  API_BASE_URL } from '../../api/api'
 
 interface ShopsResponse {
@@ -153,10 +154,10 @@ const ShopsList = () => {
 
 	//const [createModalStatus, setCreateModalStatus] = useState<boolean>(false);
 	const handleListAllShops = () => {
-		fetchShops(pagination.page, pagination.limit, searchTerm,0);
+		fetchAllShops(pagination.page, pagination.limit, searchTerm);
 	}
 
-	const fetchShops = async (page = 1, limit = 10, search = '',owner_id=0): Promise<void> => {
+	const fetchAllShops = async (page = 1, limit = 10, search = ''): Promise<void> => {
 		
 		try {
 			// const response = await axios.get<ApiResponse>('/api/products',{
@@ -165,7 +166,41 @@ const ShopsList = () => {
 					page,
 					limit,
 					search: search.length > 0 ? search : undefined,
-					owner_id:owner_id==0?undefined: user?.ID, // if there is no owner_id, all shops are displayed for Admin or SuperAdmin
+					//owner_id:user?.ID, // if there is no owner_id, all shops are displayed for Admin or SuperAdmin
+				},
+				headers: {
+					//Authorization: `Bearer ${jwtToken}`, // Include the JWT  header
+					Authorization: `${jwtToken}`, // Include the JWT token in the Authorization header
+				},
+			});
+			
+			setShops(response.data.shops);
+			setPagination({
+				page: response.data.page,
+				limit: response.data.limit,
+				totalItems: response.data.totalItems,
+				totalPages: response.data.totalPages,
+			});
+			// console.log("The shops data...",response.data);
+			setLoading(false);
+		} catch (e: any) {
+			setError(e.message);
+			setLoading(false);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const fetchShops = async (page = 1, limit = 10, search = ''): Promise<void> => {
+		
+		try {
+			// const response = await axios.get<ApiResponse>('/api/products',{
+			const response = await axios.get<ShopsResponse>(API_BASE_URL + '/shops', {
+				params: {
+					page,
+					limit,
+					search: search.length > 0 ? search : undefined,
+					owner_id:user?.ID, // if there is no owner_id, all shops are displayed for Admin or SuperAdmin
 				},
 				headers: {
 					//Authorization: `Bearer ${jwtToken}`, // Include the JWT  header
@@ -444,10 +479,10 @@ const ShopsList = () => {
 									<span className='text-muted fst-italic me-2'>Super Admin</span>
 								)}
 
-								<div
+								<span
 								className='text-muted fst-italic me-2 link-button'
 								onClick={handleListAllShops}
-								>List all shops</div>
+								>List all shops</span>
 
 							</div>
 						)}
@@ -551,6 +586,9 @@ const ShopsList = () => {
 												<th scope='col' className='d-none d-sm-table-cell'>
 													Description
 												</th>
+												<th scope='col' className='d-none d-sm-table-cell'>
+													Owner
+												</th>
 
 												<th scope='col'>Products</th>
 												<th scope='col'>Action</th>
@@ -572,7 +610,7 @@ const ShopsList = () => {
 
 													<td>
 														<div
-															className='dropdown-item d-flex align-items-center'
+															className='dropdown-item d-flex align-items-center link-button'
 															onClick={(e) => handleActionClick(e, () => handleViewDetailsLug(p))}>
 															<Icon icon='Eye' className='me-2' />
 															{p.name}
@@ -581,6 +619,9 @@ const ShopsList = () => {
 													<td className='d-none d-sm-table-cell'>{p.moto}</td>
 
 													<td className='d-none d-sm-table-cell'>{p.description}</td>
+													<td className='d-none d-sm-table-cell'>
+														{p.owner.FirstName} {p.owner.LastName} {p.owner.Email}
+														</td>
 													<td>{p.products?.length}</td>
 													{renderActionDropdown(p)}
 												</tr>
