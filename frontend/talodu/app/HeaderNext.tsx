@@ -1,9 +1,7 @@
+//HeaderNext.tsx
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
-//import { useRouter } from 'next/router'; // <-- IMPORTANT: Use Next.js useRouter
 import { useRouter } from 'next/navigation';
-//import Link from 'next/link';         // <-- IMPORTANT: Use Next.js Link for navigation
-//import { useAuth } from '../../presentation/auth/AuthContextNext'; // Assuming AuthContext is correctly set up for Next.js SSR
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAuth} from './AuthContextNext';
 import {
@@ -62,7 +60,8 @@ const HeaderNext = () => {
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         if (searchQuery.trim()) {
-            router.push(`/search?q=${encodeURIComponent(searchQuery)}`); // <-- Use router.push
+            //router.push(`/search?q=${encodeURIComponent(searchQuery)}`); // <-- Use router.push
+            router.push(`/?q=${encodeURIComponent(searchQuery)}`); // <-- Use router.push
         }
     };
 
@@ -70,9 +69,6 @@ const HeaderNext = () => {
         logout();
         toast.success('Succes vous etes déconnecté');
         setShowDropdown(false);
-        // Next.js equivalent to window.location.reload() if needed:
-        // router.reload();
-        // Or if you want to navigate to home after logout:
         router.push('/');
     };
 

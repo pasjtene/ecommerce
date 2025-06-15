@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { User, Product, ProductImage, Shop} from '../auth/types';
+import {Product} from './types';
 import axios from 'axios';
 import SubHeader, {
     SubHeaderLeft,
    
-} from '../../../layout/SubHeader/SubHeader';
-import Icon from '../../../components/icon/Icon';
-import Input from '../../../components/bootstrap/forms/Input';
+} from '../src/layout/SubHeader/SubHeader';
+import Icon from '../src/components/icon/Icon';
+import Input from '../src/components/bootstrap/forms/Input';
+import { useSearchParams } from 'next/navigation';
 
 const AllProductsDisplay  = () => {
+    const searchParams = useSearchParams();
+    const searchTerm = searchParams.get('q') || '';
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [hoveredCard, setHoveredCard] = useState<string | null>(null);
-    const [searchTerm, setSearchTerm] = useState('');
+    //const [searchTerm, setSearchTerm] = useState('');
     const [API_BASE_URL, setApibaseUrl] = useState<string | null>(null);
     //const navigate = useNavigate();
     const router = useRouter();
@@ -24,6 +27,12 @@ const AllProductsDisplay  = () => {
             totalItems: 0,
             totalPages: 1
           });
+
+          useEffect(() => {
+        if (searchTerm) {
+            fetchShopProducts(1, pagination.limit, searchTerm);
+        }
+    }, [searchTerm]);
 
       const fetchShopProducts = async (page = 1, limit = 10, search = ''):Promise<void> => {
             try {

@@ -6,10 +6,10 @@ import { faTimes, faUser, faEnvelope, faLock, faUserPlus, faEye } from '@fortawe
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import { toast } from 'react-toastify';
+//import { toast } from 'react-toastify';
 import { Shop } from '../../types';
 import axios from 'axios';
-import { useRouter } from 'next/navigation'
+//import { useRouter } from 'next/navigation'
 import { handleApiError } from '../../utils/errorHandler';
 
 
@@ -29,7 +29,7 @@ interface ConfirmDeleteProps {
 }
 
 const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({ shop, show, onClose, onError,imageIds,onImagesDeleted}) => {
-  const router = useRouter();
+  //const router = useRouter();
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8888";
 
 
@@ -142,7 +142,7 @@ const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({ shop, show, onClose, onEr
             type="submit" 
             className="w-100 mb-3"
           >
-            Yes Delete shop
+            Yes Delete Images
           </Button>
 
           <div className="text-center">
