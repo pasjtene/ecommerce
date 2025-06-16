@@ -16,8 +16,7 @@ import { User, Role, Product, Shop } from '../../types';
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify';
 import { useAuth, AuthProvider } from '../../AuthContextNext';
-import { SpanStatus } from 'next/dist/trace';
-//import {  API_BASE_URL } from '../../api/api'
+import ErrorDisplay from '../../utils/ErrorDisplayPage'
 
 interface ShopsResponse {
 	shops: Shop[];
@@ -461,8 +460,11 @@ const ShopsList = () => {
 		);
 
 	if (error) {
-		return <div>Error loading shops: {error}</div>;
-	}
+  return <ErrorDisplay 
+           error={error} 
+           title="Failed to load shops" 
+         />;
+}
 
 	return (
 		<PageWrapper>

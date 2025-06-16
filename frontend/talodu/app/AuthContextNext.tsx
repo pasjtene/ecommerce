@@ -153,7 +153,7 @@ const hideLogin = () => setShowLoginModal(false);
             setLoading(false);
             axios.defaults.headers.common['Authorization'] = `${access_token}`;
             }
-            
+
             onLoginSuccess?.();
             return user;
         } catch (error) {
@@ -172,7 +172,7 @@ const hideLogin = () => setShowLoginModal(false);
 
             if (typeof window !== 'undefined') {
           const refreshToken = localStorage.getItem('j_refresh_token');
-          if (!refreshToken) throw new Error('No refresh token');
+          if (!refreshToken) throw new Error('Please login to continue');
           
           const response = await axios.post(API_BASE_URL+'/refresh', { refresh_token: refreshToken });
           const { access_token, refresh_token } = response.data;
