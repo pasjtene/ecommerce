@@ -49,6 +49,10 @@ type AuthContextType = {
     isShopOwner: (shop: Shop) => boolean;
     isShopEmployee: (shop: Shop) => boolean;
     onLogout?: () => void;
+    showLogin: () => void;  // Add this
+    hideLogin: () => void;  // Add this
+    onRequireLogin?: () => void;  // Callback when auth is required
+    onLoginSuccess?: () => void;   // Callback after successful login
 }
 
 type AuthProviderProps = {
@@ -57,12 +61,19 @@ type AuthProviderProps = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider: React.FC<AuthProviderProps & {
+    onRequireLogin?: () => void;
+    onLoginSuccess?: () => void;
+}> = ({ children, onRequireLogin, onLoginSuccess }) => {
     const [user, setUser] = useState<User | null>(null);
     //const [token, setToken] = useState<string | null>(localStorage.getItem('j_auth_token'));
     const [token, setToken] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [mounted, setMounted] = useState(false); 
+    const [showLoginModal, setShowLoginModal] = useState(false);
+
+const showLogin = () => setShowLoginModal(true);
+const hideLogin = () => setShowLoginModal(false);
    // loaddata
     //const navigate = useNavigate();
 
@@ -101,6 +112,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         delete axios.defaults.headers.common['Authorization'];
         setToken(null);
         setUser(null);
+        showLogin();
         //router.push('/'); //ask user to log in..
       };
 
@@ -141,7 +153,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setLoading(false);
             axios.defaults.headers.common['Authorization'] = `${access_token}`;
             }
-
+            
+            onLoginSuccess?.();
             return user;
         } catch (error) {
             console.log("Login failled", error);
@@ -192,6 +205,8 @@ axios.interceptors.response.use(
             originalRequest.headers['Authorization'] = `${newAccessToken}`;
             return axios(originalRequest);
           } catch (err) {
+
+            onRequireLogin?.();
             return Promise.reject(err);
           }
         }
@@ -234,7 +249,9 @@ axios.interceptors.response.use(
         hasAnyRole,
         loaddata,
         isShopOwner,
-        isShopEmployee
+        isShopEmployee,
+        showLogin,
+        hideLogin,
 
     };
 

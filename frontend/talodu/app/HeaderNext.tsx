@@ -32,7 +32,7 @@ const Register = dynamic(() => import('./Register'), { ssr: false });
 const HeaderNext = () => {
     //const url1 = process.env.API_BASE_URL | 'undefined';
     //const { user, logout } = useAuth();
-    const { user, logout: contextLogout } = useAuth();
+    const { user, showLogin, hideLogin, logout: contextLogout } = useAuth();
     const router = useRouter(); // <-- Replaced useNavigate with useRouter
     const [searchQuery, setSearchQuery] = useState('');
     const [cartItemCount, setCartItemCount] = useState(7); // This should ideally come from global state/context
