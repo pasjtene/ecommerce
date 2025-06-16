@@ -274,6 +274,15 @@ func ListShops(db *gorm.DB) gin.HandlerFunc {
 		// Filter by owner if requested
 		if ownerID := c.Query("owner_id"); ownerID != "" {
 			query = query.Where("owner_id = ?", ownerID)
+		} else {
+			userRoles := c.MustGet("roles").([]interface{})
+
+			if auth.HasAnyRole(userRoles, []string{"Admin", "SuperAdmin"}) {
+				// User has at least one of the required roles
+			} else {
+				c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
+				return
+			}
 		}
 
 		var totalCount int64

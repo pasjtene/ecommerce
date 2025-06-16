@@ -209,10 +209,6 @@ func Logout(db *gorm.DB) gin.HandlerFunc {
 		//tokenUserID, ok := claims["user_id"].(float64) // JWT numbers are float64
 		tokenUserID, ok := claims["user_id"]
 		if !ok || tokenUserID != userID {
-			//if !ok || uint(tokenUserID) != userID {
-
-			//greeting := fmt.Sprintf("Hello, %s!", userID)
-			//println(greeting) // Output: Hello, World!
 			c.JSON(http.StatusForbidden, gin.H{"error": "Token does not match authenticated user"})
 			return
 		}
@@ -234,10 +230,6 @@ func Logout(db *gorm.DB) gin.HandlerFunc {
 			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 			return
 		}
-
-		// 7. Optionally add the token to a blacklist (for immediate invalidation)
-		// This requires additional storage like Redis
-		// redisClient.Set(tokenString, "invalid", time.Until(token.Claims.(jwt.MapClaims)["exp"].(time.Time)))
 
 		c.JSON(http.StatusOK, gin.H{"message": "Successfully logged out"})
 	}
@@ -570,4 +562,16 @@ func AuthMiddleware(requiredRoles ...string) gin.HandlerFunc {
 		c.Set("roles", userRoles)
 		c.Next()
 	}
+}
+
+// hasAnyRole checks if the user has at least one of the required roles
+func HasAnyRole(userRoles []interface{}, requiredRoles []string) bool {
+	for _, requiredRole := range requiredRoles {
+		for _, userRole := range userRoles {
+			if userRole.(string) == requiredRole {
+				return true
+			}
+		}
+	}
+	return false
 }
