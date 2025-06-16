@@ -69,16 +69,16 @@ const HeaderNext = () => {
       const logout = () => {
         contextLogout();
         setShowAuthModal('login');
-        toast.success('Succes vous etes déconnecté');
+        //toast.success('Succes vous etes déconnecté');
         setShowDropdown(false);
         //router.push('/');
     };
 
     const handleLogout = () => {
         logout();
-        toast.success('Succes vous etes déconnecté');
+        //toast.success('Succes vous etes déconnecté');
         setShowDropdown(false);
-        router.push('/');
+        //router.push('/');
     };
 
     const toggleDropdown = (e: React.MouseEvent) => {
