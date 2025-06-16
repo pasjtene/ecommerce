@@ -266,24 +266,62 @@ func ListShops(db *gorm.DB) gin.HandlerFunc {
 
 		}
 
-		// Pagination
-		page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
-		limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
-		offset := (page - 1) * limit
-
 		// Filter by owner if requested
 		if ownerID := c.Query("owner_id"); ownerID != "" {
 			query = query.Where("owner_id = ?", ownerID)
 		} else {
-			userRoles := c.MustGet("roles").([]interface{})
 
-			if auth.HasAnyRole(userRoles, []string{"Admin", "SuperAdmin"}) {
-				// User has at least one of the required roles
-			} else {
-				c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
+			// Get user roles safely
+			//userRolesInterface, exists := c.Get("roles")
+			roles, exists := c.Get("roles")
+			if !exists {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "User roles not found"})
 				return
 			}
+			userRoles, ok := roles.([]string)
+			//userRoles, ok := userRolesInterface.([]interface{})
+
+			if !ok {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user roles format"})
+				return
+			}
+
+			// Get user ID safely
+			authUserID, exists := c.Get("userID")
+			if !exists {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "User ID not found"})
+				return
+			}
+
+			//currentUserID, ok := authUserID.(string)
+			/**
+			if !ok {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID format"})
+				return
+			}
+			*/
+			// Convert authUserID to uint regardless of original type
+			currentUserID, err := convertToUint(authUserID)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"error":   "Invalid user ID",
+					"details": fmt.Sprintf("Could not convert %v (%T) to uint", authUserID, authUserID),
+				})
+				return
+			}
+
+			//This is a second more flexible check. This check can also be done in the route via authmidleware
+			if !auth.HasAnyRole(userRoles, []string{"Admin", "SuperAdmin"}) {
+				// If not admin, only show shops owned by the current user
+				query = query.Where("owner_id = ?", currentUserID)
+			}
+
 		}
+
+		// Pagination
+		page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+		limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+		offset := (page - 1) * limit
 
 		var totalCount int64
 		query.Model(&models.Shop{}).Count(&totalCount)

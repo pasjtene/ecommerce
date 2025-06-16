@@ -144,7 +144,8 @@ func main() {
 	{
 		shops.POST("", auth.AuthMiddleware(), handlers.CreateShop(s.DB))
 		shops.POST("/:id/employees", auth.AuthMiddleware(), handlers.AddShopEmployee2(s.DB))
-		shops.GET("", handlers.ListShops(s.DB))
+		shops.GET("", auth.AuthMiddleware(), handlers.ListShops(s.DB))
+		shops.GET("/all", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.ListShops(s.DB))
 		shops.GET(":id", handlers.GetShop(s.DB))
 		shops.PUT(":id", handlers.UpdateShop(s.DB))
 		shops.GET(":id/products", handlers.GetShopProducts(s.DB))

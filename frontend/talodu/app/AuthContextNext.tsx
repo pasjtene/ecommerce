@@ -48,6 +48,7 @@ type AuthContextType = {
     loaddata: () => void;
     isShopOwner: (shop: Shop) => boolean;
     isShopEmployee: (shop: Shop) => boolean;
+    onLogout?: () => void;
 }
 
 type AuthProviderProps = {

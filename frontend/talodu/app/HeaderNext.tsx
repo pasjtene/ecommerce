@@ -31,7 +31,8 @@ const Register = dynamic(() => import('./Register'), { ssr: false });
 
 const HeaderNext = () => {
     //const url1 = process.env.API_BASE_URL | 'undefined';
-    const { user, logout } = useAuth();
+    //const { user, logout } = useAuth();
+    const { user, logout: contextLogout } = useAuth();
     const router = useRouter(); // <-- Replaced useNavigate with useRouter
     const [searchQuery, setSearchQuery] = useState('');
     const [cartItemCount, setCartItemCount] = useState(7); // This should ideally come from global state/context
@@ -63,6 +64,14 @@ const HeaderNext = () => {
             //router.push(`/search?q=${encodeURIComponent(searchQuery)}`); // <-- Use router.push
             router.push(`/?q=${encodeURIComponent(searchQuery)}`); // <-- Use router.push
         }
+    };
+
+      const logout = () => {
+        contextLogout();
+        setShowAuthModal('login');
+        toast.success('Succes vous etes déconnecté');
+        setShowDropdown(false);
+        //router.push('/');
     };
 
     const handleLogout = () => {
@@ -261,7 +270,6 @@ const HeaderNext = () => {
                     show={true}
                     onClose={() => setShowAuthModal(null)}
                     onSwitchToRegister={() => setShowAuthModal('register')}
-                   // url={process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8888'}
                 />
             )}
 

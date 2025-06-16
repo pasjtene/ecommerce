@@ -128,8 +128,10 @@ func GenerateToken(user *User) (string, error) {
 }
 
 const (
-	AccessTokenExpiry  = time.Hour * 1      // 1 hour for access tokens
-	RefreshTokenExpiry = time.Hour * 24 * 7 // 7 days for refresh tokens
+	//AccessTokenExpiry  = time.Hour * 1      // 1 hour for access tokens
+	//RefreshTokenExpiry = time.Hour * 24 * 7 // 7 days for refresh tokens
+	AccessTokenExpiry  = time.Hour * 1 // 1 hour for access tokens
+	RefreshTokenExpiry = time.Hour * 2 // 2 hours for test refresh tokens
 )
 
 // GenerateTokens creates both access and refresh tokens
@@ -522,7 +524,7 @@ func CreateUser(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func AuthMiddleware(requiredRoles ...string) gin.HandlerFunc {
+func AuthMiddleware2(requiredRoles ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := c.GetHeader("Authorization")
 		if tokenString == "" {
@@ -564,11 +566,106 @@ func AuthMiddleware(requiredRoles ...string) gin.HandlerFunc {
 	}
 }
 
+func AuthMiddleware(requiredRoles ...string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		tokenString := c.GetHeader("Authorization")
+		if tokenString == "" {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization header required"})
+			return
+		}
+
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			return []byte(JWT_SECRET), nil
+		})
+		if err != nil || !token.Valid {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+			return
+		}
+
+		claims, ok := token.Claims.(jwt.MapClaims)
+		if !ok {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+			return
+		}
+
+		// Extract user ID (handle both float64 and int cases)
+		/**
+		var userID uint
+		switch v := claims["user_id"].(type) {
+		case float64:
+			userID = uint(v)
+		case int:
+			userID = uint(v)
+		default:
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID format"})
+			return
+		}
+		*/
+
+		// Extract roles
+		var roles []string
+		if rolesClaim, ok := claims["roles"]; ok { // Check if "roles" key exists
+			if rolesSlice, ok := rolesClaim.([]interface{}); ok { // Try asserting to []interface{}
+				for _, r := range rolesSlice {
+					if role, ok := r.(string); ok {
+						roles = append(roles, role)
+					} else {
+						// This case should be rare if your JWT creation is consistent
+						c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Role element in token is not a string"})
+						return
+					}
+				}
+			} else if rolesStringSlice, ok := rolesClaim.([]string); ok { // Or directly to []string
+				roles = rolesStringSlice // This is the most likely path for your JWT
+			} else {
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid or unexpected roles format in token claims"})
+				return
+			}
+		} else {
+			// If "roles" claim is missing, decide if it's an error or allowed
+			// For now, let it be an empty slice if missing.
+			// If roles are mandatory, uncomment this:
+			// c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "'roles' claim missing in token"})
+			// return
+		}
+
+		// Extract roles
+		/**
+			rolesInterface, ok := claims["roles"].([]interface{})
+		if !ok {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid roles format"})
+			return
+		}
+
+		var roles []string
+		for _, r := range rolesInterface {
+			if role, ok := r.(string); ok {
+				roles = append(roles, role)
+			}
+		}
+		**/
+
+		// Check required roles
+		if len(requiredRoles) > 0 && !HasAnyRole(roles, requiredRoles) {
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Insufficient permissions"})
+			return
+		}
+
+		// Set context values
+		c.Set("userID", claims["user_id"])
+		c.Set("user_id", claims["user_id"])
+		//c.Set("userID", userID)
+		c.Set("username", claims["username"].(string))
+		c.Set("roles", roles)
+		c.Next()
+	}
+}
+
 // hasAnyRole checks if the user has at least one of the required roles
-func HasAnyRole(userRoles []interface{}, requiredRoles []string) bool {
+func HasAnyRole(userRoles []string, requiredRoles []string) bool {
 	for _, requiredRole := range requiredRoles {
 		for _, userRole := range userRoles {
-			if userRole.(string) == requiredRole {
+			if userRole == requiredRole {
 				return true
 			}
 		}

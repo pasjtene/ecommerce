@@ -154,6 +154,8 @@ const ShopsList = () => {
 
 	//const [createModalStatus, setCreateModalStatus] = useState<boolean>(false);
 	const handleListAllShops = () => {
+		console.log("the user is: ",user);
+		console.log("The token is: ",jwtToken);
 		fetchAllShops(pagination.page, pagination.limit, searchTerm);
 	}
 
@@ -161,7 +163,7 @@ const ShopsList = () => {
 		
 		try {
 			// const response = await axios.get<ApiResponse>('/api/products',{
-			const response = await axios.get<ShopsResponse>(API_BASE_URL + '/shops', {
+			const response = await axios.get<ShopsResponse>(API_BASE_URL + '/shops/all', {
 				params: {
 					page,
 					limit,
