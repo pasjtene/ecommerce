@@ -248,6 +248,36 @@ func isAuthorized(authUser *auth.AuthUser, shop models.Shop) bool {
 	return false
 }
 
+func IsAuthorized2(c *gin.Context, shop models.Shop) bool {
+	// SuperAdmin can do anything
+	var authUser *auth.AuthUser
+	authUser, err := auth.GetAuthUser(c)
+	if err != nil {
+		//c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return false
+	}
+
+	for _, role := range authUser.Roles {
+		if role == "SuperAdmin" {
+			return true
+		}
+	}
+
+	// Shop owner can manage their own shop
+	if shop.OwnerID == authUser.ID {
+		return true
+	}
+
+	// Admin can manage any shop
+	for _, role := range authUser.Roles {
+		if role == "Admin" {
+			return true
+		}
+	}
+
+	return false
+}
+
 // ListShops - Accessible by all authenticated users
 func ListShops(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -293,13 +323,6 @@ func ListShops(db *gorm.DB) gin.HandlerFunc {
 				return
 			}
 
-			//currentUserID, ok := authUserID.(string)
-			/**
-			if !ok {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID format"})
-				return
-			}
-			*/
 			// Convert authUserID to uint regardless of original type
 			currentUserID, err := convertToUint(authUserID)
 			if err != nil {

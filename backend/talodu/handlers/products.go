@@ -541,10 +541,12 @@ func DeleteProductImagesBatch(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		if userID != request.Shop.Owner.ID {
+		if !IsAuthorized2(c, request.Shop) {
+
+			//if userID != request.Shop.Owner.ID {
 			c.JSON(http.StatusForbidden, gin.H{
 				"error":                    "Operation not permitted",
-				"details":                  "Only the shop owner can perform this action",
+				"details":                  "Only the shop owner or Admin can perform this action",
 				"shop owner Id ":           request.Shop.Owner.ID,
 				"user Id ":                 authUserID,
 				"Compared: ":               request.Shop.Owner.ID == authUserID,
