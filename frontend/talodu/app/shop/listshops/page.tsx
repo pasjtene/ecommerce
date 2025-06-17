@@ -30,8 +30,9 @@ async function getShop(id: string): Promise<Shop | null> {
   }
 }
 
-export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
-  const resolvedParams = await params;
+export async function generateMetadata() {
+  //export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
+  //const resolvedParams = await params;
   const SITE_NAME = "https://talodu.com";
   //const shop = await getShop(resolvedParams.id);
   
