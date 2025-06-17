@@ -33,23 +33,23 @@ async function getShop(id: string): Promise<Shop | null> {
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
   const resolvedParams = await params;
   const SITE_NAME = "https://talodu.com";
-  const shop = await getShop(resolvedParams.id);
+  //const shop = await getShop(resolvedParams.id);
   
   return {
     //title: shop ? `${shop.name} | Talodu.com }` : 'Product Not Found | Talodu.com',
     title: 'Shops list - Talodu.com',
-    //description: shop ? `${shop.description} | Talodu.com - by ${shop.moto}` : 'Product Not Found | Talodu.com',
-    description: 'Shops list - Talodu.com',
-    ...(shop ? {
+    description: "List of customers shops and stores - Talodu.com",
+    //description: 'Shops list - Talodu.com',
+    ...(1? {
       openGraph: {
         type: 'website',
-        url: `https://talodu.com/product/${resolvedParams.id}`,
+        url: `https://talodu.com/shop/listshops`,
         siteName: 'Talodu.com',
       },
       twitter: {
         card: 'summary_large_image',
-        title: shop.name,
-        description: shop.description || `Discover ${shop.name} on Talodu`,
+        title: "Shop list - Talodu.com",
+        description: "List of customers shops and stores - Talodu.com",
         //images: product.images?.[0]?.url ? [SITE_NAME+product.images[0].url] : [],
       }
     } : {})
