@@ -467,11 +467,11 @@ const ShopsList = () => {
 }
 
 	return (
-		<PageWrapper>
+		<div className='container-fluid'>
 			
-			<Button color='info' isLink onClick={() => handleCreateShop()}>
+			<button color='info' className='container-fluid' onClick={() => handleCreateShop()}>
 				Créer une boutique
-			</Button>
+			</button>
 
 			<div>
 				<h3> Liste des boutiques</h3>
@@ -651,7 +651,7 @@ const ShopsList = () => {
 					</div>
 				</div>
 			</Page>
-		</PageWrapper>
+		</div>
 	);
 };
 
