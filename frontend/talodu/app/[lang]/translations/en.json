@@ -1,0 +1,35 @@
+{
+  "header": {
+    "search_placeholder": "Search products...",
+    "login": "Login",
+    "register": "Register",
+    "settings": "Settings",
+    "list_shops": "List my shops",
+    "logout": "Logout",
+    "cart": "Cart"
+  },
+  "common": {
+    "brand": "Talodu"
+  },
+  "home": {
+    "title": "Welcome to Talodu!",
+    "subtitle": "Discover our fresh and local products.",
+    "slogans": [
+      "Talodu: Freshness and quality, delivered to your door.",
+      "Your online supermarket for a simpler life.",
+      "Discover local flavors with Talodu, just a click away.",
+      "Talodu: The fresh market that comes to you.",
+      "Eat better, live better, shop Talodu.",
+      "Talodu: Everything you're looking for, just a click away.",
+      "From everyday to exceptional, Talodu has it all.",
+      "Talodu: Your unlimited shopping universe.",
+      "Thousands of products, one destination: Talodu.",
+      "Simplify your life, shop at Talodu.",
+      "Talodu: The abundance of choice, plus the pleasure.",
+      "Shop smart, shop Talodu.",
+      "Talodu: Your global market, delivered locally.",
+      "Variety meets value at Talodu.",
+      "Talodu: Your order, your comfort."
+    ]
+  }
+}

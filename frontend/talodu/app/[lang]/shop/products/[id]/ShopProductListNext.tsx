@@ -1,15 +1,15 @@
 'use client';
 import React, { useState, useReducer, useEffect, useMemo} from 'react';
-import PageWrapper from '../../../../src/layout/PageWrapper/PageWrapper';
-import Page from '../../../../src/layout/Page/Page';
-import Card, { CardBody } from '../../../../src/components/bootstrap/Card';
-import Button from '../../../../src/components/bootstrap/Button';
+import PageWrapper from '../../../../../src/layout/PageWrapper/PageWrapper';
+import Page from '../../../../../src/layout/Page/Page';
+import Card, { CardBody } from '../../../../../src/components/bootstrap/Card';
+import Button from '../../../../../src/components/bootstrap/Button';
 import axios from 'axios'
 import { useRouter } from 'next/navigation';
-import { updateUser, API_BASE_URL } from '../../../../src/pages/presentation/auth/api'
+import { updateUser, API_BASE_URL } from '../../../../../src/pages/presentation/auth/api'
 import { Shop, ShopUser, Product, User } from '../../../types'; 
 import { toast } from 'react-toastify';
-import ProductAddComponent from '../../../../src/pages/presentation/sales/ProductAddComponent'; 
+//import ProductAddComponent from '../../../../src/pages/presentation/sales/ProductAddComponent'; 
 import ImageDisplayComponent from './ImageDisplayComponentNext'
 import { useAuth, AuthProvider } from '../../../AuthContextNext';
 

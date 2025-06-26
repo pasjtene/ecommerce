@@ -1,6 +1,8 @@
 //HeaderNext.tsx
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
+import { Translation } from './types'
+//import { useRouter } from 'next/router';
 import { useRouter,useParams, usePathname, } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAuth} from './AuthContextNext';
@@ -18,7 +20,8 @@ import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 import Badge from 'react-bootstrap/Badge';
-import { toast } from 'react-toastify';
+//import { toast } from './translations';
+//import { toast } from 'react-toastify';
 
 // --- Use dynamic import for modals that might have client-side dependencies ---
 // This is crucial if Login/Register components have direct browser API access
@@ -30,7 +33,8 @@ const Register = dynamic(() => import('./Register'), { ssr: false });
 
 
 const HeaderNext = () => {
-
+    //const url1 = process.env.API_BASE_URL | 'undefined';
+    //const { user, logout } = useAuth();
     const { user, showLogin, hideLogin, logout: contextLogout } = useAuth();
     //const { t } = useTranslation('header');
     const router = useRouter();
@@ -41,9 +45,21 @@ const HeaderNext = () => {
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const [showAuthModal, setShowAuthModal] = useState<'login' | 'register' | null>(null);
+    const [t, setTranslation] = useState<Translation | null>(null);
+
+    // Load translation
+    useEffect(() => {
+      const loadTranslation = async () => {
+        const t = await import(`./translations/${params.lang}.json`);
+        setTranslation(t.default);
+      };
+      loadTranslation ();
+    }, [params.lang]);
     
     // Add language switcher in your header
   const changeLanguage = (locale: string) => {
+    //const { pathname, asPath, query } = router;
+    //router.push({ pathname, query }, asPath, { locale });
     const newPathname = pathname.replace(`/${params.lang}`, '');
     router.push(`/${locale}${newPathname}`);
   };
@@ -68,8 +84,8 @@ const HeaderNext = () => {
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         if (searchQuery.trim()) {
-            
-            router.push(`/?q=${encodeURIComponent(searchQuery)}`); 
+            //router.push(`/search?q=${encodeURIComponent(searchQuery)}`); // <-- Use router.push
+            router.push(`/?q=${encodeURIComponent(searchQuery)}`); // <-- Use router.push
         }
     };
 
@@ -93,6 +109,8 @@ const HeaderNext = () => {
         setShowDropdown(!showDropdown);
     };
 
+    if (!t) return null; // or loading state
+
     return (
         <>
             <Navbar bg="light" expand="lg" sticky="top" className="shadow-sm py-2">
@@ -108,10 +126,11 @@ const HeaderNext = () => {
                                     onClick={()=>router.push("/")}
                             >
                                 {/* Wrap "Talodu" in a <span> or <div> to make it a single child */}
-                                <span>Talodu</span>
+                                <span>{t.common.brand}</span>
                             </Navbar.Brand>
                         
                         
+
                         {/* Desktop search form - hidden on mobile */}
                         <Form
                             onSubmit={handleSearch}
@@ -119,7 +138,7 @@ const HeaderNext = () => {
                         >
                             <FormControl
                                 type="search"
-                                placeholder="Search products..."
+                                placeholder={t.header.search_placeholder}
                                 className="me-2"
                                 aria-label="Search"
                                 value={searchQuery}
@@ -193,7 +212,7 @@ const HeaderNext = () => {
                                                 style={{ cursor: 'pointer', fontSize: '0.9rem' }}
                                             >
                                                 <FontAwesomeIcon icon={faCog} className="me-2" />
-                                                Settings
+                                                 {t.header.settings}
                                             </div>
                                             <div className="dropdown-divider my-1"></div>
                                             
@@ -229,7 +248,7 @@ const HeaderNext = () => {
                                     style={{ fontSize: '0.9rem' }}
                                 >
                                     <FontAwesomeIcon icon={faUser} className="me-1" />
-                                    <span className="me-2">Connexion</span>
+                                    <span className="me-2">{t.header.login}</span>
                                 </Button>
                             )}
 

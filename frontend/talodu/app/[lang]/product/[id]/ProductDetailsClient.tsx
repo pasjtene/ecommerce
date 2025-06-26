@@ -3,21 +3,18 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
-import Page from '../../../src/layout/Page/Page';
-import Card, {
-	CardBody,
-	CardHeader,
-	CardLabel,
-	CardSubTitle,
-	CardTitle,
-} from '../../../src/components/bootstrap/Card';
-import Icon from '../../../src/components/icon/Icon';
-import Input from '../../../src/components/bootstrap/forms/Input';
-import showNotification from '../../../src/components/extras/showNotification';
+//import Page from '../../../src/layout/Page/Page';
+import Card, { CardBody, CardHeader, CardLabel, CardSubTitle, CardTitle,
+} from '../../../../src/components/bootstrap/Card';
+		
+import Icon from '../../../../src/components/icon/Icon';
+import Input from '../../../../src/components/bootstrap/forms/Input';
+import showNotification from '../../../../src/components/extras/showNotification';
 import { Product, ProductImage, Shop, AppError } from '../../types';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Button from 'react-bootstrap/Button';
+//import Card, {CardBody, CardHeader, } from 'react-bootstrap';
 import { useAuth, AuthProvider } from '../../AuthContextNext';
 import ConfirmDelete from './ConfirmDeleteImages';
 import ErrorModal from '../../utils/ErrorModal';
@@ -331,7 +328,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 						)}
 					</div>
 
-					<Page>
+					<div>
 						<a
 							className='text-decoration-none display-6 py-3 text-danger'
 							onClick={() => {
@@ -500,7 +497,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 								error={apiError}
 							/>
 						</div>
-					</Page>
+					</div>
 				</>
 
 				<div

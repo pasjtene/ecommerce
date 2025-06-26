@@ -2,14 +2,27 @@
 "use client";
 import React, {useState, useEffect } from 'react';
 import Head from 'next/head'; // For meta tags and page title
-import Footer from '../src/pages/presentation/footers/Footer'
+import Footer from '../../src/pages/presentation/footers/Footer'
 import AllProductDisplay from './AllProductsDisplay'
+import { Translation } from './types'
+import { useParams } from 'next/navigation';
 //import AllProductDisplay from '../src/pages/presentation/sales/AllProductsDisplayNext'
 
 
 
 
 const HomePage = () => {
+  const params = useParams();
+const [t, setTranslation] = useState<Translation | null>(null);
+// Load translation
+    useEffect(() => {
+      const loadTranslation = async () => {
+        const t = await import(`./translations/${params.lang}.json`);
+        setTranslation(t.default);
+      };
+      loadTranslation ();
+    }, [params.lang]);
+
     // Define your French slogans
     const slogans = [
         "Talodu : Fraîcheur et qualité, livrées à votre porte.",
@@ -35,6 +48,9 @@ const DISPLAY_DURATION = 5000; // milliseconds (10 seconds total)
 const [opacity, setOpacity] = useState(1); // 1 for visible, 0 for hidden
 
   const [currentSloganIndex, setCurrentSloganIndex] = useState(0);
+
+
+/** 
   useEffect(() => {
     // Phase 1: Show the slogan
     setOpacity(1); // Ensure it's fully visible at the start of its 10s display
@@ -56,6 +72,29 @@ const [opacity, setOpacity] = useState(1); // 1 for visible, 0 for hidden
     };
   }, [currentSloganIndex]); // Re-run effect whenever the slogan index changes
 
+  */
+
+  // Slogan rotation effect
+  useEffect(() => {
+    if (!t) return;
+
+    setOpacity(1);
+    const fadeOutTimer = setTimeout(() => {
+      setOpacity(0);
+    }, DISPLAY_DURATION - TRANSITION_DURATION);
+
+    const nextSloganTimer = setTimeout(() => {
+      setCurrentSloganIndex((prevIndex) => 
+        (prevIndex + 1) % t.home.slogans.length
+      );
+    }, DISPLAY_DURATION);
+
+    return () => {
+      clearTimeout(fadeOutTimer);
+      clearTimeout(nextSloganTimer);
+    };
+  }, [currentSloganIndex, t]);
+
 
   return (
     <div>
@@ -68,8 +107,8 @@ const [opacity, setOpacity] = useState(1); // 1 for visible, 0 for hidden
       {/* the header component */}
 
       <main style={{ minHeight: '20vh', padding: '20px' }}>
-        <h1>Bienvenue chez Talodu!</h1>
-        <p>Découvrez nos produits frais et locaux.</p>
+        <h1>{t?.home.title}</h1>
+        <p>{t?.home.subtitle}</p>
             {/* Dynamic Slogan Display with Transition */}
         <div
           style={{
@@ -81,7 +120,7 @@ const [opacity, setOpacity] = useState(1); // 1 for visible, 0 for hidden
             transition: `opacity ${TRANSITION_DURATION / 1000}s ease-in-out`, // CSS transition for smooth fade
           }}
         >
-          <h2>{slogans[currentSloganIndex]}</h2>
+          <h2>{t?.home.slogans[currentSloganIndex]}</h2>
         </div>
         {/* End Dynamic Slogan Display */}
         {/* Add more content specific to your homepage here */}

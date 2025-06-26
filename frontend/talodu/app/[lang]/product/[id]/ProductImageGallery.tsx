@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import dynamic from 'next/dynamic';
-import LoadingSpinner from '../../api/LoadingSpinner';
+import LoadingSpinner from '../../../api/LoadingSpinner';
 import { useAuth, AuthProvider } from '../../AuthContextNext';
 
 const ProductEditComponent = dynamic(() => import('./ProductEditComponent'), { ssr: false });

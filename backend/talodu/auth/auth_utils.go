@@ -577,6 +577,7 @@ func AuthMiddleware(requiredRoles ...string) gin.HandlerFunc {
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			return []byte(JWT_SECRET), nil
 		})
+
 		if err != nil || !token.Valid {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 			return
@@ -587,20 +588,6 @@ func AuthMiddleware(requiredRoles ...string) gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
 			return
 		}
-
-		// Extract user ID (handle both float64 and int cases)
-		/**
-		var userID uint
-		switch v := claims["user_id"].(type) {
-		case float64:
-			userID = uint(v)
-		case int:
-			userID = uint(v)
-		default:
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID format"})
-			return
-		}
-		*/
 
 		// Extract roles
 		var roles []string
