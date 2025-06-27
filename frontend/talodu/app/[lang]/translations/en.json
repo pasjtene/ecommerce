@@ -31,5 +31,16 @@
       "Variety meets value at Talodu.",
       "Talodu: Your order, your comfort."
     ]
+  },
+   "login": {
+    "title": "Login to Your Account",
+    "email_placeholder": "Email",
+    "password_placeholder": "Password",
+    "submit_button": "Login",
+    "forgot_password": "Forgot Password?",
+    "no_account": "Don't have an account?",
+    "create_account": "Create Account",
+    "success_message": "Successfully logged in",
+    "show_password": "Show password"
   }
 }

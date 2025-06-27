@@ -1,8 +1,7 @@
 //HeaderNext.tsx
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
-import { Translation } from './types'
-//import { useRouter } from 'next/router';
+import { Translation } from './types';
 import { useRouter,useParams, usePathname, } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAuth} from './AuthContextNext';
@@ -20,11 +19,6 @@ import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 import Badge from 'react-bootstrap/Badge';
-//import { toast } from './translations';
-//import { toast } from 'react-toastify';
-
-// --- Use dynamic import for modals that might have client-side dependencies ---
-// This is crucial if Login/Register components have direct browser API access
 import dynamic from 'next/dynamic';
 
 const Login = dynamic(() => import('./Login'), { ssr: false });
@@ -33,10 +27,7 @@ const Register = dynamic(() => import('./Register'), { ssr: false });
 
 
 const HeaderNext = () => {
-    //const url1 = process.env.API_BASE_URL | 'undefined';
-    //const { user, logout } = useAuth();
-    const { user, showLogin, hideLogin, logout: contextLogout } = useAuth();
-    //const { t } = useTranslation('header');
+    const { user, logout: contextLogout } = useAuth();
     const router = useRouter();
     const pathname = usePathname();
     const params = useParams();
@@ -57,12 +48,24 @@ const HeaderNext = () => {
     }, [params.lang]);
     
     // Add language switcher in your header
-  const changeLanguage = (locale: string) => {
-    //const { pathname, asPath, query } = router;
-    //router.push({ pathname, query }, asPath, { locale });
+  const changeLanguage1 = (locale: string) => {
     const newPathname = pathname.replace(`/${params.lang}`, '');
     router.push(`/${locale}${newPathname}`);
   };
+
+        const changeLanguage = (locale: string) => {
+        // 1. Get current path without language prefix
+        const newPathname = (pathname || '/').replace(`/${params.lang}`, '') || '/';
+        
+        // 2. Set cookie to remember language preference
+        if (typeof document !== 'undefined') {
+            document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=${365 * 24 * 60 * 60}; SameSite=Lax`;
+        }
+
+        // 3. Navigate to new URL (using only path string)
+        router.push(`/${locale}${newPathname}`);
+        };
+
 
     // Close dropdown when clicking outside - This needs to be in useEffect
     useEffect(() => {
@@ -84,7 +87,6 @@ const HeaderNext = () => {
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         if (searchQuery.trim()) {
-            //router.push(`/search?q=${encodeURIComponent(searchQuery)}`); // <-- Use router.push
             router.push(`/?q=${encodeURIComponent(searchQuery)}`); // <-- Use router.push
         }
     };
@@ -92,16 +94,12 @@ const HeaderNext = () => {
       const logout = () => {
         contextLogout();
         setShowAuthModal('login');
-        //toast.success('Succes vous etes déconnecté');
         setShowDropdown(false);
-        //router.push('/');
     };
 
     const handleLogout = () => {
         logout();
-        //toast.success('Succes vous etes déconnecté');
         setShowDropdown(false);
-        //router.push('/');
     };
 
     const toggleDropdown = (e: React.MouseEvent) => {
@@ -117,7 +115,6 @@ const HeaderNext = () => {
                 <Container fluid className="px-3">
                     {/* First row - logo, desktop search, and user controls */}
                     <div className="d-flex w-100 align-items-center">
-                        
                             {/* Ensure Navbar.Brand's content is a single, direct child */}
                             <Navbar.Brand
                                 className="fw-bold fs-4 text-primary me-3"
@@ -155,18 +152,18 @@ const HeaderNext = () => {
                         </Form>
 
                         
-        {/* Language switcher */}
-        <div className="ms-3">
-          <select 
-            onChange={(e) => changeLanguage(e.target.value)}
-            value={params.lang as string}
-            className="form-select form-select-sm"
-          >
-            <option value="en">English</option>
-            <option value="fr">Français</option>
-            <option value="es">Español</option>
-          </select>
-        </div>
+                    {/* Language switcher */}
+                    <div className="ms-3">
+                    <select 
+                        onChange={(e) => changeLanguage(e.target.value)}
+                        value={params.lang as string}
+                        className="form-select form-select-sm"
+                    >
+                        <option value="en">English</option>
+                        <option value="fr">Français</option>
+                        <option value="es">Español</option>
+                    </select>
+                    </div>
 
                         {/* User info and cart - always visible */}
                         <div className="d-flex  align-items-center ms-auto">
@@ -284,7 +281,7 @@ const HeaderNext = () => {
                         >
                             <FormControl
                                 type="search"
-                                placeholder="Search products..."
+                                placeholder={t.header.search_placeholder}
                                 className="me-2"
                                 aria-label="Search"
                                 value={searchQuery}

@@ -14,6 +14,7 @@
   "home": {
     "title": "Bienvenue chez Talodu !",
     "subtitle": "Découvrez nos produits frais et locaux.",
+
     "slogans": [
       "Talodu : Fraîcheur et qualité, livrées à votre porte.",
       "Votre supermarché en ligne, pour une vie plus simple.",
@@ -31,5 +32,16 @@
       "La variété rencontre la valeur, chez Talodu.",
       "Talodu : Votre commande, votre confort."
     ]
+  },
+   "login": {
+    "title": "Connectez-vous à votre compte",
+    "email_placeholder": "Email",
+    "password_placeholder": "Mot de passe",
+    "submit_button": "Connexion",
+    "forgot_password": "Mot de passe oublié ?",
+    "no_account": "Vous n'avez pas de compte ?",
+    "create_account": "Créer un compte",
+    "success_message": "Connexion réussie",
+    "show_password": "Afficher le mot de passe"
   }
 }

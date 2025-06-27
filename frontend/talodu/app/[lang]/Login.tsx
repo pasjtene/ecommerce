@@ -1,7 +1,5 @@
 "use client"
-import React, { useState } from 'react';
-//import { useAuth } from '../auth/AuthContext';
-//import { useAuth} from '../../presentation/auth/AuthContextNext';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faUser, faLock, faUserPlus, faEye } from '@fortawesome/free-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
@@ -9,12 +7,26 @@ import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { toast } from 'react-toastify';
 import { useAuth} from './AuthContextNext';
+import { useParams } from 'next/navigation';
 
 interface LoginProps {
   show: boolean;
   onClose: () => void;
   onSwitchToRegister: () => void;
-  //url: string;
+}
+
+interface Dictionary {
+  login: {
+    title: string;
+    email_placeholder: string;
+    password_placeholder: string;
+    submit_button: string;
+    forgot_password: string;
+    no_account: string;
+    create_account: string;
+    success_message: string;
+    show_password: string;
+  };
 }
 
 const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
@@ -22,7 +34,8 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
-  //const [url, setUrl ] = useState(url)
+  const params = useParams();
+  const [t, setTranslation] = useState<Dictionary | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +43,6 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
         if (typeof window !== 'undefined') {
             await login(email, password);
         }
-      //await login(email, password, "127.0.0.1:8888" );
       onClose();
       toast.success('Succes vous etes connecté');
       window.location.reload();
@@ -38,6 +50,20 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
       console.error('Login failed:', error);
     }
   };
+
+   // Load dictionary
+  useEffect(() => {
+    const loadDictionary = async () => {
+      const dict = await import(`./translations/${params.lang}.json`);
+      setTranslation(dict.default);
+    };
+    loadDictionary();
+  }, [params.lang]);
+
+
+  if (!t) {
+    return null; // or loading spinner
+  }
 
   return (
     <Modal
@@ -69,7 +95,7 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
           <FontAwesomeIcon icon={faTimes} />
         </Button>
 
-        <h4 className="mb-4 text-center">Login to Your Account</h4>
+        <h4 className="mb-4 text-center">{t.login.title}</h4>
         
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
@@ -79,7 +105,7 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
               </span>
               <Form.Control
                 type="email"
-                placeholder="Email"
+                placeholder={t.login.email_placeholder}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -93,9 +119,9 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
                 <FontAwesomeIcon icon={faLock} />
               </span>
               <Form.Control
-                //type="password"
+                
                 type={showPassword ? 'text' : 'password'}
-                placeholder="Password"
+                placeholder={t.login.password_placeholder}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -116,24 +142,24 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
             type="submit" 
             className="w-100 mb-3"
           >
-            Login
+            {t.login.submit_button}
           </Button>
 
           <div className="text-center mb-3">
             <Button variant="link" size="sm">
-              Forgot Password?
+              {t.login.forgot_password}
             </Button>
           </div>
 
           <div className="text-center">
-            <p className="mb-1">Don't have an account?</p>
+            <p className="mb-1">{t.login.no_account}</p>
             <Button 
               variant="outline-primary" 
               onClick={onSwitchToRegister}
               className="w-100"
             >
               <FontAwesomeIcon icon={faUserPlus} className="me-2" />
-              Create Account
+              {t.login.create_account}
             </Button>
           </div>
         </Form>

@@ -24,7 +24,7 @@ import { toast } from 'react-toastify';
 // This is crucial if Login/Register components have direct browser API access
 import dynamic from 'next/dynamic';
 
-const Login = dynamic(() => import('./Login'), { ssr: false });
+//const Login = dynamic(() => import('./Login'), { ssr: false });
 const Register = dynamic(() => import('./Register'), { ssr: false });
 // --- END dynamic import ---
 
@@ -285,21 +285,7 @@ const HeaderNext = () => {
             </Navbar>
 
             {/* Modals are rendered here */}
-            {showAuthModal === 'login' && (
-                <Login
-                    show={true}
-                    onClose={() => setShowAuthModal(null)}
-                    onSwitchToRegister={() => setShowAuthModal('register')}
-                />
-            )}
-
-            {showAuthModal === 'register' && (
-                <Register
-                    show={true}
-                    onClose={() => setShowAuthModal(null)}
-                    onSwitchToLogin={() => setShowAuthModal('login')}
-                />
-            )}
+            
         </>
     );
 };

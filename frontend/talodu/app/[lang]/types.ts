@@ -105,5 +105,17 @@ export interface User {
     subtitle: string;
     slogans: string[];
   };
+
+  login: {
+    title: string;
+    email_placeholder: string;
+    password_placeholder: string;
+    submit_button: string;
+    forgot_password: string;
+    no_account: string;
+    create_account: string;
+    success_message: string;
+    show_password: string;
+  };
 }
 

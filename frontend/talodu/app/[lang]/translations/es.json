@@ -31,5 +31,16 @@
       "Variedad que encuentra valor en Talodu.",
       "Talodu: Tu pedido, tu comodidad."
     ]
+  },
+  "login": {
+    "title": "Inicia sesión en tu cuenta",
+    "email_placeholder": "Correo electrónico",
+    "password_placeholder": "Contraseña",
+    "submit_button": "Iniciar sesión",
+    "forgot_password": "¿Olvidaste tu contraseña?",
+    "no_account": "¿No tienes una cuenta?",
+    "create_account": "Crear cuenta",
+    "success_message": "Sesión iniciada correctamente",
+    "show_password": "Mostrar contraseña"
   }
 }

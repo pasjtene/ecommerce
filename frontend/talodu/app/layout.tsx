@@ -7,7 +7,7 @@ import './css/global.css'
 import dynamic from 'next/dynamic';
 
 
-const Login = dynamic(() => import('./Login'), { ssr: false });
+//const Login = dynamic(() => import('./Login'), { ssr: false });
 
 
 
@@ -23,12 +23,7 @@ const Login = dynamic(() => import('./Login'), { ssr: false });
         <AuthProvider onRequireLogin={() => setShowLogin(true)}
             onLoginSuccess={() => setShowLogin(false)}>
           
-          <Login 
-                show={showLogin} 
-                onClose={() => setShowLogin(false)}
-                onSwitchToRegister={() => setShowAuthModal('register')}
-                //onSwitchToRegister={/* ... */}
-            />
+         
           {/* Optional: Add a loading state */}
           {children}
         </AuthProvider>
