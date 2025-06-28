@@ -21,6 +21,19 @@ import ErrorModal from '../../utils/ErrorModal';
 
 // Dynamic import for client-only components
 import dynamic from 'next/dynamic';
+import { useParams } from 'next/navigation';
+
+interface Dictionary {
+  product: {
+    back_to_list: string;
+    by_shop: string;
+    no_images: string;
+    edit_as: string;
+    shop_owner: string;
+    admin: string;
+    super_admin: string;
+  };
+}
 
 const DynamicProductImageGallery = dynamic(() => import('./ProductImageGallery'), { ssr: false });
 
@@ -31,6 +44,19 @@ interface IValues {
 	category: string;
 	image?: string;
 }
+
+// Initialize with default values
+const defaultDictionary: Dictionary = {
+  product: {
+    back_to_list: 'Back to List',
+    by_shop: 'By {shopName}',
+    no_images: 'No images available',
+    edit_as: 'Edit as:',
+    shop_owner: 'Shop Owner',
+    admin: 'Admin',
+    super_admin: 'Super Admin'
+  }
+};
 
 const validate = (values: IValues) => {
 	const errors = {
@@ -82,7 +108,9 @@ interface ProductDetailsClientProps {
 const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProps) => {
 	//const { darkModeStatus } = useDarkMode();
 	const router = useRouter();
-
+	const params = useParams();
+  	//const [t, setDictionary] = useState<Dictionary | null>(null);
+	const [t, setDictionary] = useState<Dictionary>(defaultDictionary);
 	const [images, setImages] = useState<ProductImage[]>([]);
 	const [files, setFiles] = useState<File[]>([]);
 	const [uploading, setUploading] = useState(false);
@@ -103,6 +131,30 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 		setApiError(error);
 		setShowErrorModal(true);
 	};
+	// Load translations
+	useEffect(() => {
+		const loadDictionary = async () => {
+		const dict = await import(`../../translations/${params.lang}.json`);
+		setDictionary(dict.default);
+		};
+		loadDictionary();
+	}, [params.lang]);
+
+	// Apply translations to product data
+		useEffect(() => {
+			if (initialProduct.translations) {
+			const translation = initialProduct.translations.find(
+				(t: any) => t.language === params.lang
+			);
+			if (translation) {
+				setCurrentProduct({
+				...initialProduct,
+				name: translation.name || initialProduct.name,
+				description: translation.description || initialProduct.description
+				});
+			}
+			}
+		}, [initialProduct, params.lang]);
 
 	const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
 	useEffect(() => {
@@ -273,6 +325,8 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 		}
 	}, [initialProduct]); // Depend on initialProduct
 
+	if (!t) return <div>Loading...</div>;
+
 	// No loading/error states for the *initial* product here, as that's handled by the Server Component
 	// This component assumes it receives a valid `initialProduct`.
 
@@ -299,19 +353,20 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 									e.currentTarget.style.color = '#dc3545'; // original red
 								}}
 								onClick={() => router.back()}>
-								Retour a la Liste
+								
+								{t?.product.back_to_list}
 							</button>
 						</div>
 
 						{(isShopOwner(shop) || hasAnyRole(['SuperAdmin', 'Admin'])) && (
 							<div className='col-md-6 col-12 col-sm-12 col-lg-6 col-xs-12 ms-2 mt-2 mb-2'>
-								<span className='text-muted fst-italic me-2'>edit as:</span>
+								<span className='text-muted fst-italic me-2'>{t.product.edit_as}:</span>
 								{isShopOwner(shop) && (
-									<span className='text-muted fst-italic me-2'>Shop owner</span>
+									<span className='text-muted fst-italic me-2'>{t.product.shop_owner}</span>
 								)}
-								{hasAnyRole(['Admin']) && <span className='text-muted fst-italic me-2'>Admin</span>}
+								{hasAnyRole(['Admin']) && <span className='text-muted fst-italic me-2'>{t.product.admin}</span>}
 								{hasAnyRole(['SuperAdmin']) && (
-									<span className='text-muted fst-italic me-2'>Super Admin</span>
+									<span className='text-muted fst-italic me-2'>{t.product.super_admin}</span>
 								)}
 
 								<input
@@ -336,6 +391,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 							}}
 							style={{ cursor: 'pointer' }}>
 							By {currentProduct?.shop?.name || 'Unknown Shop'}
+							{t.product.by_shop.replace('{shopName}', currentProduct?.shop?.name || 'Unknown Shop')}
 						</a>
 						<div className='display-4 fw-bold py-3'>{currentProduct?.name}</div>
 

@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { User, Role, Product, Shop, ProductCategory } from '../../../types'
+import { User, Role, Product, Shop, ProductCategory, Translation } from '../../../types'
 import axios from 'axios';
 //import { API_BASE_URL } from '../auth/api'
 
@@ -24,7 +24,8 @@ const ProductAddComponent = ({ shop, onSave, onCancel }: ShopAddProps) => {
             stock: 0,
             shop_id: shop.ID,
             ShopID: shop.ID,
-            categories: []
+            categories: [],
+            translations: []
           });
 
 

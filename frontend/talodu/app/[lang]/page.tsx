@@ -1,4 +1,4 @@
-// pages/index.tsx
+
 "use client";
 import React, {useState, useEffect } from 'react';
 import Head from 'next/head'; // For meta tags and page title
@@ -6,10 +6,7 @@ import Footer from '../../src/pages/presentation/footers/Footer'
 import AllProductDisplay from './AllProductsDisplay'
 import { Translation } from './types'
 import { useParams } from 'next/navigation';
-//import AllProductDisplay from '../src/pages/presentation/sales/AllProductsDisplayNext'
-
-
-
+import ClientLayoutWrapper from './ClientLayoutWrapper';
 
 const HomePage = () => {
   const params = useParams();
@@ -50,29 +47,6 @@ const [opacity, setOpacity] = useState(1); // 1 for visible, 0 for hidden
   const [currentSloganIndex, setCurrentSloganIndex] = useState(0);
 
 
-/** 
-  useEffect(() => {
-    // Phase 1: Show the slogan
-    setOpacity(1); // Ensure it's fully visible at the start of its 10s display
-
-    // Phase 2: Start fading out before the 10 seconds are up
-    const fadeOutTimer = setTimeout(() => {
-      setOpacity(0);
-    }, DISPLAY_DURATION - TRANSITION_DURATION); // Start fading out 1 second before the 10s is up
-
-    // Phase 3: Change to the next slogan after the full 10 seconds (when it's fully faded out)
-    const nextSloganTimer = setTimeout(() => {
-      setCurrentSloganIndex((prevIndex) => (prevIndex + 1) % slogans.length);
-    }, DISPLAY_DURATION); // Switch to next slogan after total display duration
-
-    // Cleanup timers
-    return () => {
-      clearTimeout(fadeOutTimer);
-      clearTimeout(nextSloganTimer);
-    };
-  }, [currentSloganIndex]); // Re-run effect whenever the slogan index changes
-
-  */
 
   // Slogan rotation effect
   useEffect(() => {
@@ -97,6 +71,7 @@ const [opacity, setOpacity] = useState(1); // 1 for visible, 0 for hidden
 
 
   return (
+    
     <div>
       <Head>
         <title>Talodu - Votre supermarché en Ligne</title>
@@ -130,6 +105,7 @@ const [opacity, setOpacity] = useState(1); // 1 for visible, 0 for hidden
 
       <Footer /> {/* The footer component */}
     </div>
+    
   );
 };
 

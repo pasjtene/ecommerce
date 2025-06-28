@@ -42,5 +42,14 @@
     "create_account": "Create Account",
     "success_message": "Successfully logged in",
     "show_password": "Show password"
+  },
+  "product": {
+    "back_to_list": "Back to List",
+    "by_shop": "By {shopName}",
+    "no_images": "No images available",
+    "edit_as": "Edit as:",
+    "shop_owner": "Shop Owner",
+    "admin": "Admin",
+    "super_admin": "Super Admin"
   }
 }

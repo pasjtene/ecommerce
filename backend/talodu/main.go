@@ -43,7 +43,15 @@ func main() {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
 
-	s.DB.AutoMigrate(&Shop{}, &models.User{}, &Role{}, &models.Product{}, &models.Category{}, &models.ProductImage{})
+	s.DB.AutoMigrate(
+		&Shop{},
+		&models.User{},
+		&Role{},
+		&models.Product{},
+		&models.Category{},
+		&models.ProductImage{},
+		&models.ProductTranslation{},
+	)
 
 	// Seed initial data
 	//handlers.SeedProducts(s.DB)

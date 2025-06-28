@@ -37,6 +37,15 @@ export interface User {
     ShopID: number
     shop_id: number
     images: ProductImage[]
+    translations: Translation[]
+  }
+
+  export interface Translation {
+    ID: number;
+    PoductID: number
+    language: string
+    name: string;
+    description: string;
   }
 
   export interface Shop {

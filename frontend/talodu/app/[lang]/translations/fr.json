@@ -33,6 +33,7 @@
       "Talodu : Votre commande, votre confort."
     ]
   },
+  
    "login": {
     "title": "Connectez-vous à votre compte",
     "email_placeholder": "Email",
@@ -43,5 +44,15 @@
     "create_account": "Créer un compte",
     "success_message": "Connexion réussie",
     "show_password": "Afficher le mot de passe"
+  },
+
+  "product": {
+    "back_to_list": "Retour à la liste",
+    "by_shop": "Par {shopName}",
+    "no_images": "Aucune image disponible",
+    "edit_as": "Modifier en tant que :",
+    "shop_owner": "Propriétaire du magasin",
+    "admin": "Administrateur",
+    "super_admin": "Super Administrateur"
   }
 }

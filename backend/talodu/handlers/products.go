@@ -18,6 +18,7 @@ import (
 
 type Product = models.Product
 type ProductImage = models.ProductImage
+type ProductTranslation = models.ProductTranslation
 
 // GET /products?search=query&sort=price&page=1&limit=10
 func ListProducts(db *gorm.DB) gin.HandlerFunc {
@@ -26,7 +27,7 @@ func ListProducts(db *gorm.DB) gin.HandlerFunc {
 		var products []models.Product
 
 		//query := db.Model(&models.Product{})
-		query := db.Model(&models.Product{}).Preload("Images").Preload("Shop", func(db *gorm.DB) *gorm.DB {
+		query := db.Model(&models.Product{}).Preload("Translations").Preload("Images").Preload("Shop", func(db *gorm.DB) *gorm.DB {
 			return db.Select("id", "name") // Only load specific shop fields
 		})
 
@@ -224,10 +225,22 @@ func GetProduct(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var product models.Product
 		id := c.Param("id")
+		lang := c.Query("lang")
 
-		if err := db.Preload("Images").First(&product, id).Error; err != nil {
+		if err := db.Preload("Images").Preload("Translations").First(&product, id).Error; err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
 			return
+		}
+
+		// Apply translation if available
+		if lang != "" {
+			for _, t := range product.Translations {
+				if t.Language == lang {
+					product.Name = t.Name
+					product.Description = t.Description
+					break
+				}
+			}
 		}
 
 		// Fetch and return the fully updated product
