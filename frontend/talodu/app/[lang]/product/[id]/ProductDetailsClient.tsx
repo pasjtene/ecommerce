@@ -10,13 +10,14 @@ import Card, { CardBody, CardHeader, CardLabel, CardSubTitle, CardTitle,
 import Icon from '../../../../src/components/icon/Icon';
 import Input from '../../../../src/components/bootstrap/forms/Input';
 import showNotification from '../../../../src/components/extras/showNotification';
-import { Product, ProductImage, Shop, AppError } from '../../types';
+import { Product, ProductImage, Shop, AppError, ProductTranslation } from '../../types';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Button from 'react-bootstrap/Button';
 //import Card, {CardBody, CardHeader, } from 'react-bootstrap';
 import { useAuth, AuthProvider } from '../../AuthContextNext';
 import ConfirmDelete from './ConfirmDeleteImages';
+//import ProductTranslationForm from './ProductTranslationForm'
 import ErrorModal from '../../utils/ErrorModal';
 
 // Dynamic import for client-only components
@@ -36,6 +37,7 @@ interface Dictionary {
 }
 
 const DynamicProductImageGallery = dynamic(() => import('./ProductImageGallery'), { ssr: false });
+const ProductTranslationForm = dynamic(() => import('./ProductTranslationForm'), { ssr: false });
 
 interface IValues {
 	name: string;
@@ -126,11 +128,24 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 	const [showConfirmModal, setShowConfirmModal] = useState(false);
 	const [apiError, setApiError] = useState<AppError>();
 	const [showErrorModal, setShowErrorModal] = useState(false);
+	const [isTranslating, setIsTranslating] = useState(false);
+	const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8888';
+
+	const [currentProductTranslation, setCurrentProductTranslation] = useState<ProductTranslation>(
+		{ID: 0,
+    PoductID: initialProduct.ID,
+    language: '',
+    name: '',
+    description: ''});
 
 	const handleDeleteError = (error: AppError) => {
 		setApiError(error);
 		setShowErrorModal(true);
 	};
+
+		
+		  
+
 	// Load translations
 	useEffect(() => {
 		const loadDictionary = async () => {
@@ -203,6 +218,28 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 	// Toggle product selection
 	const toggleEnableEdit = () => {
 		setEnableEdit(!enableEdit);
+	};
+
+
+
+	const handleSaveTranslation = async (updatedProductTranslation: ProductTranslation) => {
+		console.log('The prduct to update: ', updatedProductTranslation);
+		setLoading(true);
+		try {
+			const response = await axios.post(API_BASE_URL + `/products/translate/${initialProduct.ID}`, updatedProductTranslation);
+			
+			setLoading(false);
+			
+			console.log('The updated prduct shop is ...: ', response.data);
+			router.push(`/product/${initialProduct.Slug}`);
+			setIsTranslating(false);
+			// Show success toast
+			toast.success(`Product updated savedsuccessfully`);
+		} catch (error) {
+			toast.error('Failed to update products');
+			console.log(error);
+			// Show error toast
+		}
 	};
 
 	const handleDeleteImages = async (imageIds: string[]) => {
@@ -390,10 +427,46 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 								handleShopNameClick(currentProduct?.shop);
 							}}
 							style={{ cursor: 'pointer' }}>
-							By {currentProduct?.shop?.name || 'Unknown Shop'}
+							
 							{t.product.by_shop.replace('{shopName}', currentProduct?.shop?.name || 'Unknown Shop')}
 						</a>
 						<div className='display-4 fw-bold py-3'>{currentProduct?.name}</div>
+
+							{(isShopOwner(shop) || hasAnyRole(['SuperAdmin', 'Admin'])) && (
+								<div>
+									<a
+										className='text-decoration-none  py-3 ms-3 text-success'
+										onClick={() => {
+											setIsTranslating(true)
+										}}
+										style={{ cursor: 'pointer' }}>
+										
+										Add translations
+									</a>
+									<a
+										className='text-decoration-none  py-3 text-primary mx-3'
+										onClick={() => {
+											setIsTranslating(false)
+										}}
+										style={{ cursor: 'pointer' }}>
+										
+										Cancel translations
+									</a>
+									<div className='container mt-4'>
+										{isTranslating ? (
+											<ProductTranslationForm
+												product={currentProduct}
+												onSave={handleSaveTranslation}
+												onCancel={() => setIsTranslating(false)}
+											/>
+										) : (
+											<></>
+										)}
+									</div>
+								</div>)
+								}
+						
+				
 
 						<div className='container py-4'>
 							{images?.length > 0 ? (

@@ -220,6 +220,58 @@ func GetShopProducts(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+func CreateProductTranslation(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Get product ID from URL
+		productID := c.Param("id")
+
+		var input struct {
+			Language    string `json:"language" binding:"required"`
+			Name        string `json:"name" binding:"required"`
+			Description string `json:"description"`
+		}
+
+		// Bind JSON input
+		if err := c.ShouldBindJSON(&input); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		// Check if product exists
+		var product models.Product
+		if err := db.First(&product, productID).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
+			return
+		}
+
+		// Check if translation already exists for this language
+		var existingTranslation models.ProductTranslation
+		if err := db.Where("product_id = ? AND language = ?", productID, input.Language).First(&existingTranslation).Error; err == nil {
+			c.JSON(http.StatusConflict, gin.H{"error": "Translation already exists for this language"})
+			return
+		}
+
+		// Create new translation
+		translation := models.ProductTranslation{
+			ProductID:   product.ID,
+			Language:    input.Language,
+			Name:        input.Name,
+			Description: input.Description,
+		}
+
+		if err := db.Create(&translation).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create translation"})
+			return
+		}
+
+		// Return success response with the created translation
+		c.JSON(http.StatusCreated, gin.H{
+			"message":     "Translation created successfully",
+			"translation": translation,
+		})
+	}
+}
+
 // GET /products/:id
 func GetProduct(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {

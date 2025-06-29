@@ -37,10 +37,10 @@ export interface User {
     ShopID: number
     shop_id: number
     images: ProductImage[]
-    translations: Translation[]
+    translations: ProductTranslation[]
   }
 
-  export interface Translation {
+  export interface ProductTranslation {
     ID: number;
     PoductID: number
     language: string
