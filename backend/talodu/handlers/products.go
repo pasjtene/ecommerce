@@ -222,6 +222,62 @@ func GetShopProducts(db *gorm.DB) gin.HandlerFunc {
 
 func CreateProductTranslation(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// 1. Parse input
+		productID := c.Param("id")
+		var input struct {
+			Language    string `json:"language" binding:"required"`
+			Name        string `json:"name" binding:"required"`
+			Description string `json:"description"`
+		}
+
+		if err := c.ShouldBindJSON(&input); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		// 2. Verify product exists
+		var product models.Product
+		if err := db.First(&product, productID).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
+			return
+		}
+
+		// 3. Upsert translation (create or update)
+		translation := models.ProductTranslation{
+			ProductID:   product.ID,
+			Language:    input.Language,
+			Name:        input.Name,
+			Description: input.Description,
+		}
+
+		// Try to find existing translation or create a new one
+		result := db.Where(models.ProductTranslation{
+			ProductID: product.ID,
+			Language:  input.Language,
+		}).Attrs(translation).FirstOrCreate(&translation)
+
+		if result.Error != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch or create translation"})
+			return
+		}
+
+		// 4. Return appropriate response
+		status := http.StatusCreated
+		message := "Translation created successfully"
+		if result.RowsAffected > 0 { // Existing record was updated
+			status = http.StatusOK
+			message = "Translation updated successfully"
+		}
+
+		c.JSON(status, gin.H{
+			"message":     message,
+			"translation": translation,
+		})
+	}
+}
+
+func CreateProductTranslation2(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
 		// Get product ID from URL
 		productID := c.Param("id")
 
