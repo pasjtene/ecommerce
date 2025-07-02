@@ -220,7 +220,7 @@ func GetShopProducts(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func CreateProductTranslation(db *gorm.DB) gin.HandlerFunc {
+func CreateProductTranslation3(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 1. Parse input
 		productID := c.Param("id")
@@ -272,6 +272,84 @@ func CreateProductTranslation(db *gorm.DB) gin.HandlerFunc {
 		c.JSON(status, gin.H{
 			"message":     message,
 			"translation": translation,
+		})
+	}
+}
+
+// CreateProductTranslation creates a new product translation or updates an existing one.
+func CreateProductTranslation(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// 1. Parse input
+		productID := c.Param("id")
+		var input struct {
+			Language    string `json:"language" binding:"required"`
+			Name        string `json:"name" binding:"required"`
+			Description string `json:"description"`
+		}
+
+		if err := c.ShouldBindJSON(&input); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		// 2. Verify product exists
+		var product models.Product
+		if err := db.First(&product, productID).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
+			return
+		}
+
+		// 3. Upsert translation (create or update)
+		var existingTranslation models.ProductTranslation
+		isNewTranslation := false
+
+		// Try to find an existing translation
+		result := db.Where("product_id = ? AND language = ?", product.ID, input.Language).First(&existingTranslation)
+
+		if result.Error != nil {
+			// If record not found, proceed to create
+			if result.Error == gorm.ErrRecordNotFound {
+				isNewTranslation = true
+				existingTranslation = models.ProductTranslation{
+					ProductID:   product.ID,
+					Language:    input.Language,
+					Name:        input.Name,
+					Description: input.Description,
+				}
+				if err := db.Create(&existingTranslation).Error; err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create translation"})
+					return
+				}
+			} else {
+				// Other database errors
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch translation: " + result.Error.Error()})
+				return
+			}
+		} else {
+			// If record found, update its fields
+			// Check if there are actual changes to avoid unnecessary updates
+			if existingTranslation.Name != input.Name || existingTranslation.Description != input.Description {
+				existingTranslation.Name = input.Name
+				existingTranslation.Description = input.Description
+				if err := db.Save(&existingTranslation).Error; err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update translation"})
+					return
+				}
+			}
+			// If no changes, the status will still be OK, but no DB write
+		}
+
+		// 4. Return appropriate response
+		status := http.StatusOK
+		message := "Translation updated successfully"
+		if isNewTranslation {
+			status = http.StatusCreated
+			message = "Translation created successfully"
+		}
+
+		c.JSON(status, gin.H{
+			"message":     message,
+			"translation": existingTranslation,
 		})
 	}
 }
