@@ -4,9 +4,14 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 //import Page from '../../../src/layout/Page/Page';
-import Card, { CardBody, CardHeader, CardLabel, CardSubTitle, CardTitle,
+import Card, {
+	CardBody,
+	CardHeader,
+	CardLabel,
+	CardSubTitle,
+	CardTitle,
 } from '../../../../src/components/bootstrap/Card';
-		
+
 import Icon from '../../../../src/components/icon/Icon';
 import Input from '../../../../src/components/bootstrap/forms/Input';
 import showNotification from '../../../../src/components/extras/showNotification';
@@ -17,7 +22,6 @@ import Button from 'react-bootstrap/Button';
 //import Card, {CardBody, CardHeader, } from 'react-bootstrap';
 import { useAuth, AuthProvider } from '../../AuthContextNext';
 import ConfirmDelete from './ConfirmDeleteImages';
-//import ProductTranslationForm from './ProductTranslationForm'
 import ErrorModal from '../../utils/ErrorModal';
 
 // Dynamic import for client-only components
@@ -25,19 +29,22 @@ import dynamic from 'next/dynamic';
 import { useParams } from 'next/navigation';
 
 interface Dictionary {
-  product: {
-    back_to_list: string;
-    by_shop: string;
-    no_images: string;
-    edit_as: string;
-    shop_owner: string;
-    admin: string;
-    super_admin: string;
-  };
+	product: {
+		back_to_list: string;
+		by_shop: string;
+		no_images: string;
+		edit_as: string;
+		shop_owner: string;
+		admin: string;
+		super_admin: string;
+	};
 }
 
 const DynamicProductImageGallery = dynamic(() => import('./ProductImageGallery'), { ssr: false });
 const ProductTranslationForm = dynamic(() => import('./ProductTranslationForm'), { ssr: false });
+
+const ProductAboutsEditor = dynamic(() => import('./ProductAboutsEditor'), { ssr: false });
+const ProductAboutSection = dynamic(() => import('./ProductAboutSection'), { ssr: false });
 
 interface IValues {
 	name: string;
@@ -49,15 +56,15 @@ interface IValues {
 
 // Initialize with default values
 const defaultDictionary: Dictionary = {
-  product: {
-    back_to_list: 'Back to List',
-    by_shop: 'By {shopName}',
-    no_images: 'No images available',
-    edit_as: 'Edit as:',
-    shop_owner: 'Shop Owner',
-    admin: 'Admin',
-    super_admin: 'Super Admin'
-  }
+	product: {
+		back_to_list: 'Back to List',
+		by_shop: 'By {shopName}',
+		no_images: 'No images available',
+		edit_as: 'Edit as:',
+		shop_owner: 'Shop Owner',
+		admin: 'Admin',
+		super_admin: 'Super Admin',
+	},
 };
 
 const validate = (values: IValues) => {
@@ -111,7 +118,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 	//const { darkModeStatus } = useDarkMode();
 	const router = useRouter();
 	const params = useParams();
-  	//const [t, setDictionary] = useState<Dictionary | null>(null);
+	//const [t, setDictionary] = useState<Dictionary | null>(null);
 	const [t, setDictionary] = useState<Dictionary>(defaultDictionary);
 	const [images, setImages] = useState<ProductImage[]>([]);
 	const [files, setFiles] = useState<File[]>([]);
@@ -131,45 +138,41 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 	const [isTranslating, setIsTranslating] = useState(false);
 	const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8888';
 
-	const [currentProductTranslation, setCurrentProductTranslation] = useState<ProductTranslation>(
-		{ID: 0,
-    PoductID: initialProduct.ID,
-    language: '',
-    name: '',
-    description: ''});
+	const [currentProductTranslation, setCurrentProductTranslation] = useState<ProductTranslation>({
+		ID: 0,
+		PoductID: initialProduct.ID,
+		language: '',
+		name: '',
+		description: '',
+	});
 
 	const handleDeleteError = (error: AppError) => {
 		setApiError(error);
 		setShowErrorModal(true);
 	};
 
-		
-		  
-
 	// Load translations
 	useEffect(() => {
 		const loadDictionary = async () => {
-		const dict = await import(`../../translations/${params.lang}.json`);
-		setDictionary(dict.default);
+			const dict = await import(`../../translations/${params.lang}.json`);
+			setDictionary(dict.default);
 		};
 		loadDictionary();
 	}, [params.lang]);
 
 	// Apply translations to product data
-		useEffect(() => {
-			if (initialProduct.translations) {
-			const translation = initialProduct.translations.find(
-				(t: any) => t.language === params.lang
-			);
+	useEffect(() => {
+		if (initialProduct.translations) {
+			const translation = initialProduct.translations.find((t: any) => t.language === params.lang);
 			if (translation) {
 				setCurrentProduct({
-				...initialProduct,
-				name: translation.name || initialProduct.name,
-				description: translation.description || initialProduct.description
+					...initialProduct,
+					name: translation.name || initialProduct.name,
+					description: translation.description || initialProduct.description,
 				});
 			}
-			}
-		}, [initialProduct, params.lang]);
+		}
+	}, [initialProduct, params.lang]);
 
 	const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
 	useEffect(() => {
@@ -220,38 +223,30 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 		setEnableEdit(!enableEdit);
 	};
 
-
-
 	const handleSaveTranslation = async (updatedProductTranslation: ProductTranslation) => {
 		console.log('The prduct to update: ', updatedProductTranslation);
 		setLoading(true);
 		try {
-			const response = await axios.post(API_BASE_URL + `/products/translate/${initialProduct.ID}`, updatedProductTranslation);
-			
+			const response = await axios.post(
+				API_BASE_URL + `/products/translate/${initialProduct.ID}`,
+				updatedProductTranslation,
+			);
 			setLoading(false);
-			
-			console.log('The updated prduct shop is ...: ', response.data);
 			router.push(`/product/${initialProduct.Slug}`);
 			setIsTranslating(false);
 			// Show success toast
 			toast.success(`Product updated savedsuccessfully`);
 		} catch (error) {
 			toast.error('Failed to update products');
-			console.log(error);
+			//console.log(error);
 			// Show error toast
 		}
 	};
 
 	const handleDeleteImages = async (imageIds: string[]) => {
 		try {
-			//await axios.delete(API_URL + '/products/images/delete/batch', {
-			//data: { ids: imageIds },
-			//});
 			setImages((prev) => prev.filter((i) => !imageIds.includes(i.ID)));
 			setSelectedImages([]);
-
-			// Show success message
-			//toast.success(`${productIds.length} products deleted successfully`);
 		} catch (error) {
 			//toast.error('Failed to delete products');
 		}
@@ -390,7 +385,6 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 									e.currentTarget.style.color = '#dc3545'; // original red
 								}}
 								onClick={() => router.back()}>
-								
 								{t?.product.back_to_list}
 							</button>
 						</div>
@@ -401,7 +395,9 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 								{isShopOwner(shop) && (
 									<span className='text-muted fst-italic me-2'>{t.product.shop_owner}</span>
 								)}
-								{hasAnyRole(['Admin']) && <span className='text-muted fst-italic me-2'>{t.product.admin}</span>}
+								{hasAnyRole(['Admin']) && (
+									<span className='text-muted fst-italic me-2'>{t.product.admin}</span>
+								)}
 								{hasAnyRole(['SuperAdmin']) && (
 									<span className='text-muted fst-italic me-2'>{t.product.super_admin}</span>
 								)}
@@ -427,46 +423,61 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 								handleShopNameClick(currentProduct?.shop);
 							}}
 							style={{ cursor: 'pointer' }}>
-							
-							{t.product.by_shop.replace('{shopName}', currentProduct?.shop?.name || 'Unknown Shop')}
+							{t.product.by_shop.replace(
+								'{shopName}',
+								currentProduct?.shop?.name || 'Unknown Shop',
+							)}
 						</a>
 						<div className='display-4 fw-bold py-3'>{currentProduct?.name}</div>
 
-							{(isShopOwner(shop) || hasAnyRole(['SuperAdmin', 'Admin'])) && (
-								<div>
+						{(isShopOwner(shop) || hasAnyRole(['SuperAdmin', 'Admin'])) && (
+							<div>
+								{!isTranslating && (
 									<a
 										className='text-decoration-none  py-3 ms-3 text-success'
 										onClick={() => {
-											setIsTranslating(true)
+											setIsTranslating(true);
 										}}
 										style={{ cursor: 'pointer' }}>
-										
 										Add translations
 									</a>
+								)}
+
+								{isTranslating && (
 									<a
 										className='text-decoration-none  py-3 text-primary mx-3'
 										onClick={() => {
-											setIsTranslating(false)
+											setIsTranslating(false);
 										}}
 										style={{ cursor: 'pointer' }}>
-										
 										Cancel translations
 									</a>
-									<div className='container mt-4'>
-										{isTranslating ? (
-											<ProductTranslationForm
-												product={currentProduct}
-												onSave={handleSaveTranslation}
-												onCancel={() => setIsTranslating(false)}
-											/>
-										) : (
-											<></>
-										)}
-									</div>
-								</div>)
-								}
-						
-				
+								)}
+
+								<div className='container mt-4'>
+									{isTranslating ? (
+										<ProductTranslationForm
+											product={currentProduct}
+											onSave={handleSaveTranslation}
+											onCancel={() => setIsTranslating(false)}
+										/>
+									) : (
+										<></>
+									)}
+								</div>
+
+								<div className='container mt-4'>
+									{isTranslating ? (
+										<ProductAboutsEditor
+											productId={currentProduct.ID}
+											initialDetails={currentProduct.abouts}
+										/>
+									) : (
+										<></>
+									)}
+								</div>
+							</div>
+						)}
 
 						<div className='container py-4'>
 							{images?.length > 0 ? (
@@ -474,6 +485,27 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 							) : (
 								<div>No images</div>
 							)}
+						</div>
+
+						<div className='row'>
+							{/* - Left Side display features or recommended */}
+							<div className='col-lg-8'>
+								<div className='card mb-4 shadow-sm main-image-container'>
+									card in 8 - featured product or recommended products
+								</div>
+							</div>
+
+							<div className='col'>
+								Div shoud take 4
+								<div>
+									{currentProduct.abouts.length > 0 ? (
+										<ProductAboutSection details={currentProduct.abouts} />
+									) : (
+										<div>No addition details about this product</div>
+									)}
+								</div>
+								<div></div>
+							</div>
 						</div>
 
 						{/** if shop owner */}

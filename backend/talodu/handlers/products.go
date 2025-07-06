@@ -220,62 +220,6 @@ func GetShopProducts(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func CreateProductTranslation3(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		// 1. Parse input
-		productID := c.Param("id")
-		var input struct {
-			Language    string `json:"language" binding:"required"`
-			Name        string `json:"name" binding:"required"`
-			Description string `json:"description"`
-		}
-
-		if err := c.ShouldBindJSON(&input); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-
-		// 2. Verify product exists
-		var product models.Product
-		if err := db.First(&product, productID).Error; err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
-			return
-		}
-
-		// 3. Upsert translation (create or update)
-		translation := models.ProductTranslation{
-			ProductID:   product.ID,
-			Language:    input.Language,
-			Name:        input.Name,
-			Description: input.Description,
-		}
-
-		// Try to find existing translation or create a new one
-		result := db.Where(models.ProductTranslation{
-			ProductID: product.ID,
-			Language:  input.Language,
-		}).Attrs(translation).FirstOrCreate(&translation)
-
-		if result.Error != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch or create translation"})
-			return
-		}
-
-		// 4. Return appropriate response
-		status := http.StatusCreated
-		message := "Translation created successfully"
-		if result.RowsAffected > 0 { // Existing record was updated
-			status = http.StatusOK
-			message = "Translation updated successfully"
-		}
-
-		c.JSON(status, gin.H{
-			"message":     message,
-			"translation": translation,
-		})
-	}
-}
-
 // CreateProductTranslation creates a new product translation or updates an existing one.
 func CreateProductTranslation(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -354,58 +298,6 @@ func CreateProductTranslation(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func CreateProductTranslation2(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		// Get product ID from URL
-		productID := c.Param("id")
-
-		var input struct {
-			Language    string `json:"language" binding:"required"`
-			Name        string `json:"name" binding:"required"`
-			Description string `json:"description"`
-		}
-
-		// Bind JSON input
-		if err := c.ShouldBindJSON(&input); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-
-		// Check if product exists
-		var product models.Product
-		if err := db.First(&product, productID).Error; err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
-			return
-		}
-
-		// Check if translation already exists for this language
-		var existingTranslation models.ProductTranslation
-		if err := db.Where("product_id = ? AND language = ?", productID, input.Language).First(&existingTranslation).Error; err == nil {
-			c.JSON(http.StatusConflict, gin.H{"error": "Translation already exists for this language"})
-			return
-		}
-
-		// Create new translation
-		translation := models.ProductTranslation{
-			ProductID:   product.ID,
-			Language:    input.Language,
-			Name:        input.Name,
-			Description: input.Description,
-		}
-
-		if err := db.Create(&translation).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create translation"})
-			return
-		}
-
-		// Return success response with the created translation
-		c.JSON(http.StatusCreated, gin.H{
-			"message":     "Translation created successfully",
-			"translation": translation,
-		})
-	}
-}
-
 // GET /products/:id
 func GetProduct(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -413,7 +305,7 @@ func GetProduct(db *gorm.DB) gin.HandlerFunc {
 		id := c.Param("id")
 		lang := c.Query("lang")
 
-		if err := db.Preload("Images").Preload("Translations").First(&product, id).Error; err != nil {
+		if err := db.Preload("Images").Preload("Translations").Preload("Abouts").First(&product, id).Error; err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
 			return
 		}

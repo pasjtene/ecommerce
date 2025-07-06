@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -14,6 +15,15 @@ type ProductTranslation struct {
 	Language    string `json:"language" gorm:"size:5"` // en, fr, es
 	Name        string `json:"name"`
 	Description string `json:"description"`
+}
+
+type ProductAbout struct {
+	ID        int       `json:"id"`
+	ProductID uint      `json:"product_id"`
+	ItemOrder int       `json:"item_order"`
+	AboutText string    `json:"about_text" binding:"required,max=255"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type Product struct {
@@ -28,6 +38,7 @@ type Product struct {
 	Categories   []Category           `json:"categories" gorm:"many2many:product_categories;"`
 	Images       []ProductImage       `json:"images" gorm:"foreignKey:ProductID"`
 	Translations []ProductTranslation `json:"translations" gorm:"foreignKey:ProductID"`
+	Abouts       []ProductAbout       `json:"abouts" gorm:"foreignKey:ProductID"`
 }
 
 // Generate slug before creating/updating

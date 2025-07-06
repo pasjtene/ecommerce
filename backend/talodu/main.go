@@ -51,6 +51,7 @@ func main() {
 		&models.Category{},
 		&models.ProductImage{},
 		&models.ProductTranslation{},
+		&models.ProductAbout{},
 	)
 
 	// Seed initial data
@@ -107,6 +108,8 @@ func main() {
 		products.DELETE("/delete/batch", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.DeleteProductBatch(s.DB))
 		products.DELETE("/images/delete/batch", auth.AuthMiddleware(), handlers.DeleteProductImagesBatch(s.DB))
 		products.POST("/translate/:id", auth.AuthMiddleware(), handlers.CreateProductTranslation(s.DB))
+		products.POST("/abouts/:id", auth.AuthMiddleware(), handlers.CreateProductAbout(s.DB))
+		products.PUT("/abouts/order/:id", auth.AuthMiddleware(), handlers.UpdateProductAboutOrder(s.DB))
 
 		products.GET(":id", handlers.GetProduct(s.DB))                           // Get single product
 		products.PUT(":id", auth.AuthMiddleware(), handlers.UpdateProduct(s.DB)) // Update

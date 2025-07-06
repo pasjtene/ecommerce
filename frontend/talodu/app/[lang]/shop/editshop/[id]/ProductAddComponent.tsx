@@ -25,7 +25,8 @@ const ProductAddComponent = ({ shop, onSave, onCancel }: ShopAddProps) => {
             shop_id: shop.ID,
             ShopID: shop.ID,
             categories: [],
-            translations: []
+            translations: [],
+            abouts: []
           });
 
 

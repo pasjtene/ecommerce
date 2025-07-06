@@ -38,7 +38,14 @@ export interface User {
     shop_id: number
     images: ProductImage[]
     translations: ProductTranslation[]
+    abouts: ProductAbout[]
   }
+
+  export interface ProductAbout {
+  id: number;
+  about_text: string;
+  item_order: number;
+}
 
   export interface ProductTranslation {
     ID: number;

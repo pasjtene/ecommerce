@@ -140,7 +140,7 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
 			setisAddingProduct(false);
 			//handleViewShopProducts(shop)
 			//handleManageShop();
-			console.log('Produc update result: ', response.data);
+			//console.log('Produc update result: ', response.data);
 			toast.success(`Product created savedsuccessfully`);
 			handleViewDetailsLug(response.data);
 			// Show success toast
