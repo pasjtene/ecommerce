@@ -17,13 +17,23 @@ type ProductTranslation struct {
 	Description string `json:"description"`
 }
 
+type ProductAboutTranslation struct {
+	ID             uint      `json:"id" gorm:"primaryKey"`
+	ProductAboutID uint      `json:"product_about_id"`
+	Language       string    `json:"language" gorm:"size:5"` // en, fr, es
+	AboutText      string    `json:"about_text" binding:"required,max=255"`
+	CreatedAt      time.Time `json:"created_at"`
+	UpdatedAt      time.Time `json:"updated_at"`
+}
+
 type ProductAbout struct {
-	ID        int       `json:"id"`
-	ProductID uint      `json:"product_id"`
-	ItemOrder int       `json:"item_order"`
-	AboutText string    `json:"about_text" binding:"required,max=255"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID           int                       `json:"id"`
+	ProductID    uint                      `json:"product_id"`
+	ItemOrder    int                       `json:"item_order"`
+	Translations []ProductAboutTranslation `json:"translations" gorm:"foreignKey:ProductAboutID"`
+	AboutText    string                    `json:"about_text" binding:"required,max=255"`
+	CreatedAt    time.Time                 `json:"created_at"`
+	UpdatedAt    time.Time                 `json:"updated_at"`
 }
 
 type Product struct {

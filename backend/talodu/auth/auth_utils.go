@@ -34,7 +34,7 @@ type (
 	User = models.User
 )
 
-const JWT_SECRET = "your-secret-key"
+const JWT_SECRET = "your-secret-key-this-is-not-used-in-prod"
 
 func GetAuthUser(c *gin.Context) (*AuthUser, error) {
 	tokenString := c.GetHeader("Authorization")
@@ -95,10 +95,10 @@ func SeedSuperAdmin(db *gorm.DB) {
 		return // SuperAdmin already exists
 	}
 	// Create SuperAdmin user
-	hashedPassword, _ := HashPassword("SuperAdmin@123") // Use a strong default password
+	hashedPassword, _ := HashPassword("SuperAdmin@123") // We must Use a strong default password
 	superAdmin := User{
 		Username:  "superadmin",
-		Email:     "superadmin@example.com",
+		Email:     "superadmin@talodu.com",
 		FirstName: "System",
 		LastName:  "Administrator",
 		Password:  hashedPassword,
@@ -110,7 +110,6 @@ func SeedSuperAdmin(db *gorm.DB) {
 	fmt.Println("Seeded initial SuperAdmin user")
 }
 
-// const JWT_SECRET = "your-secret-key" // Replace with env var in production
 func GenerateToken(user *User) (string, error) {
 	// Extract role names for JWT
 	var roleNames []string
@@ -134,7 +133,7 @@ const (
 	RefreshTokenExpiry = time.Hour * 2 // 2 hours for test refresh tokens
 )
 
-// GenerateTokens creates both access and refresh tokens
+// GenerateTokens: this creates both access and refresh tokens
 func GenerateTokens(user *User) (accessToken string, refreshToken string, err error) {
 	// Access token
 	accessClaims := jwt.MapClaims{
@@ -172,7 +171,7 @@ func getRoleNames(roles []Role) []string {
 
 func Logout(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// 1. Get user ID from context (set by your AuthMiddleware)
+		// 1. Get user ID from context (set by AuthMiddleware)
 		userID, exists := c.Get("user_id")
 		if !exists {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authentication required"})
@@ -201,7 +200,7 @@ func Logout(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		// 4. Verify token claims match the user from context
+		// Verify that token claims match the user from context
 		claims, ok := token.Claims.(jwt.MapClaims)
 		if !ok {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
@@ -215,7 +214,7 @@ func Logout(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		// 5. Invalidate refresh token
+		// Invalidate refresh token
 		result := db.Model(&User{}).Where("id = ?", userID).
 			Updates(map[string]interface{}{
 				"refresh_token":  nil,
@@ -227,7 +226,7 @@ func Logout(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		// 6. Verify the user was actually updated
+		// Verify the user was actually updated
 		if result.RowsAffected == 0 {
 			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 			return
@@ -426,21 +425,8 @@ func RegisterUser(db *gorm.DB) gin.HandlerFunc {
 
 		db.Create(&user)
 
-		// Return user data (excluding password)
-		/**
-		c.JSON(http.StatusCreated, UserResponse{
-			ID:        user.ID,
-			Username:  user.Username,
-			Email:     user.Email,
-			FirstName: user.FirstName,
-			LastName:  user.LastName,
-			Roles:     user.Roles,
-		})
-
-		*/
-
 		//
-		frontendUser := user.ToFrontend()
+		frontendUser := user.ToFrontend() // this is to match what React expects at frontend
 
 		c.JSON(http.StatusOK, gin.H{
 			"message": "User updated successfully",
@@ -592,13 +578,13 @@ func AuthMiddleware(requiredRoles ...string) gin.HandlerFunc {
 		// Extract roles
 		var roles []string
 		if rolesClaim, ok := claims["roles"]; ok { // Check if "roles" key exists
-			if rolesSlice, ok := rolesClaim.([]interface{}); ok { // Try asserting to []interface{}
+			if rolesSlice, ok := rolesClaim.([]interface{}); ok {
 				for _, r := range rolesSlice {
 					if role, ok := r.(string); ok {
 						roles = append(roles, role)
 					} else {
 						// This case should be rare if your JWT creation is consistent
-						c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Role element in token is not a string"})
+						c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid role, must be a string"})
 						return
 					}
 				}
@@ -609,28 +595,11 @@ func AuthMiddleware(requiredRoles ...string) gin.HandlerFunc {
 				return
 			}
 		} else {
-			// If "roles" claim is missing, decide if it's an error or allowed
-			// For now, let it be an empty slice if missing.
-			// If roles are mandatory, uncomment this:
+
+			// If roles are mandatory, we can uncomment this: For now some users have no roles in the system
 			// c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "'roles' claim missing in token"})
 			// return
 		}
-
-		// Extract roles
-		/**
-			rolesInterface, ok := claims["roles"].([]interface{})
-		if !ok {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid roles format"})
-			return
-		}
-
-		var roles []string
-		for _, r := range rolesInterface {
-			if role, ok := r.(string); ok {
-				roles = append(roles, role)
-			}
-		}
-		**/
 
 		// Check required roles
 		if len(requiredRoles) > 0 && !HasAnyRole(roles, requiredRoles) {

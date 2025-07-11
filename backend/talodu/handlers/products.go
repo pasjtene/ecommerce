@@ -31,40 +31,6 @@ func ListProducts(db *gorm.DB) gin.HandlerFunc {
 			return db.Select("id", "name") // Only load specific shop fields
 		})
 
-		// 1. Search (by name)
-		/**
-		if search := c.Query("search"); search != "" {
-			//query = query.Where("name LIKE ?", "%"+search+"%" )
-			if len(search) < 5 {
-				query = query.Where(
-					"name ILIKE ? OR description ILIKE ?",
-					"%"+search+"%", "%"+search+"%",
-				)
-			} else {
-				query = query.Where(
-					"to_tsvector('english', name || ' ' || description) @@ to_tsquery('english', ?)",
-					strings.Join(strings.Fields(search), " & "),
-				)
-			}
-
-		}
-		*/
-
-		/**
-		if search := c.Query("search"); search != "" {
-			searchTerms := strings.Fields(search)
-			termPatterns := make([]string, len(searchTerms))
-			for i, term := range searchTerms {
-				termPatterns[i] = "%" + term + "%"
-			}
-
-			query = query.Where(
-				`(name ILIKE ANY(?) OR description ILIKE ANY(?))`,
-				pq.Array(termPatterns), pq.Array(termPatterns),
-			)
-		}
-		*/
-
 		if search := c.Query("search"); search != "" {
 			search = strings.TrimSpace(search)
 
@@ -89,38 +55,6 @@ func ListProducts(db *gorm.DB) gin.HandlerFunc {
 			}
 		}
 
-		/**
-		if search := c.Query("search"); search != "" {
-			search = strings.TrimSpace(search)
-
-			if len(search) < 5 {
-				// Use trigram-optimized ILIKE for short searches
-				query = query.Where(
-					"name ILIKE ? OR description ILIKE ?",
-					"%"+search+"%", "%"+search+"%",
-				)
-			} else {
-
-			// Use FTS for longer queries with proper tokenization
-			terms := strings.Join(strings.Fields(search), " & ")
-			query = query.Where(
-				"to_tsvector('english', coalesce(name,'') || ' ' || coalesce(description,'')) @@ to_tsquery('english', ?)",
-				terms,
-			)
-			}
-		}
-		*/
-
-		/**
-		if search := c.Query("search"); search != "" {
-			query = query.Where(
-				"to_tsvector('english', name || ' ' || description) @@ to_tsquery('english', ?)",
-				strings.Join(strings.Fields(search), " & "),
-			)
-		}
-		*/
-
-		// ---- 3. PRICE RANGE FILTER ----
 		// Minimum price (e.g., ?min_price=50)
 		if minPrice := c.Query("min_price"); minPrice != "" {
 			query = query.Where("price >= ?", minPrice)
@@ -145,7 +79,7 @@ func ListProducts(db *gorm.DB) gin.HandlerFunc {
 			query = query.Order("id") // Default sort
 		}
 
-		// 3. Pagination
+		//  Pagination
 		page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 		limit, _ := strconv.Atoi(c.DefaultQuery("limit", "5"))
 		offset := (page - 1) * limit
@@ -203,7 +137,7 @@ func GetShopProducts(db *gorm.DB) gin.HandlerFunc {
 		var totalCount int64
 		query.Count(&totalCount)
 
-		// 3. Pagination
+		//  Pagination
 		page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 		limit, _ := strconv.Atoi(c.DefaultQuery("limit", "5"))
 		offset := (page - 1) * limit
@@ -223,7 +157,7 @@ func GetShopProducts(db *gorm.DB) gin.HandlerFunc {
 // CreateProductTranslation creates a new product translation or updates an existing one.
 func CreateProductTranslation(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// 1. Parse input
+
 		productID := c.Param("id")
 		var input struct {
 			Language    string `json:"language" binding:"required"`
@@ -236,14 +170,14 @@ func CreateProductTranslation(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		// 2. Verify product exists
+		// Verify product exists
 		var product models.Product
 		if err := db.First(&product, productID).Error; err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
 			return
 		}
 
-		// 3. Upsert translation (create or update)
+		// Upsert translation (create or update)
 		var existingTranslation models.ProductTranslation
 		isNewTranslation := false
 
@@ -305,7 +239,7 @@ func GetProduct(db *gorm.DB) gin.HandlerFunc {
 		id := c.Param("id")
 		lang := c.Query("lang")
 
-		if err := db.Preload("Images").Preload("Translations").Preload("Abouts").First(&product, id).Error; err != nil {
+		if err := db.Preload("Images").Preload("Translations").First(&product, id).Error; err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
 			return
 		}
@@ -331,8 +265,23 @@ func GetProduct(db *gorm.DB) gin.HandlerFunc {
 		product.Shop = shop
 		db.Save(&product)
 
-		//c.JSON(http.StatusOK, product)
-		// Return response
+		// get product abouts with translations
+		var abouts []models.ProductAbout
+		query := db.Preload("Translations").Where("product_id = ?", id).Order("item_order")
+
+		if lang != "" {
+			// Join with translations and filter by language
+			query = query.Joins("JOIN product_about_translations ON product_abouts.id = product_about_translations.product_about_id").
+				Where("product_about_translations.language = ?", lang)
+		}
+
+		if err := query.Find(&abouts).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch abouts"})
+			return
+		}
+
+		product.Abouts = abouts
+
 		c.JSON(http.StatusOK, gin.H{
 			"product": product,
 			"shop":    shop,

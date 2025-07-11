@@ -23,7 +23,7 @@ import dynamic from 'next/dynamic';
 
 const Login = dynamic(() => import('./Login'), { ssr: false });
 const Register = dynamic(() => import('./Register'), { ssr: false });
-// --- END dynamic import ---
+
 
 
 const HeaderNext = () => {
@@ -47,27 +47,25 @@ const HeaderNext = () => {
       loadTranslation ();
     }, [params.lang]);
     
-    // Add language switcher in your header
+    // Add language switcher in header
   const changeLanguage1 = (locale: string) => {
     const newPathname = pathname.replace(`/${params.lang}`, '');
     router.push(`/${locale}${newPathname}`);
   };
 
         const changeLanguage = (locale: string) => {
-        // 1. Get current path without language prefix
+        
         const newPathname = (pathname || '/').replace(`/${params.lang}`, '') || '/';
         
-        // 2. Set cookie to remember language preference
         if (typeof document !== 'undefined') {
             document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=${365 * 24 * 60 * 60}; SameSite=Lax`;
         }
 
-        // 3. Navigate to new URL (using only path string)
         router.push(`/${locale}${newPathname}`);
         };
 
 
-    // Close dropdown when clicking outside - This needs to be in useEffect
+    // Close dropdown when clicking outside 
     useEffect(() => {
         // Ensure this code only runs in the browser environment
         if (typeof document !== 'undefined') {

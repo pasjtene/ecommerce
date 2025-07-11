@@ -45,6 +45,7 @@ const ProductTranslationForm = dynamic(() => import('./ProductTranslationForm'),
 
 const ProductAboutsEditor = dynamic(() => import('./ProductAboutsEditor'), { ssr: false });
 const ProductAboutSection = dynamic(() => import('./ProductAboutSection'), { ssr: false });
+const ProductAboutSection2 = dynamic(() => import('./ProductAboutSection2'), { ssr: false });
 
 interface IValues {
 	name: string;
@@ -476,6 +477,20 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 										<></>
 									)}
 								</div>
+
+								<div className='container mt-4'>
+									{isTranslating ? (
+										<ProductAboutSection2
+											productId={currentProduct.ID}
+											abouts={currentProduct.abouts}
+											languages={['en','fr','es']}
+										/>
+									) : (
+										<></>
+									)}
+								</div>
+
+								
 							</div>
 						)}
 

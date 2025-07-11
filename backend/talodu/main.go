@@ -111,8 +111,19 @@ func main() {
 		products.POST("/abouts/:id", auth.AuthMiddleware(), handlers.CreateProductAbout(s.DB))
 		products.PUT("/abouts/order/:id", auth.AuthMiddleware(), handlers.UpdateProductAboutOrder(s.DB))
 
-		products.GET(":id", handlers.GetProduct(s.DB))                           // Get single product
+		products.GET(":id", handlers.GetProduct(s.DB)) // Get single product
+		products.GET("/abouts/:productId", handlers.GetProductAbouts(s.DB))
 		products.PUT(":id", auth.AuthMiddleware(), handlers.UpdateProduct(s.DB)) // Update
+		// Add translation to an about entry
+		products.POST("/:id/abouts/:aboutId/translations",
+			auth.AuthMiddleware(), handlers.CreateProductAboutTranslation(s.DB))
+
+		// Get translations for an about entry
+		products.GET("/:id/abouts/:aboutId/translations", handlers.GetProductAboutTranslations(s.DB))
+
+		// Update a translation
+		products.PUT("/:id/abouts/:aboutId/translations/:translationId",
+			auth.AuthMiddleware(), handlers.UpdateProductAboutTranslation(s.DB))
 	}
 
 	// Get product categories
