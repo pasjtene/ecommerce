@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"talodu/models"
 	"time"
@@ -34,7 +35,39 @@ type (
 	User = models.User
 )
 
-const JWT_SECRET = "your-secret-key-this-is-not-used-in-prod"
+// const JWT_SECRET = "your-secret-key-this-is-not-used-in-prod"
+
+var JWT_SECRET string
+var SUPER_USER_PASS string
+var SUPER_USER_EMAIL string
+
+var SUPER_USER_USERNAME string
+var INITIAL_USER_PASS string
+
+func init() {
+	secret := os.Getenv("JWT_SECRET")
+	super_user_pass := os.Getenv("SUPER_USER_PASS")
+	super_user_email := os.Getenv("SUPER_USER_PASS")
+	super_user_username := os.Getenv("SUPER_USER_PASS")
+	initial_user_pass := os.Getenv("SUPER_USER_PASS")
+
+	if secret == "" {
+		log.Fatal("FATAL: JWT_SECRET environment variable not set. Please set it before running the application.")
+	}
+	if super_user_pass == "" {
+		log.Fatal("FATAL: SUPER_USER_PASS environment variable not set. Please set it before running the application.")
+	}
+
+	if super_user_email == "" {
+		log.Fatal("FATAL: SUPER_USER_EMAIL environment variable not set. Please set it before running the application.")
+	}
+
+	JWT_SECRET = secret
+	SUPER_USER_PASS = super_user_pass
+	SUPER_USER_EMAIL = super_user_email
+	SUPER_USER_USERNAME = super_user_username
+	INITIAL_USER_PASS = initial_user_pass
+}
 
 func GetAuthUser(c *gin.Context) (*AuthUser, error) {
 	tokenString := c.GetHeader("Authorization")
@@ -95,10 +128,10 @@ func SeedSuperAdmin(db *gorm.DB) {
 		return // SuperAdmin already exists
 	}
 	// Create SuperAdmin user
-	hashedPassword, _ := HashPassword("SuperAdmin@123") // We must Use a strong default password
+	hashedPassword, _ := HashPassword(SUPER_USER_PASS) // We must Use a strong default password
 	superAdmin := User{
 		Username:  "superadmin",
-		Email:     "superadmin@talodu.com",
+		Email:     SUPER_USER_EMAIL,
 		FirstName: "System",
 		LastName:  "Administrator",
 		Password:  hashedPassword,
@@ -474,7 +507,7 @@ func CreateUser(db *gorm.DB) gin.HandlerFunc {
 			}
 		}
 		// Create user
-		hashedPassword, _ := HashPassword("Jt.pas123")
+		hashedPassword, _ := HashPassword(INITIAL_USER_PASS)
 		user := User{
 			//Username:  input.Username,
 			Username:  input.Email,
