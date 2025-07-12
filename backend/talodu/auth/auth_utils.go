@@ -47,9 +47,9 @@ var INITIAL_USER_PASS string
 func init() {
 	secret := os.Getenv("JWT_SECRET")
 	super_user_pass := os.Getenv("SUPER_USER_PASS")
-	super_user_email := os.Getenv("SUPER_USER_PASS")
-	super_user_username := os.Getenv("SUPER_USER_PASS")
-	initial_user_pass := os.Getenv("SUPER_USER_PASS")
+	super_user_email := os.Getenv("SUPER_USER_EMAIL")
+	super_user_username := os.Getenv("SUPER_USER_USERNAME")
+	initial_user_pass := os.Getenv("INITIAL_USER_PASS")
 
 	if secret == "" {
 		log.Fatal("FATAL: JWT_SECRET environment variable not set. Please set it before running the application.")
