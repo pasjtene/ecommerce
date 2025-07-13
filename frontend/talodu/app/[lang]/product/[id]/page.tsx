@@ -1,4 +1,4 @@
-// app/product/[id]/page.tsx
+// /app/[lang]/product/[id]/page.tsx
 import React from 'react';
 import { Metadata } from 'next';
 import axios from 'axios';
@@ -9,6 +9,7 @@ import ProductDetailsClient from './ProductDetailsClient';
 // Define the expected params type
 type PageParams = {
   id: string;
+  lang: string;
 };
 
 type ProductData = {
@@ -16,7 +17,7 @@ type ProductData = {
   shop: Shop
 };
 
-async function getProduct(id: string): Promise<Product | null> {
+async function getProduct(id: string, lang: string): Promise<Product | null> {
     //Id is the last part of product slug which is a string separated by "_". This string is constructed at the backend 
     //When a product is created or updated
   const productId = id?.toString().split('-').pop();
@@ -25,7 +26,7 @@ async function getProduct(id: string): Promise<Product | null> {
   try {
     const API_URL = process.env.API_BASE_URL || "http://127.0.0.1:8888";
     const response = await axios.get<{ product: Product }>(
-      `${API_URL}/products/${productId}`
+      `${API_URL}/products/${productId}?lang=${lang}`
     );
     return response.data.product;
   } catch (error) {
@@ -55,7 +56,7 @@ try {
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
   const resolvedParams = await params;
   const SITE_NAME = "https://talodu.com";
-  const product = await getProduct(resolvedParams.id);
+  const product = await getProduct(resolvedParams.id, resolvedParams.lang);
   
   return {
     title: product ? `${product.name} | Talodu.com | by ${product.shop.name}` : 'Product Not Found | Talodu.com',
@@ -84,7 +85,9 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
 
 export default async function Page({ params }: { params: Promise<PageParams> }) {
   const resolvedParams = await params;
-  const product = await getProduct(resolvedParams.id);
+  const product = await getProduct(resolvedParams.id, resolvedParams.lang);
+  //const { lang, id } = params;
+  //const product = await getProduct(id, lang);
   const shop = await getShop(resolvedParams.id);
 
   if (!product || !shop) {

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"log"
 	"math"
 	"net/http"
 	"os"
@@ -237,7 +238,8 @@ func GetProduct(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var product models.Product
 		id := c.Param("id")
-		lang := c.Query("lang")
+		lang := strings.ToLower(strings.TrimSpace(c.Query("lang")))
+		log.Printf("Processing request for product ID: %s, language: %s", id, lang)
 
 		if err := db.Preload("Images").Preload("Translations").First(&product, id).Error; err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
@@ -253,6 +255,8 @@ func GetProduct(db *gorm.DB) gin.HandlerFunc {
 					break
 				}
 			}
+		} else {
+			log.Printf("No language for for product ID: %s, language: %s", id, lang)
 		}
 
 		// Fetch and return the fully updated product
@@ -267,24 +271,60 @@ func GetProduct(db *gorm.DB) gin.HandlerFunc {
 
 		// get product abouts with translations
 		var abouts []models.ProductAbout
-		query := db.Preload("Translations").Where("product_id = ?", id).Order("item_order")
 
-		if lang != "" {
-			// Join with translations and filter by language
-			query = query.Joins("JOIN product_about_translations ON product_abouts.id = product_about_translations.product_about_id").
-				Where("product_about_translations.language = ?", lang)
-		}
-
-		if err := query.Find(&abouts).Error; err != nil {
+		if err := db.Where("product_id = ?", id).Order("item_order").Find(&abouts).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch abouts"})
 			return
 		}
 
-		product.Abouts = abouts
+		//product.Abouts = abouts
+
+		// Convert to response format with translations
+		aboutResponses := make([]models.ProductAboutResponse, len(abouts))
+
+		for i, about := range abouts {
+			aboutText := "Not translated" // Default empty if no translation found
+
+			if lang != "" {
+				// Find translation for this language
+				var translation models.ProductAboutTranslation
+				if err := db.Where("product_about_id = ? AND language = ?", about.ID, lang).
+					First(&translation).Error; err == nil {
+					aboutText = translation.AboutText
+				} else {
+					aboutText = about.AboutText
+				}
+			}
+			aboutResponses[i] = models.ProductAboutResponse{
+				ID:        about.ID,
+				ProductID: about.ProductID,
+				ItemOrder: about.ItemOrder,
+				AboutText: aboutText,
+				CreatedAt: about.CreatedAt,
+				UpdatedAt: about.UpdatedAt,
+			}
+
+		}
+
+		translatedAbouts := make([]models.ProductAbout, len(abouts))
+
+		for i, a2 := range aboutResponses {
+			translatedAbouts[i] = models.ProductAbout{
+				ID:        a2.ID,
+				ItemOrder: a2.ItemOrder,
+				AboutText: a2.AboutText,
+				CreatedAt: a2.CreatedAt,
+				UpdatedAt: a2.UpdatedAt,
+			}
+		}
+
+		//product.AboutsT = aboutResponses
+		product.Abouts = translatedAbouts
 
 		c.JSON(http.StatusOK, gin.H{
 			"product": product,
 			"shop":    shop,
+			//"abouts":  aboutResponses,
 		})
 	}
 }

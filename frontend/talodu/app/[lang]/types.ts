@@ -39,6 +39,7 @@ export interface User {
     images: ProductImage[]
     translations: ProductTranslation[]
     abouts: ProductAbout[]
+    //aboutst: ProductAbout[]
   }
 
   export interface ProductAbout {

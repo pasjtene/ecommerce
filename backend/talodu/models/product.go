@@ -17,6 +17,16 @@ type ProductTranslation struct {
 	Description string `json:"description"`
 }
 
+// Add this struct for API responses
+type ProductAboutResponse struct {
+	ID        uint      `json:"id"`
+	ProductID uint      `json:"product_id"`
+	ItemOrder int       `json:"item_order"`
+	AboutText string    `json:"about_text"` // This will contain the translated text
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
 type ProductAboutTranslation struct {
 	ID             uint      `json:"id" gorm:"primaryKey"`
 	ProductAboutID uint      `json:"product_about_id"`
@@ -27,7 +37,7 @@ type ProductAboutTranslation struct {
 }
 
 type ProductAbout struct {
-	ID           int                       `json:"id"`
+	ID           uint                      `json:"id"`
 	ProductID    uint                      `json:"product_id"`
 	ItemOrder    int                       `json:"item_order"`
 	Translations []ProductAboutTranslation `json:"translations" gorm:"foreignKey:ProductAboutID"`
@@ -49,6 +59,7 @@ type Product struct {
 	Images       []ProductImage       `json:"images" gorm:"foreignKey:ProductID"`
 	Translations []ProductTranslation `json:"translations" gorm:"foreignKey:ProductID"`
 	Abouts       []ProductAbout       `json:"abouts" gorm:"foreignKey:ProductID"`
+	//AboutsT      []ProductAboutResponse `json:"aboutst" gorm:"foreignKey:ProductID"`
 }
 
 // Generate slug before creating/updating

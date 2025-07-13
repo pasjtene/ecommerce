@@ -163,6 +163,9 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 
 	// Apply translations to product data
 	useEffect(() => {
+		//console.log("The products abouts is: ", initialProduct.abouts);
+		
+		//console.log("The language is: ",params.lang);
 		if (initialProduct.translations) {
 			const translation = initialProduct.translations.find((t: any) => t.language === params.lang);
 			if (translation) {
@@ -429,7 +432,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 								currentProduct?.shop?.name || 'Unknown Shop',
 							)}
 						</a>
-						<div className='display-4 fw-bold py-3'>{currentProduct?.name}</div>
+						<div className='display-4 fw-bold py-3'>{currentProduct?.name} pname</div>
 
 						{(isShopOwner(shop) || hasAnyRole(['SuperAdmin', 'Admin'])) && (
 							<div>
@@ -511,10 +514,10 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 							</div>
 
 							<div className='col'>
-								Div shoud take 4
+								Div should take 4
 								<div>
 									{currentProduct.abouts.length > 0 ? (
-										<ProductAboutSection details={currentProduct.abouts} />
+										<ProductAboutSection abouts={currentProduct.abouts} />
 									) : (
 										<div>No addition details about this product</div>
 									)}

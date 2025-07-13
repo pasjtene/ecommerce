@@ -11,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -45,6 +46,10 @@ var SUPER_USER_USERNAME string
 var INITIAL_USER_PASS string
 
 func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
 	secret := os.Getenv("JWT_SECRET")
 	super_user_pass := os.Getenv("SUPER_USER_PASS")
 	super_user_email := os.Getenv("SUPER_USER_EMAIL")
