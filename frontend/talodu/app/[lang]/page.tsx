@@ -6,7 +6,7 @@ import Footer from '../../src/pages/presentation/footers/Footer'
 import AllProductDisplay from './AllProductsDisplay'
 import { Translation } from './types'
 import { useParams } from 'next/navigation';
-import ClientLayoutWrapper from './ClientLayoutWrapper';
+//import ClientLayoutWrapper from './ClientLayoutWrapper';
 
 const HomePage = () => {
   const params = useParams();
