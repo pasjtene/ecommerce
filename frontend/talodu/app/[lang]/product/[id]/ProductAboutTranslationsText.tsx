@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Button, Card, ListGroup } from 'react-bootstrap';
-import ProductAboutTranslationForm from './ProductAboutTranslationForm';
+import ProductAboutTranslationAddModal from './ProductAboutTranslationAddModal';
 import axios from 'axios';
 
-const ProductAboutSection2 = ({ abouts, productId, languages }: { 
+const ProductAboutTranslationsText = ({ abouts, productId, languages }: { 
     abouts: any[], 
     productId: number,
     languages: string[] 
@@ -34,7 +34,7 @@ const ProductAboutSection2 = ({ abouts, productId, languages }: {
             );
             
             const r = response.data;
-            console.log("The response: ", r)
+            console.log("The translations response: ", r)
             
             // Refresh the abouts data or update local state
             setShowTranslationForm(false);
@@ -72,6 +72,7 @@ const ProductAboutSection2 = ({ abouts, productId, languages }: {
                                     <div>
                                         <h6>#{about.item_order}:{about.about_text}</h6>
                                         <p>{translation?.about_text || 'No translation available'}</p>
+                                        
                                     </div>
                                     <Button 
                                         variant="outline-secondary" 
@@ -88,7 +89,7 @@ const ProductAboutSection2 = ({ abouts, productId, languages }: {
             </Card.Body>
 
             {showTranslationForm && selectedAbout && (
-                <ProductAboutTranslationForm
+                <ProductAboutTranslationAddModal
                     about={selectedAbout}
                     languages={languages.filter(lang => 
                         !selectedAbout.translations?.some((t: any) => t.language === lang)
@@ -101,4 +102,4 @@ const ProductAboutSection2 = ({ abouts, productId, languages }: {
     );
 };
 
-export default ProductAboutSection2;
+export default ProductAboutTranslationsText;

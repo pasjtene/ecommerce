@@ -5,7 +5,7 @@ import axios from 'axios';
 //import { useNavigate } from "react-router-dom";
 import { useRouter } from "next/navigation";
 //import { API_BASE_URL } from '../auth/api'
-import { Shop } from './types'
+import { Shop } from '../types'
 
 
 
@@ -64,7 +64,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<AuthProviderProps & {
     onRequireLogin?: () => void;
     onLoginSuccess?: () => void;
-}> = ({ children, onRequireLogin, onLoginSuccess }) => {
+    showLogin?: () => void; 
+}> = ({ children, onRequireLogin, onLoginSuccess, showLogin: propShowLogin }) => {
     const [user, setUser] = useState<User | null>(null);
     //const [token, setToken] = useState<string | null>(localStorage.getItem('j_auth_token'));
     const [token, setToken] = useState<string | null>(null);
@@ -72,10 +73,15 @@ export const AuthProvider: React.FC<AuthProviderProps & {
     const [mounted, setMounted] = useState(false); 
     const [showLoginModal, setShowLoginModal] = useState(false);
 
-const showLogin = () => setShowLoginModal(true);
+//const showLogin = () => setShowLoginModal(true);
 const hideLogin = () => setShowLoginModal(false);
    // loaddata
     //const navigate = useNavigate();
+    const showLogin = useCallback(() => {
+        setShowLoginModal(true);
+        propShowLogin?.();
+        onRequireLogin?.();
+    }, [propShowLogin, onRequireLogin]);
 
     const router = useRouter();
 

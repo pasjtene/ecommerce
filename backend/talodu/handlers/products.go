@@ -272,7 +272,7 @@ func GetProduct(db *gorm.DB) gin.HandlerFunc {
 		// get product abouts with translations
 		var abouts []models.ProductAbout
 
-		if err := db.Where("product_id = ?", id).Order("item_order").Find(&abouts).Error; err != nil {
+		if err := db.Preload("Translations").Where("product_id = ?", id).Order("item_order").Find(&abouts).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch abouts"})
 			return
 		}
@@ -315,11 +315,13 @@ func GetProduct(db *gorm.DB) gin.HandlerFunc {
 				AboutText: a2.AboutText,
 				CreatedAt: a2.CreatedAt,
 				UpdatedAt: a2.UpdatedAt,
+				//Translations: abouts.translations,
 			}
 		}
 
 		//product.AboutsT = aboutResponses
 		product.Abouts = translatedAbouts
+		product.AboutsWithTranlations = abouts
 
 		c.JSON(http.StatusOK, gin.H{
 			"product": product,

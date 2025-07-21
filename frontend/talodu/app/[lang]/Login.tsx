@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { toast } from 'react-toastify';
-import { useAuth} from './AuthContextNext';
+import { useAuth} from './contexts/AuthContextNext';
 import { useParams } from 'next/navigation';
 
 interface LoginProps {

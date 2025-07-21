@@ -666,3 +666,23 @@ func HasAnyRole(userRoles []string, requiredRoles []string) bool {
 	}
 	return false
 }
+
+func IsAdminOrIsSuperAdmin(c *gin.Context) bool {
+	authUser, err := GetAuthUser(c)
+	if err != nil {
+		return false
+	}
+
+	// Check if authUser is not nil (since GetAuthUser returns a pointer)
+	if authUser == nil {
+		return false
+	}
+
+	for _, role := range authUser.Roles {
+		if role == "SuperAdmin" || role == "Admin" {
+			return true
+		}
+	}
+
+	return false
+}

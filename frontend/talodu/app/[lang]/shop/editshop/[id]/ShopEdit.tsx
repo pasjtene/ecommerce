@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import { User, Role, Shop, ShopUser, Product } from '../../../types';
 import { toast } from 'react-toastify';
 import ProductAddComponent  from './ProductAddComponent'
-import { useAuth, AuthProvider } from '../../../AuthContextNext';
+import { useAuth, AuthProvider } from '../../../contexts/AuthContextNext';
 import ConfirmDelete from '../../../utils/ConfirmDelete';
 import ErrorModal from '../../../utils/ErrorModal';
 

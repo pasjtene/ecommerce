@@ -48,18 +48,18 @@ type ProductAbout struct {
 
 type Product struct {
 	gorm.Model
-	Name         string               `json:"name"`
-	Description  string               `json:"description"`
-	Slug         string               `gorm:"unique"`
-	Price        float64              `json:"price"`
-	Stock        int                  `json:"stock"`
-	ShopID       uint                 `json:"ShopID" gorm:"column:shop_id"`
-	Shop         Shop                 `json:"shop" gorm:"foreignKey:ShopID"`
-	Categories   []Category           `json:"categories" gorm:"many2many:product_categories;"`
-	Images       []ProductImage       `json:"images" gorm:"foreignKey:ProductID"`
-	Translations []ProductTranslation `json:"translations" gorm:"foreignKey:ProductID"`
-	Abouts       []ProductAbout       `json:"abouts" gorm:"foreignKey:ProductID"`
-	//AboutsT      []ProductAboutResponse `json:"aboutst" gorm:"foreignKey:ProductID"`
+	Name                  string               `json:"name"`
+	Description           string               `json:"description"`
+	Slug                  string               `gorm:"unique"`
+	Price                 float64              `json:"price"`
+	Stock                 int                  `json:"stock"`
+	ShopID                uint                 `json:"ShopID" gorm:"column:shop_id"`
+	Shop                  Shop                 `json:"shop" gorm:"foreignKey:ShopID"`
+	Categories            []Category           `json:"categories" gorm:"many2many:product_categories;"`
+	Images                []ProductImage       `json:"images" gorm:"foreignKey:ProductID"`
+	Translations          []ProductTranslation `json:"translations" gorm:"foreignKey:ProductID"`
+	Abouts                []ProductAbout       `json:"abouts" gorm:"foreignKey:ProductID"`
+	AboutsWithTranlations []ProductAbout       `json:"aboutst" gorm:"foreignKey:ProductID"`
 }
 
 // Generate slug before creating/updating

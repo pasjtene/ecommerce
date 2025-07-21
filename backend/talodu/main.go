@@ -73,6 +73,9 @@ func main() {
 			"https://www.talodu.com",
 			"http://localhost:3000",
 			"http://localhost:3001", // Add other domains as needed
+			"http://127.0.0.1:*",
+			"http://localhost:*",
+			"http://localhost:64518",
 		}
 		origin := c.Request.Header.Get("Origin")
 		for _, allowedOrigin := range allowedOrigins {
@@ -124,6 +127,34 @@ func main() {
 		// Update a translation
 		products.PUT("/:id/abouts/:aboutId/translations/:translationId",
 			auth.AuthMiddleware(), handlers.UpdateProductAboutTranslation(s.DB))
+	}
+
+	// Cart routes
+	cartRoutes := r.Group("/cart")
+	cartRoutes.Use(auth.AuthMiddleware()) // All cart routes require authentication
+	{
+		cartRoutes.GET("/", handlers.GetCart(s.DB))
+		cartRoutes.POST("/", handlers.AddToCart(s.DB))
+		cartRoutes.PUT("/:id", handlers.UpdateCartItem(s.DB))
+		cartRoutes.DELETE("/:id", handlers.RemoveFromCart(s.DB))
+		cartRoutes.DELETE("/", handlers.ClearCart(s.DB))
+	}
+
+	// Order routes
+	orderRoutes := r.Group("/orders")
+	orderRoutes.Use(auth.AuthMiddleware()) // All order routes require authentication
+	{
+		orderRoutes.POST("/", handlers.CreateOrderFromCart(s.DB))
+		orderRoutes.GET("/user", handlers.GetUserOrders(s.DB)) // User's own orders
+
+		// Admin-only routes
+		adminOrderRoutes := orderRoutes.Group("/")
+		adminOrderRoutes.Use(auth.AuthMiddleware("Admin", "SuperAdmin")) // Additional role check
+		{
+			adminOrderRoutes.GET("/", handlers.GetOrders(s.DB))
+			adminOrderRoutes.GET("/:id", handlers.GetOrderDetails(s.DB))
+			adminOrderRoutes.PUT("/:id/status", handlers.UpdateOrderStatus(s.DB))
+		}
 	}
 
 	// Get product categories

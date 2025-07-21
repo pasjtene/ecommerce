@@ -11,7 +11,7 @@ import { Shop, ShopUser, Product, User } from '../../../types';
 import { toast } from 'react-toastify';
 //import ProductAddComponent from '../../../../src/pages/presentation/sales/ProductAddComponent'; 
 import ImageDisplayComponent from './ImageDisplayComponentNext'
-import { useAuth, AuthProvider } from '../../../AuthContextNext';
+import { useAuth, AuthProvider } from '../../../contexts/AuthContextNext';
 
   interface ShopDetailsClientProps {
     shop: Shop; // Pass the fetched product from the Server Component

@@ -15,7 +15,7 @@ import axios from 'axios';
 import { User, Role, Product, Shop } from '../../types';
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify';
-import { useAuth, AuthProvider } from '../../AuthContextNext';
+import { useAuth, AuthProvider } from '../../contexts/AuthContextNext';
 import ErrorDisplay from '../../utils/ErrorDisplayPage'
 
 interface ShopsResponse {

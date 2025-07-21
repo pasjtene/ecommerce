@@ -1,9 +1,11 @@
+
 // app/[lang]/ClientComponentWrapper.tsx
 'use client';
-import { AuthProvider } from './AuthContextNext';
+import { AuthProvider } from './contexts/AuthContextNext';
 import HeaderNext from './HeaderNext';
 import dynamic from 'next/dynamic';
-import React, { useState} from 'react';
+import React, { useState, useCallback } from 'react';
+import { CartProvider } from './contexts/CartContext';
 
 const Login = dynamic(() => import('./Login'), {
   ssr: false,
@@ -14,18 +16,30 @@ export default function ClientComponentWrapper({
   children,
 }: {
   children: React.ReactNode;
-  }) {
+}) {
   const [showLogin, setShowLogin] = useState(false);
+
+  const handleShowLogin = useCallback(() => {
+    setShowLogin(true);
+  }, []);
   
   return (
-    <AuthProvider onRequireLogin={() => setShowLogin(true)}>
-      <HeaderNext />
-      <Login 
-        show={showLogin} 
-        onClose={() => setShowLogin(false)}
-        onSwitchToRegister={() => {}}
-      />
-      {children}
+    <CartProvider>
+      <AuthProvider 
+        showLogin={handleShowLogin}
+        onRequireLogin={handleShowLogin} 
+      >
+        <HeaderNext />
+        <Login 
+          show={showLogin} 
+          onClose={() => setShowLogin(false)}
+          onSwitchToRegister={() => {
+            setShowLogin(false);
+            
+          }}
+        />
+        {children}
       </AuthProvider>
+    </CartProvider>
   );
 }

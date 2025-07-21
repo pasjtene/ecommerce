@@ -1,7 +1,9 @@
 // product/id/ProductAboutsEditor.tsx
 import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import { Button, Form, Modal } from 'react-bootstrap';
 import axios from 'axios';
+import { useParams } from 'next/navigation';
 
 interface ProductAbout {
   id: number;
@@ -14,17 +16,23 @@ const ProductAboutsEditor = ({ productId, initialDetails }: { productId: number;
   const [newDetail, setNewDetail] = useState('');
   const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
   const token = localStorage.getItem('j_auth_token');
+  const [languages, setLanguages] = useState(['fr','en','es']);
+  const [language, setLanguage] = useState(languages[0]);
+  const params = useParams();
 
  
 
   const handleAddDetail = async () => {
   if (!newDetail.trim()) return;
+
+  console.log("The params are:",params)
   
   try {
     const response = await axios.post(
       `${API_URL}/products/abouts/${productId}`,
       { 
         about_text: newDetail,
+        language: params.lang,
         item_order: abouts.length > 0 
           ? Math.max(...abouts.map(d => d.item_order)) + 1 
           : 1
@@ -110,6 +118,19 @@ const saveNewOrder = async (updatedDetails: ProductAbout[]) => {
           placeholder="Add new about point"
           className="flex-1 p-2 border rounded"
         />
+        {/* 
+         <Form.Select 
+                                    value={language} 
+                                    onChange={(e) => setLanguage(e.target.value)}
+                                >
+                                    {languages.map(lang => (
+                                        <option key={lang} value={lang}>
+                                            {lang.toUpperCase()}
+                                        </option>
+                                    ))}
+                                </Form.Select>
+        */}
+       
         <button 
           onClick={handleAddDetail}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"

@@ -4,7 +4,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Translation } from './types';
 import { useRouter,useParams, usePathname, } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useAuth} from './AuthContextNext';
+import { useAuth} from './contexts/AuthContextNext';
+import { useCart } from './contexts/CartContext';
 import {
   faUser,
   faShoppingCart,
@@ -32,7 +33,8 @@ const HeaderNext = () => {
     const pathname = usePathname();
     const params = useParams();
     const [searchQuery, setSearchQuery] = useState('');
-    const [cartItemCount, setCartItemCount] = useState(7); // This should ideally come from global state/context
+    //const [cartItemCount, setCartItemCount] = useState(0); // This should ideally come from global state/context
+    const { cartItemCount } = useCart();
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const [showAuthModal, setShowAuthModal] = useState<'login' | 'register' | null>(null);

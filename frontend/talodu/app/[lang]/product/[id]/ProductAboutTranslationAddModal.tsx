@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 
-const ProductAboutTranslationForm = ({ 
+const ProductAboutTranslationAddModal = ({ 
     about, 
     languages, 
     onSave, 
@@ -72,4 +72,4 @@ const ProductAboutTranslationForm = ({
     );
 };
 
-export default ProductAboutTranslationForm;
+export default ProductAboutTranslationAddModal;

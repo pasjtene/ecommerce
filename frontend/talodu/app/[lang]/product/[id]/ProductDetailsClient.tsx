@@ -19,10 +19,11 @@ import { Product, ProductImage, Shop, AppError, ProductTranslation } from '../..
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Button from 'react-bootstrap/Button';
-//import Card, {CardBody, CardHeader, } from 'react-bootstrap';
-import { useAuth, AuthProvider } from '../../AuthContextNext';
+import LoadingSpinner from '../../../api/LoadingSpinner';
+import { useAuth, AuthProvider } from '../../contexts/AuthContextNext';
 import ConfirmDelete from './ConfirmDeleteImages';
 import ErrorModal from '../../utils/ErrorModal';
+import { useCart } from '../../contexts/CartContext';
 
 // Dynamic import for client-only components
 import dynamic from 'next/dynamic';
@@ -39,13 +40,13 @@ interface Dictionary {
 		super_admin: string;
 	};
 }
-
+const ProductEditComponent = dynamic(() => import('./ProductEditComponent'), { ssr: false });
 const DynamicProductImageGallery = dynamic(() => import('./ProductImageGallery'), { ssr: false });
 const ProductTranslationForm = dynamic(() => import('./ProductTranslationForm'), { ssr: false });
 
 const ProductAboutsEditor = dynamic(() => import('./ProductAboutsEditor'), { ssr: false });
 const ProductAboutSection = dynamic(() => import('./ProductAboutSection'), { ssr: false });
-const ProductAboutSection2 = dynamic(() => import('./ProductAboutSection2'), { ssr: false });
+const ProductAboutTranslationsText = dynamic(() => import('./ProductAboutTranslationsText'), { ssr: false });
 
 interface IValues {
 	name: string;
@@ -117,8 +118,11 @@ interface ProductDetailsClientProps {
 
 const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProps) => {
 	//const { darkModeStatus } = useDarkMode();
+	const { addToCart } = useCart();
+	const token = localStorage.getItem('j_auth_token');
 	const router = useRouter();
 	const params = useParams();
+	const [isEditing, setIsEditing] = useState(false);
 	//const [t, setDictionary] = useState<Dictionary | null>(null);
 	const [t, setDictionary] = useState<Dictionary>(defaultDictionary);
 	const [images, setImages] = useState<ProductImage[]>([]);
@@ -152,6 +156,18 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 		setShowErrorModal(true);
 	};
 
+	
+
+	const handleAddToCart = (product: Product) => {
+    if (product.stock <= 0) {
+      toast.error('This product is out of stock');
+      return;
+    }
+    
+    addToCart(product);
+    toast.success(`${product.name} added to cart`);
+  };
+
 	// Load translations
 	useEffect(() => {
 		const loadDictionary = async () => {
@@ -163,7 +179,8 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 
 	// Apply translations to product data
 	useEffect(() => {
-		//console.log("The products abouts is: ", initialProduct.abouts);
+		console.log("The products abouts is: ", initialProduct.abouts);
+		console.log("The products is: ", initialProduct);
 		
 		//console.log("The language is: ",params.lang);
 		if (initialProduct.translations) {
@@ -227,6 +244,29 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 		setEnableEdit(!enableEdit);
 	};
 
+
+	const handleSave = async (updatedProduct: Product) => {
+		console.log('The prduct to update: ', updatedProduct);
+		setLoading(true);
+		try {
+			const response = await axios.put(API_BASE_URL + `/products/${currentProduct.ID}`, updatedProduct);
+			setCurrentProduct(response.data.product);
+			setLoading(false);
+			router.push(`/product/${response.data.product.Slug}`);
+			setIsEditing(false);
+			// Show success toast
+			toast.success(`Product updated savedsuccessfully`);
+		} catch (error) {
+			toast.error('Failed to update products');
+			console.log(error);
+			// Show error toast
+		}
+	};
+
+	if (loading) {
+		return <LoadingSpinner />;
+	}
+
 	const handleSaveTranslation = async (updatedProductTranslation: ProductTranslation) => {
 		console.log('The prduct to update: ', updatedProductTranslation);
 		setLoading(true);
@@ -234,6 +274,13 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 			const response = await axios.post(
 				API_BASE_URL + `/products/translate/${initialProduct.ID}`,
 				updatedProductTranslation,
+				
+				{
+					headers: { 
+					'Content-Type': 'application/json', 
+					Authorization: `${token}` 
+					}
+				}
 			);
 			setLoading(false);
 			router.push(`/product/${initialProduct.Slug}`);
@@ -420,6 +467,18 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 						)}
 					</div>
 
+					<div className='container mt-4'>
+						{isEditing ? (
+							<ProductEditComponent
+								product={currentProduct}
+								onSave={handleSave}
+								onCancel={() => setIsEditing(false)}
+							/>
+						) : (
+							<></>
+						)}
+					</div>
+
 					<div>
 						<a
 							className='text-decoration-none display-6 py-3 text-danger'
@@ -432,7 +491,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 								currentProduct?.shop?.name || 'Unknown Shop',
 							)}
 						</a>
-						<div className='display-4 fw-bold py-3'>{currentProduct?.name} pname</div>
+						<div className='display-4 fw-bold py-3'>{currentProduct?.name}</div>
 
 						{(isShopOwner(shop) || hasAnyRole(['SuperAdmin', 'Admin'])) && (
 							<div>
@@ -483,9 +542,9 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 
 								<div className='container mt-4'>
 									{isTranslating ? (
-										<ProductAboutSection2
+										<ProductAboutTranslationsText
 											productId={currentProduct.ID}
-											abouts={currentProduct.abouts}
+											abouts={initialProduct.aboutst}
 											languages={['en','fr','es']}
 										/>
 									) : (
@@ -497,24 +556,27 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 							</div>
 						)}
 
-						<div className='container py-4'>
-							{images?.length > 0 ? (
-								<DynamicProductImageGallery images={images} product={currentProduct} />
-							) : (
-								<div>No images</div>
-							)}
-						</div>
-
 						<div className='row'>
-							{/* - Left Side display features or recommended */}
-							<div className='col-lg-8'>
-								<div className='card mb-4 shadow-sm main-image-container'>
-									card in 8 - featured product or recommended products
-								</div>
-							</div>
+							{/* Main Image Display Area - Left Side */}
+							<div className='col-lg-6'>
 
+								<div className='container py-4 border border-danger'>
+									<div>
+										<button onClick={() => handleAddToCart(currentProduct)} className='btn btn-danger'>
+													Add to card
+										</button>
+									</div>
+										{images?.length > 0 ? (
+											<DynamicProductImageGallery images={images} product={currentProduct} />
+										) : (
+											<div>No images</div>
+										)}
+									</div>
+							</div>
+							
 							<div className='col'>
-								Div should take 4
+								
+								<h3 className="text-xl font-bold mb-4">{currentProduct.name}</h3>
 								<div>
 									{currentProduct.abouts.length > 0 ? (
 										<ProductAboutSection abouts={currentProduct.abouts} />
@@ -523,8 +585,92 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 									)}
 								</div>
 								<div></div>
+
 							</div>
+
+							<div className='col'>
+								{user && (
+										<div className='card shadow-sm product-details-card'>
+											<div className='card-body'>
+												<h4 className='card-title'>Product Details</h4>
+
+												
+													<>
+														
+														<hr />
+
+														<div className='d-grid gap-2'>
+															<button onClick={() => setIsEditing(true)} className='btn btn-danger'>
+																Edit product
+															</button>
+															
+														</div>
+													</>
+												
+											</div>
+										</div>
+									)}
+
+									{/* add product to card, fists section */}
+
+									<div className='card-body'>
+										<h4 className='card-title'>{currentProduct.price} XAF</h4>
+
+											<>
+												<div className='mb-3'>
+													<h6>Product Information</h6>
+													<p className='text-muted small mb-1'>Livraison: gratuite</p>
+													<p className='small'>Expédition: 2500 fcfa</p>
+												</div>
+
+												<hr />
+
+												<div className='mb-3'>
+													<h6>Prix</h6>
+													{currentProduct.price ? (
+														<h5 className='text-primary'>{currentProduct.price.toFixed(2)} FCFA</h5>
+													) : (
+														<p className='text-muted'>Le prix du produit n'est pas disponible</p>
+													)}
+												</div>
+
+												<div className='mb-3'>
+													<h6>Stock</h6>
+													{currentProduct.stock ? (
+														<h5 className='text-primary'>En Stock: {currentProduct.stock} disponible</h5>
+													) : (
+														<p className='text-muted'>Ce produit n'est pas disponible</p>
+													)}
+												</div>
+
+												{currentProduct.price ? (
+													<div className='mb-3'>
+														<h6>Pricing</h6>
+														<h5 className='text-primary'>${currentProduct.price.toFixed(2)}</h5>
+													</div>
+												) : (
+													<p className='text-muted'> </p>
+												)}
+
+												<div className='mb-3'>
+													<h6>SKU</h6>
+													<p className='text-muted small'>{currentProduct.stock || 'Not specified'}</p>
+												</div>
+
+												<div className='d-grid gap-2'>
+													<button className='btn btn-primary'>Add to Cart</button>
+													<button className='btn btn-outline-secondary'>Add to whish list</button>
+												</div>
+											</>
+										
+									</div>
+									
+									{/* End add p to c first section */}
+							</div>
+
+
 						</div>
+
 
 						{/** if shop owner */}
 						{enableEdit && (
