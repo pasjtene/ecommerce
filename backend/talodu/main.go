@@ -73,9 +73,9 @@ func main() {
 			"https://www.talodu.com",
 			"http://localhost:3000",
 			"http://localhost:3001", // Add other domains as needed
-			"http://127.0.0.1:*",
-			"http://localhost:*",
-			"http://localhost:64518",
+			//"http://127.0.0.1:*",
+			//"http://localhost:*",
+			//"http://localhost:64518",
 		}
 		origin := c.Request.Header.Get("Origin")
 		for _, allowedOrigin := range allowedOrigins {
