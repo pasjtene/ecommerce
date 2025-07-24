@@ -14,7 +14,6 @@
   "home": {
     "title": "Bienvenue chez Talodu !",
     "subtitle": "Découvrez nos produits frais et locaux.",
-
     "slogans": [
       "Talodu : Fraîcheur et qualité, livrées à votre porte.",
       "Votre supermarché en ligne, pour une vie plus simple.",
@@ -33,8 +32,7 @@
       "Talodu : Votre commande, votre confort."
     ]
   },
-  
-   "login": {
+  "login": {
     "title": "Connectez-vous à votre compte",
     "email_placeholder": "Email",
     "password_placeholder": "Mot de passe",
@@ -45,7 +43,6 @@
     "success_message": "Connexion réussie",
     "show_password": "Afficher le mot de passe"
   },
-
   "product": {
     "back_to_list": "Retour à la liste",
     "by_shop": "Par {shopName}",
@@ -54,5 +51,48 @@
     "shop_owner": "Propriétaire du magasin",
     "admin": "Administrateur",
     "super_admin": "Super Administrateur"
+  },
+  "privacy_policy": {
+    "title": "Politique de Confidentialité",
+    "sections": {
+      "information_collected": {
+        "title": "1. Informations que nous collectons",
+        "content": [
+          "Chez Talodu.com, nous nous engageons à protéger votre vie privée et à nous conformer aux lois applicables sur la protection des données, y compris le RGPD, PCI-DSS, la CCPA (California Consumer Privacy Act) et d'autres réglementations pertinentes. Nous collectons des informations personnelles lorsque vous vous inscrivez sur notre site, passez une commande, vous abonnez à notre newsletter ou remplissez un formulaire. Cela peut inclure votre nom, adresse e-mail, adresse postale, numéro de téléphone, informations de paiement et autres détails pour vous aider dans votre expérience.",
+          "Nous mettons en œuvre diverses mesures de sécurité pour garantir la sécurité de vos informations personnelles lorsque vous passez une commande ou entrez, soumettez ou accédez à vos informations personnelles. Toutes les transactions sont traitées via un fournisseur de passerelle et ne sont pas stockées ou traitées sur nos serveurs, garantissant ainsi la conformité PCI-DSS."
+        ]
+      },
+      "information_usage": {
+        "title": "2. Comment nous utilisons vos informations",
+        "content": [
+          "Les informations que nous collectons peuvent être utilisées de la manière suivante : Pour personnaliser votre expérience et répondre à vos besoins individuels ; pour améliorer notre site web en fonction des informations et des commentaires que nous recevons de vous ; pour améliorer le service client et les besoins de support ; pour traiter les transactions efficacement ; pour administrer des concours, promotions, enquêtes ou d'autres fonctionnalités du site ; pour envoyer des e-mails périodiques concernant votre commande ou d'autres produits et services.",
+          "Conformément à la CCPA, les résidents de Californie ont le droit de demander la divulgation des pratiques de collecte et de partage de données, de demander la suppression des informations personnelles et de refuser la vente d'informations personnelles (bien que nous ne vendions pas d'informations personnelles). En vertu du RGPD, les résidents de l'UE ont des droits d'accès, de rectification, d'effacement, de limitation du traitement, de portabilité des données et d'opposition au traitement de leurs données personnelles."
+        ]
+      },
+      "cookies": {
+        "title": "3. Cookies et technologies de suivi",
+        "content": [
+          "Nous utilisons des cookies pour nous aider à mémoriser et à traiter les articles dans votre panier, à comprendre et à sauvegarder vos préférences pour les visites futures et à compiler des données agrégées sur le trafic du site et les interactions. Vous pouvez choisir de faire avertir votre ordinateur chaque fois qu'un cookie est envoyé, ou vous pouvez choisir de désactiver tous les cookies via les paramètres de votre navigateur."
+        ]
+      },
+      "third_party": {
+        "title": "4. Divulgation à des tiers",
+        "content": [
+          "Nous ne vendons, n'échangeons ni ne transférons vos informations personnellement identifiables à des tiers extérieurs, sauf si nous fournissons aux utilisateurs un préavis. Cela n'inclut pas les partenaires d'hébergement de sites web et les autres parties qui nous aident à exploiter notre site web, à mener nos activités ou à servir nos utilisateurs, tant que ces parties acceptent de garder ces informations confidentielles conformément à nos accords de traitement des données."
+        ]
+      },
+      "policy_changes": {
+        "title": "5. Modifications de cette politique",
+        "content": [
+          "Nous nous réservons le droit de modifier cette politique de confidentialité à tout moment. Les modifications et clarifications prendront effet immédiatement après leur publication sur le site web. Si nous apportons des modifications matérielles à cette politique, nous vous en informerons ici qu'elle a été mise à jour."
+        ]
+      },
+      "contact": {
+        "title": "6. Informations de contact",
+        "content": [
+          "Si vous avez des questions concernant cette politique de confidentialité, vos droits en vertu des lois applicables ou souhaitez exercer l'un de vos droits en matière de protection des données, vous pouvez contacter notre Délégué à la Protection des Données à privacy@talodu.com ou via notre page Contactez-nous."
+        ]
+      }
+    }
   }
 }

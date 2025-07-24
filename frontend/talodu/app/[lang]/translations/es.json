@@ -51,5 +51,51 @@
     "shop_owner": "Dueño de la tienda",
     "admin": "Administrador",
     "super_admin": "Super Administrador"
+  },
+ 
+  "privacy_policy": {
+    "title": "Política de Privacidad",
+    "sections": {
+      "information_collected": {
+        "title": "1. Información que recopilamos",
+        "content": [
+          "En Talodu.com, estamos comprometidos a proteger su privacidad y cumplir con las leyes aplicables de protección de datos, incluido el RGPD, PCI-DSS, la CCPA (Ley de Privacidad del Consumidor de California) y otras regulaciones relevantes. Recopilamos información personal cuando se registra en nuestro sitio, realiza un pedido, se suscribe a nuestro boletín o completa un formulario. Esto puede incluir su nombre, dirección de correo electrónico, dirección postal, número de teléfono, información de pago y otros detalles para ayudarlo con su experiencia.",
+          "Implementamos una variedad de medidas de seguridad para mantener la seguridad de su información personal cuando realiza un pedido o ingresa, envía o accede a su información personal. Todas las transacciones se procesan a través de un proveedor de pasarela y no se almacenan ni procesan en nuestros servidores, lo que garantiza el cumplimiento de PCI-DSS."
+        ]
+      },
+      "information_usage": {
+        "title": "2. Cómo utilizamos su información",
+        "content": [
+          "La información que recopilamos puede ser utilizada de las siguientes maneras: Para personalizar su experiencia y responder a sus necesidades individuales; para mejorar nuestro sitio web según la información y los comentarios que recibimos de usted; para mejorar el servicio al cliente y las necesidades de soporte; para procesar transacciones de manera eficiente; para administrar concursos, promociones, encuestas u otras características del sitio; para enviar correos electrónicos periódicos con respecto a su pedido u otros productos y servicios.",
+          "De acuerdo con la CCPA, los residentes de California tienen derecho a solicitar la divulgación de las prácticas de recopilación y uso compartido de datos, solicitar la eliminación de información personal y optar por no participar en la venta de información personal (aunque no vendemos información personal). Según el RGPD, los residentes de la UE tienen derechos de acceso, rectificación, eliminación, limitación del procesamiento, portabilidad de datos y oposición al procesamiento de sus datos personales."
+        ]
+      },
+      "cookies": {
+        "title": "3. Cookies y tecnologías de seguimiento",
+        "content": [
+          "Utilizamos cookies para ayudarnos a recordar y procesar los artículos en su carrito de compras, comprender y guardar sus preferencias para futuras visitas y compilar datos agregados sobre el tráfico del sitio y la interacción. Puede elegir que su computadora le advierta cada vez que se envía una cookie, o puede elegir desactivar todas las cookies a través de la configuración de su navegador."
+        ]
+      },
+      "third_party": {
+        "title": "4. Divulgación a terceros",
+        "content": [
+          "No vendemos, comercializamos ni transferimos de otro modo su información de identificación personal a partes externas, a menos que les proporcionemos a los usuarios un aviso previo. Esto no incluye a los socios de alojamiento de sitios web y otras partes que nos ayudan a operar nuestro sitio web, llevar a cabo nuestro negocio o atender a nuestros usuarios, siempre que esas partes acuerden mantener esta información confidencial de acuerdo con nuestros acuerdos de procesamiento de datos."
+        ]
+      },
+      "policy_changes": {
+        "title": "5. Cambios en esta política",
+        "content": [
+          "Nos reservamos el derecho de modificar esta política de privacidad en cualquier momento. Los cambios y aclaraciones entrarán en vigor inmediatamente después de su publicación en el sitio web. Si realizamos cambios materiales en esta política, le notificaremos aquí que se ha actualizado."
+        ]
+      },
+      "contact": {
+        "title": "6. Información de contacto",
+        "content": [
+          "Si tiene alguna pregunta con respecto a esta política de privacidad, sus derechos bajo las leyes aplicables o desea ejercer cualquiera de sus derechos de protección de datos, puede comunicarse con nuestro Oficial de Protección de Datos en privacy@talodu.com o a través de nuestra página Contáctenos."
+        ]
+      }
+    }
   }
+
+    
 }

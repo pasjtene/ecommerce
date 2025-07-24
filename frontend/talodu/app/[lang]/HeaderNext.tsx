@@ -126,8 +126,6 @@ const HeaderNext = () => {
                                 <span>{t.common.brand}</span>
                             </Navbar.Brand>
                         
-                        
-
                         {/* Desktop search form - hidden on mobile */}
                         <Form
                             onSubmit={handleSearch}

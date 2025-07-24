@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-//import { useAuth } from '../auth/AuthContext';
-//import { useAuth} from '../../presentation/auth/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faUser, faLock, faEnvelope, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import { useAuth} from './AuthContextNext';
+import { useAuth} from './contexts/AuthContextNext';
 
 interface RegisterProps {
   show: boolean;
