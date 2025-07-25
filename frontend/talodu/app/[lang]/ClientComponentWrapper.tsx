@@ -7,6 +7,7 @@ import Footer from './components/Footer'
 import dynamic from 'next/dynamic';
 import React, { useState, useCallback } from 'react';
 import { CartProvider } from './contexts/CartContext';
+import CookieConsent from './components/CookieConsent';
 
 const Login = dynamic(() => import('./Login'), {
   ssr: false,
@@ -57,6 +58,7 @@ export default function ClientComponentWrapper({
         />
         {children}
         <Footer/>
+         <CookieConsent />
       </AuthProvider>
     </CartProvider>
   );

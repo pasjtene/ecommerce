@@ -3,8 +3,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../src/pages/presentation/sales/ProductImageGallery.css';
 import './css/global.css';
 import ClientComponentWrapper from './ClientComponentWrapper';
+import CookieConsent from './components/CookieConsent';
 
-interface LayoutProps {
+interface LayoutProps {                       
   children: React.ReactNode;
   params: {
     lang: string;
@@ -20,6 +21,7 @@ export default async function RootLayout({ children, params }: LayoutProps) {
         {/* This wrapper will contain all client components */}
         <ClientComponentWrapper>
           {children}
+          <CookieConsent />
         </ClientComponentWrapper>
       </body>
     </html>

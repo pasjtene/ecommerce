@@ -1,3 +1,4 @@
+// models/order.go
 package models
 
 import (
@@ -65,9 +66,9 @@ type ShippingInfo struct {
 
 // PaymentInfo contains payment details
 type PaymentInfo struct {
-	Method      string    `json:"method" gorm:"size:50"` // stripe, paypal, etc.
-	Amount      float64   `json:"amount"`
-	Transaction string    `json:"transaction" gorm:"size:100"` // Transaction ID from payment processor
-	Status      string    `json:"status" gorm:"size:50"`       // pending, completed, failed, refunded
-	PaidAt      time.Time `json:"paid_at"`
+	Method        string    `json:"method" gorm:"size:50"` // stripe, paypal, etc.
+	Amount        float64   `json:"amount"`
+	TransactionID string    `json:"transaction_id" gorm:"size:100"` // Transaction ID from payment processor
+	Status        string    `json:"status" gorm:"size:50"`          // pending, completed, failed, refunded
+	PaidAt        time.Time `json:"paid_at"`
 }

@@ -94,5 +94,161 @@
         ]
       }
     }
+  },
+  
+  "footer": {
+    "tagline": "Votre destination de confiance pour des achats en ligne de produits de qualité.",
+    "shop": {
+      "title": "Boutique",
+      "new_arrivals": "Nouveautés",
+      "bestsellers": "Meilleures ventes",
+      "deals": "Promotions & Remises",
+      "gift_cards": "Cartes-cadeaux"
+    },
+    "company": {
+      "title": "Entreprise",
+      "about": "À propos",
+      "careers": "Carrières",
+      "blog": "Blog",
+      "press": "Presse"
+    },
+    "support": {
+      "title": "Assistance",
+      "contact": "Contactez-nous",
+      "faq": "FAQ",
+      "privacy": "Politique de confidentialité",
+      "terms": "Conditions d'utilisation"
+    },
+    "copyright": "&copy; {year} Talodu.com. Tous droits réservés."
+  },
+  
+  "cookie_consent": {
+    "message": "Notre site utilise des cookies - de petits fichiers texte stockés sur votre appareil pour améliorer votre expérience. Les cookies nous aident à mémoriser vos préférences, analyser le trafic et personnaliser le contenu. Ils sont sûrs et ne peuvent pas exécuter de code ou transmettre de virus. Certains sont essentiels au fonctionnement du site, tandis que d'autres nous aident à l'améliorer. Nous respectons votre vie privée et n'utilisons les cookies qu'avec votre consentement. Vous pouvez gérer vos préférences à tout moment. Pour plus de détails, consultez notre Politique relative aux cookies.",
+    "accept": "Accepter tout",
+    "reject": "Uniquement les essentiels",
+    "privacy_policy": "Politique de confidentialité",
+    "cookie_policy": "Politique relative aux cookies"
+  },
+
+  
+  "cookie_policy": {
+    "title": "Politique relative aux cookies",
+    "introduction": {
+      "title": "1. Introduction",
+      "content": [
+        "Sur Talodu.com, nous utilisons des cookies et des technologies de suivi similaires pour améliorer votre expérience de navigation, analyser le trafic du site et personnaliser le contenu. Cette politique explique :",
+        "- Ce que sont les cookies",
+        "- Comment nous les utilisons",
+        "- Vos choix concernant les cookies",
+        "Cette politique est conforme au RGPD (Règlement général sur la protection des données), à la CCPA (California Consumer Privacy Act), à la directive ePrivacy et aux directives de CookieDatabase.org."
+      ]
+    },
+    "what_are_cookies": {
+      "title": "2. Que sont les cookies ?",
+      "content": [
+        "Les cookies sont de petits fichiers texte stockés sur votre appareil lorsque vous visitez un site web. Ils permettent de :",
+        "- Mémoriser vos préférences (langue, articles du panier, etc.)",
+        "- Analyser les performances du site",
+        "- Diffuser des publicités personnalisées (le cas échéant)"
+      ],
+      "table": {
+        "headers": ["Catégorie", "Objectif", "Exemples"],
+        "rows": [
+          {
+            "category": "Essentiels",
+            "purpose": "Nécessaires au fonctionnement du site (ne peuvent pas être désactivés)",
+            "examples": "Sessions de connexion, panier d'achat"
+          },
+          {
+            "category": "Performance",
+            "purpose": "Collectent des données anonymes pour améliorer les performances du site",
+            "examples": "Google Analytics, cartes thermiques"
+          },
+          {
+            "category": "Fonctionnels",
+            "purpose": "Mémorisent les préférences des utilisateurs (langue, région, etc.)",
+            "examples": "Identifiants enregistrés, paramètres du thème"
+          },
+          {
+            "category": "Ciblage",
+            "purpose": "Utilisés pour la publicité personnalisée (le cas échéant)",
+            "examples": "Facebook Pixel, reciblage publicitaire"
+          }
+        ]
+      }
+    },
+    "types_of_cookies": {
+      "title": "3. Types de cookies que nous utilisons",
+      "first_party": {
+        "title": "A. Cookies internes",
+        "content": [
+          "Définis par Talodu.com pour :",
+          "- La gestion des sessions (par exemple, vous maintenir connecté)",
+          "- La conservation du panier d'achat",
+          "- Les préférences de langue/devise"
+        ]
+      },
+      "third_party": {
+        "title": "B. Cookies tiers",
+        "content": [
+          "Utilisés par des partenaires de confiance pour :",
+          "- L'analyse (Google Analytics) – Suivi anonyme de l'utilisation du site.",
+          "- Le traitement des paiements (Stripe, PayPal) – Garantit des transactions sécurisées.",
+          "- Le marketing (le cas échéant) – Facebook Pixel pour les performances publicitaires.",
+          "Nous n'utilisons pas de cookies pour un suivi intrusif ou un profilage au-delà de la fonctionnalité nécessaire."
+        ],
+        "table": {
+          "headers": ["Service", "Objectif", "Lien de désactivation"],
+          "rows": [
+            {
+              "service": "Google Analytics",
+              "purpose": "Analyse du site",
+              "opt_out_link": "https://tools.google.com/dlpage/gaoptout"
+            },
+            {
+              "service": "Facebook Pixel",
+              "purpose": "Performances publicitaires (le cas échéant)",
+              "opt_out_link": "https://www.facebook.com/adpreferences"
+            }
+          ]
+        }
+      }
+    },
+    "your_choices": {
+      "title": "4. Vos choix concernant les cookies",
+      "content": [
+        "Vous pouvez gérer les cookies via :",
+        "Paramètres du navigateur : La plupart des navigateurs vous permettent de bloquer tous les cookies, de supprimer les cookies existants ou de définir des préférences pour des sites spécifiques.",
+        "Gestion du consentement : Notre bannière de cookies vous permet d'accepter tous les cookies ou de refuser les cookies non essentiels. Vous pouvez modifier vos préférences à tout moment via le lien Paramètres des cookies dans le pied de page."
+      ]
+    },
+    "data_retention": {
+      "title": "5. Conservation des données",
+      "content": [
+        "Les cookies de session expirent lorsque vous fermez votre navigateur.",
+        "Les cookies persistants durent jusqu'à 6 mois (ou selon les exigences légales).",
+        "Nous anonymisons les données d'analyse après 14 mois (standard Google Analytics)."
+      ]
+    },
+    "policy_updates": {
+      "title": "6. Mises à jour de la politique",
+      "content": [
+        "Nous pouvons mettre à jour cette politique pour refléter les changements juridiques. Les mises à jour importantes seront annoncées via :",
+        "- Une bannière sur notre site web",
+        "- E-mail (pour les utilisateurs enregistrés)"
+      ]
+    },
+    "contact": {
+      "title": "7. Contactez-nous",
+      "content": [
+        "Pour les demandes relatives aux cookies :",
+        "E-mail : privacy@talodu.com",
+        "Les résidents de l'UE peuvent déposer des plaintes auprès de leur autorité locale de protection des données (DPA)."
+      ]
+    }
   }
+
+
+
+
 }

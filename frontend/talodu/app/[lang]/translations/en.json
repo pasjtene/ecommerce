@@ -96,6 +96,160 @@
         ]
       }
     }
+  },
+
+  
+  "footer": {
+    "tagline": "Your trusted online shopping destination for quality products.",
+    "shop": {
+      "title": "Shop",
+      "new_arrivals": "New Arrivals",
+      "bestsellers": "Bestsellers",
+      "deals": "Deals & Discounts",
+      "gift_cards": "Gift Cards"
+    },
+    "company": {
+      "title": "Company",
+      "about": "About Us",
+      "careers": "Careers",
+      "blog": "Blog",
+      "press": "Press"
+    },
+    "support": {
+      "title": "Support",
+      "contact": "Contact Us",
+      "faq": "FAQ",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    },
+    "copyright": "&copy; {year} Talodu.com. All rights reserved."
+  },
+
+  
+  
+  "cookie_consent": {
+    "message": "Our website uses cookies - small text files stored on your device to enhance your experience. Cookies help us remember your preferences, analyze site traffic, and personalize content. They are safe and cannot execute code or deliver viruses. Some are essential for the site to function, while others help us improve it. We value your privacy and only use cookies with your consent. You can manage preferences at any time. For more details, please review our Cookie Policy.",
+    "accept": "Accept All",
+    "reject": "Essential Only",
+    "privacy_policy": "Privacy Policy",
+    "cookie_policy": "Cookie Policy"
+  },
+  
+  "cookie_policy": {
+    "title": "Cookie Policy",
+    "introduction": {
+      "title": "1. Introduction",
+      "content": [
+        "At Talodu.com, we use cookies and similar tracking technologies to enhance your browsing experience, analyze site traffic, and personalize content. This policy explains:",
+        "- What cookies are",
+        "- How we use them",
+        "- Your choices regarding cookies",
+        "This policy complies with GDPR (EU General Data Protection Regulation), CCPA (California Consumer Privacy Act), ePrivacy Directive, and guidelines from CookieDatabase.org."
+      ]
+    },
+    "what_are_cookies": {
+      "title": "2. What Are Cookies?",
+      "content": [
+        "Cookies are small text files stored on your device when you visit a website. They help:",
+        "- Remember your preferences (e.g., language, cart items)",
+        "- Analyze site performance",
+        "- Deliver personalized ads (if applicable)"
+      ],
+      "table": {
+        "headers": ["Category", "Purpose", "Examples"],
+        "rows": [
+          {
+            "category": "Essential",
+            "purpose": "Required for the website to function (cannot be disabled)",
+            "examples": "Login sessions, shopping cart"
+          },
+          {
+            "category": "Performance",
+            "purpose": "Collect anonymous data to improve site performance",
+            "examples": "Google Analytics, heatmaps"
+          },
+          {
+            "category": "Functional",
+            "purpose": "Remember user preferences (e.g., language, region)",
+            "examples": "Saved login details, theme settings"
+          },
+          {
+            "category": "Targeting",
+            "purpose": "Used for personalized advertising (if applicable)",
+            "examples": "Facebook Pixel, ad retargeting"
+          }
+        ]
+      }
+    },
+    "types_of_cookies": {
+      "title": "3. Types of Cookies We Use",
+      "first_party": {
+        "title": "A. First-Party Cookies",
+        "content": [
+          "Set by Talodu.com for:",
+          "- Session management (e.g., keeping you logged in)",
+          "- Shopping cart retention",
+          "- Language/currency preferences"
+        ]
+      },
+      "third_party": {
+        "title": "B. Third-Party Cookies",
+        "content": [
+          "Used by trusted partners for:",
+          "- Analytics (Google Analytics) – Tracks site usage anonymously.",
+          "- Payment processing (Stripe, PayPal) – Ensures secure transactions.",
+          "- Marketing (if used) – Facebook Pixel for ad performance.",
+          "We do not use cookies for intrusive tracking or profiling beyond necessary functionality."
+        ],
+        "table": {
+          "headers": ["Service", "Purpose", "Opt-Out Link"],
+          "rows": [
+            {
+              "service": "Google Analytics",
+              "purpose": "Site analytics",
+              "opt_out_link": "https://tools.google.com/dlpage/gaoptout"
+            },
+            {
+              "service": "Facebook Pixel",
+              "purpose": "Ad performance (if applicable)",
+              "opt_out_link": "https://www.facebook.com/adpreferences"
+            }
+          ]
+        }
+      }
+    },
+    "your_choices": {
+      "title": "4. Your Cookie Choices",
+      "content": [
+        "You can manage cookies via:",
+        "Browser Settings: Most browsers allow you to block all cookies, delete existing cookies, or set preferences for specific sites.",
+        "Consent Management: Our cookie banner lets you accept all cookies or reject non-essential cookies. You can change preferences anytime via the Cookie Settings link in the footer."
+      ]
+    },
+    "data_retention": {
+      "title": "5. Data Retention",
+      "content": [
+        "Session cookies expire when you close your browser.",
+        "Persistent cookies last up to 6 months (or as required by law).",
+        "We anonymize analytics data after 14 months (Google Analytics standard)."
+      ]
+    },
+    "policy_updates": {
+      "title": "6. Policy Updates",
+      "content": [
+        "We may update this policy to reflect legal changes. Significant updates will be announced via:",
+        "- A banner on our website",
+        "- Email (for registered users)"
+      ]
+    },
+    "contact": {
+      "title": "7. Contact Us",
+      "content": [
+        "For cookie-related requests:",
+        "Email: privacy@talodu.com",
+        "EU residents may lodge complaints with their local Data Protection Authority (DPA)."
+      ]
+    }
   }
 
 }

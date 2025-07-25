@@ -29,7 +29,7 @@ export default function PrivacyPolicy() {
   }, [params.lang]);
 
   if (!t) {
-    return <div>Loading...</div>; // or your preferred loading state
+    return <div>Loading...</div>; 
   }
 
   return (
