@@ -72,7 +72,7 @@ const [opacity, setOpacity] = useState(1); // 1 for visible, 0 for hidden
 
   return (
     
-    <div>
+    <div className='container border border-danger py-4'>
       <Head>
         <title>Talodu - Votre supermarché en Ligne</title>
         <meta name="description" content="Your online supermarket for fresh produce and more." />
@@ -81,7 +81,7 @@ const [opacity, setOpacity] = useState(1); // 1 for visible, 0 for hidden
 
       {/* the header component */}
 
-      <main style={{ minHeight: '20vh', padding: '20px' }}>
+      <div className='container border border-danger py-4' >
         <h1>{t?.home.title}</h1>
         <p>{t?.home.subtitle}</p>
             {/* Dynamic Slogan Display with Transition */}
@@ -95,11 +95,12 @@ const [opacity, setOpacity] = useState(1); // 1 for visible, 0 for hidden
             transition: `opacity ${TRANSITION_DURATION / 1000}s ease-in-out`, // CSS transition for smooth fade
           }}
         >
-          <h2>{t?.home.slogans[currentSloganIndex]}</h2>
+          <h1>This is home</h1>
+          
         </div>
         {/* End Dynamic Slogan Display */}
         {/* Add more content specific to your homepage here */}
-      </main>
+      </div>
 
       <AllProductDisplay />
 
@@ -110,3 +111,4 @@ const [opacity, setOpacity] = useState(1); // 1 for visible, 0 for hidden
 };
 
 export default HomePage;
+

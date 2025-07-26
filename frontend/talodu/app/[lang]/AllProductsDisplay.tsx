@@ -120,32 +120,9 @@ const AllProductsDisplay  = () => {
       };
 
   return (
-    <div className="container-fluid mt-4">
+    <div className="container mt-4 py-4">
       <h2 className="mb-4"> {allImages.length} images</h2>
-      {/**
-       *  <SubHeader>
-            <SubHeaderLeft>
-                <label
-                    className='border-0 bg-transparent cursor-pointer me-0'
-                    htmlFor='searchInput'>
-                    <Icon icon='Search' size='2x' color='primary' />
-                </label>
-                <Input
-                    id='searchInput'
-                    //type='search'
-                    type='text'
-                    className='border-0 shadow-none bg-transparent'
-                    placeholder='search....'
-                    value={searchTerm}
-                    onChange={(e:React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
-                    
-                />
-            </SubHeaderLeft>
-        
-    </SubHeader>
-       */}
      
-
     {/** Products */}
     <div className='m-4'>Tous les produits</div>
     {(products?.length > 0) && (

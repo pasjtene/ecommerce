@@ -415,7 +415,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 
 	return (
 		<>
-			<div>
+			<div className="container py-4">
 				{/* Removed redundant loading/error checks, assuming initialProduct is valid */}
 				<>
 					<div className='row'>
