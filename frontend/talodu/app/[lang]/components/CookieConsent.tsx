@@ -36,9 +36,10 @@ export default function CookieConsent() {
       const consentDate = localStorage.getItem('cookieConsentDate');
       //const sixMonthsInMs = 15552000000; // 6 months in milliseconds
       const thirtyMinutesInMs = 1800000;
+      // 24h = 86 400 000
 
       if (!consentGiven || 
-          (consentDate && Date.now() - parseInt(consentDate) > thirtyMinutesInMs)) {
+          (consentDate && Date.now() - parseInt(consentDate) > 86400000)) {
         setVisible(true);
       }
     };

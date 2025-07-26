@@ -73,6 +73,8 @@
       },
       "cookies": {
         "title": "3. Cookies and Tracking Technologies",
+         "link_text": "For more detailed information about the cookies we use, please see our {cookiePolicyLink}.",
+        "cookie_policy": "Cookie Policy",
         "content": [
           "We use cookies to help us remember and process the items in your shopping cart, understand and save your preferences for future visits, and compile aggregate data about site traffic and interaction. You can choose to have your computer warn you each time a cookie is being sent, or you can choose to turn off all cookies via your browser settings."
         ]

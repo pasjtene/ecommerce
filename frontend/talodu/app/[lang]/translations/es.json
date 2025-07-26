@@ -72,6 +72,8 @@
       },
       "cookies": {
         "title": "3. Cookies y tecnologías de seguimiento",
+         "link_text": "Para obtener información más detallada sobre las cookies que utilizamos, consulte nuestra {cookiePolicyLink}.",
+          "cookie_policy": "Política de cookies",
         "content": [
           "Utilizamos cookies para ayudarnos a recordar y procesar los artículos en su carrito de compras, comprender y guardar sus preferencias para futuras visitas y compilar datos agregados sobre el tráfico del sitio y la interacción. Puede elegir que su computadora le advierta cada vez que se envía una cookie, o puede elegir desactivar todas las cookies a través de la configuración de su navegador."
         ]

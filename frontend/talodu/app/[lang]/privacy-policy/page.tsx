@@ -2,6 +2,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import Link from 'next/link';
 
 interface Dictionary {
   privacy_policy: {
@@ -9,7 +10,7 @@ interface Dictionary {
     sections: {
       [key: string]: {
         title: string;
-        content: string;
+        content: string[];
       };
     };
   };
@@ -29,8 +30,28 @@ export default function PrivacyPolicy() {
   }, [params.lang]);
 
   if (!t) {
-    return <div>Loading...</div>; 
+    return <div>Loading...</div>; // or your preferred loading state
   }
+
+  const renderContent = (content: string[], sectionKey: string) => {
+    return (
+     <>
+        {content.map((paragraph, index) => (
+          <p key={`${sectionKey}-para-${index}`}>{paragraph}</p>
+        ))}
+        {sectionKey === 'cookies' && t.privacy_policy.sections.cookies.link_text && (
+          <p
+            dangerouslySetInnerHTML={{
+              __html: t.privacy_policy.sections.cookies.link_text.replace(
+                '{cookiePolicyLink}',
+                `<a href="/${params.lang}/cookie-policy" style="color: tomato" class="text-decoration-none">${t.privacy_policy.sections.cookies.cookie_policy}</a>`
+                )
+            }}
+          />
+        )}
+      </>
+    );
+  };
 
   return (
     <div className="container py-5">
@@ -41,7 +62,7 @@ export default function PrivacyPolicy() {
           {Object.entries(t.privacy_policy.sections).map(([key, section]) => (
             <section key={key} className="mb-5">
               <h2 className="h4 mb-3">{section.title}</h2>
-              <p>{section.content}</p>
+              {renderContent(section.content, key)}
             </section>
           ))}
         </div>
