@@ -558,7 +558,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 
 						<div className='row'>
 							{/* Main Image Display Area - Left Side */}
-							<div className='col-lg-6'>
+							<div className='col-lg-6 col-md-12'>
 
 								<div className='container py-4 border border-danger'>
 									<div>
@@ -574,7 +574,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 									</div>
 							</div>
 							
-							<div className='col'>
+							<div className='col-lg-3 col-md-6'>
 								
 								<h3 className="text-xl font-bold mb-4">{currentProduct.name}</h3>
 								<div>
@@ -588,7 +588,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 
 							</div>
 
-							<div className='col'>
+							<div className='col-lg-3 col-md-6'>
 								{user && (
 										<div className='card shadow-sm product-details-card'>
 											<div className='card-body'>

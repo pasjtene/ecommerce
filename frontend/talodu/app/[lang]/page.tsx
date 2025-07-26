@@ -72,7 +72,7 @@ const [opacity, setOpacity] = useState(1); // 1 for visible, 0 for hidden
 
   return (
     
-    <div className='container border border-danger py-4'>
+    <div className='container border border-secondary py-4'>
       <Head>
         <title>Talodu - Votre supermarché en Ligne</title>
         <meta name="description" content="Your online supermarket for fresh produce and more." />
@@ -81,7 +81,7 @@ const [opacity, setOpacity] = useState(1); // 1 for visible, 0 for hidden
 
       {/* the header component */}
 
-      <div className='container border border-danger py-4' >
+      <div className='container border border-primary py-4' >
         <h1>{t?.home.title}</h1>
         <p>{t?.home.subtitle}</p>
             {/* Dynamic Slogan Display with Transition */}
@@ -95,8 +95,8 @@ const [opacity, setOpacity] = useState(1); // 1 for visible, 0 for hidden
             transition: `opacity ${TRANSITION_DURATION / 1000}s ease-in-out`, // CSS transition for smooth fade
           }}
         >
-          <h1>This is home</h1>
           
+          <h2>{t?.home.slogans[currentSloganIndex]}</h2>
         </div>
         {/* End Dynamic Slogan Display */}
         {/* Add more content specific to your homepage here */}
