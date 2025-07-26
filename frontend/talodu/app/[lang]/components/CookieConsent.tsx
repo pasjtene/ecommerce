@@ -37,9 +37,10 @@ export default function CookieConsent() {
       //const sixMonthsInMs = 15552000000; // 6 months in milliseconds
       const thirtyMinutesInMs = 1800000;
       // 24h = 86 400 000
+      // 48h = 172 800 000
 
       if (!consentGiven || 
-          (consentDate && Date.now() - parseInt(consentDate) > 86400000)) {
+          (consentDate && Date.now() - parseInt(consentDate) > 172800000)) {
         setVisible(true);
       }
     };
