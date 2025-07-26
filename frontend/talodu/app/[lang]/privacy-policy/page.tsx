@@ -10,6 +10,8 @@ interface Dictionary {
     sections: {
       [key: string]: {
         title: string;
+        link_text:string;
+        cookie_policy:string;
         content: string[];
       };
     };
