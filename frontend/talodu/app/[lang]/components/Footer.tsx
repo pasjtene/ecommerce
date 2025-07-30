@@ -4,6 +4,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useCurrency } from '../contexts/CurrencyContext';
+import CountryCurrencySelector from './CountryCurrencySelector';
 
 interface FooterTranslations {
   footer: {
@@ -30,13 +32,50 @@ interface FooterTranslations {
       terms: string;
     };
     copyright: string;
+    currency: string;
+    country: string;
   };
+}
+
+interface Currency {
+  code: string;
+  name: string;
+  symbol: string;
+  rate: number; // Conversion rate from base currency
+}
+
+interface Country {
+  code: string;
+  name: string;
+  currency: string;
 }
 
 export default function Footer() {
   const pathname = usePathname();
   const [t, setTranslations] = useState<FooterTranslations | null>(null);
+  const [selectedCurrency, setSelectedCurrency] = useState<string>('USD');
+  //const [selectedCountry, setSelectedCountry] = useState<string>('US');
+  const { currency, currencyRate, currencySymbol, formatPrice, setCurrency, selectedCountry,
+      setSelectedCountry, } = useCurrency();
   
+  // Sample data - you might want to fetch this from an API or config file
+  const currencies: Currency[] = [
+    { code: 'USD', name: 'US Dollar', symbol: '$', rate: 1 },
+    { code: 'EUR', name: 'Euro', symbol: '€', rate: 0.93 },
+    { code: 'GBP', name: 'British Pound', symbol: '£', rate: 0.79 },
+    { code: 'JPY', name: 'Japanese Yen', symbol: '¥', rate: 151.61 },
+    { code: 'CAD', name: 'Canadian Dollar', symbol: 'CA$', rate: 1.36 },
+  ];
+
+  const countries: Country[] = [
+    { code: 'US', name: 'United States', currency: 'USD' },
+    { code: 'GB', name: 'United Kingdom', currency: 'GBP' },
+    { code: 'DE', name: 'Germany', currency: 'EUR' },
+    { code: 'FR', name: 'France', currency: 'EUR' },
+    { code: 'JP', name: 'Japan', currency: 'JPY' },
+    { code: 'CA', name: 'Canada', currency: 'CAD' },
+  ];
+
   useEffect(() => {
     const loadTranslations = async () => {
       const lang = pathname.split('/')[1];
@@ -45,6 +84,23 @@ export default function Footer() {
     };
     loadTranslations();
   }, [pathname]);
+
+  useEffect(() => {
+    // When country changes, update currency to match
+    const newCountry = countries.find(c => c.code === selectedCountry);
+    if (newCountry) {
+      setSelectedCurrency(newCountry.currency);
+    }
+  }, [selectedCountry]);
+
+  const handleCurrencyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCurrency(e.target.value);
+    setCurrency(e.target.value);
+  };
+
+  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCountry(e.target.value);
+  };
 
   if (!t) {
     return null; // or loading state
@@ -127,7 +183,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column 4 - Support */}
+          {/* Column 4 - Support and Currency/Country Selector */}
           <div className="col-md-3">
             <h5 style={{ color: 'tomato' }}>{t.footer.support.title}</h5>
             <ul className="list-unstyled">
@@ -155,13 +211,28 @@ export default function Footer() {
           </div>
         </div>
 
+      
+
         <div className="border-top mt-4 pt-4" style={{ borderColor: 'rgba(255, 99, 71, 0.3)' }}>
           <div className="row">
             <div className="col-md-6 text-center text-md-start">
               <p className="mb-0" style={{ color: 'rgba(255, 99, 71, 0.8)' }} 
                 dangerouslySetInnerHTML={{ __html: t.footer.copyright.replace('{year}', new Date().getFullYear().toString()) }} />
             </div>
+
+             {/* Country selector - now takes 4 columns */}
+    
             <div className="col-md-6 text-center text-md-end">
+
+              {/* Currency and country selector component */}
+    <CountryCurrencySelector 
+                translations={{
+                  country: t.footer.country,
+                  currency: t.footer.currency
+                }}
+                className="justify-content-center justify-content-md-end"
+              />
+
               <div className="d-inline-flex">
                 <Link href="#" className="me-3" style={{ color: 'rgba(255, 99, 71, 0.8)' }}>
                   <i className="bi bi-facebook"></i>
@@ -177,6 +248,7 @@ export default function Footer() {
                 </Link>
               </div>
             </div>
+
           </div>
         </div>
       </div>

@@ -50,7 +50,8 @@
     "edit_as": "Editar como:",
     "shop_owner": "Dueño de la tienda",
     "admin": "Administrador",
-    "super_admin": "Super Administrador"
+    "super_admin": "Super Administrador",
+    "price":"Precio"
   },
  
   "privacy_policy": {
@@ -122,7 +123,9 @@
       "privacy": "Política de privacidad",
       "terms": "Términos de servicio"
     },
-    "copyright": "&copy; {year} Talodu.com. Todos los derechos reservados."
+    "copyright": "&copy; {year} Talodu.com. Todos los derechos reservados.",
+    "country": "País",
+    "currency": "Moneda"
   },
   
   "cookie_consent": {

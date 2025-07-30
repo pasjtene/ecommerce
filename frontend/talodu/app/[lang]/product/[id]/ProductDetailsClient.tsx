@@ -1,9 +1,8 @@
-// app/product/[id]/ProductDetailsClient.tsx
+// app/[lang]/product/[id]/ProductDetailsClient.tsx
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
-//import Page from '../../../src/layout/Page/Page';
 import Card, {
 	CardBody,
 	CardHeader,
@@ -24,22 +23,13 @@ import { useAuth, AuthProvider } from '../../contexts/AuthContextNext';
 import ConfirmDelete from './ConfirmDeleteImages';
 import ErrorModal from '../../utils/ErrorModal';
 import { useCart } from '../../contexts/CartContext';
+import { useCurrency } from '../../contexts/CurrencyContext';
 
 // Dynamic import for client-only components
 import dynamic from 'next/dynamic';
 import { useParams } from 'next/navigation';
 
-interface Dictionary {
-	product: {
-		back_to_list: string;
-		by_shop: string;
-		no_images: string;
-		edit_as: string;
-		shop_owner: string;
-		admin: string;
-		super_admin: string;
-	};
-}
+
 const ProductEditComponent = dynamic(() => import('./ProductEditComponent'), { ssr: false });
 const DynamicProductImageGallery = dynamic(() => import('./ProductImageGallery'), { ssr: false });
 const ProductTranslationForm = dynamic(() => import('./ProductTranslationForm'), { ssr: false });
@@ -55,6 +45,18 @@ interface IValues {
 	category: string;
 	image?: string;
 }
+interface Dictionary {
+	product: {
+		back_to_list: string;
+		by_shop: string;
+		no_images: string;
+		edit_as: string;
+		shop_owner: string;
+		admin: string;
+		super_admin: string;
+		price:string
+	};
+}
 
 // Initialize with default values
 const defaultDictionary: Dictionary = {
@@ -66,6 +68,7 @@ const defaultDictionary: Dictionary = {
 		shop_owner: 'Shop Owner',
 		admin: 'Admin',
 		super_admin: 'Super Admin',
+		price:"Price"
 	},
 };
 
@@ -118,6 +121,7 @@ interface ProductDetailsClientProps {
 
 const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProps) => {
 	//const { darkModeStatus } = useDarkMode();
+	const { currency, currencyRate, currencySymbol, formatPrice } = useCurrency();
 	const { addToCart } = useCart();
 	const token = localStorage.getItem('j_auth_token');
 	const router = useRouter();
@@ -143,13 +147,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 	const [isTranslating, setIsTranslating] = useState(false);
 	const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8888';
 
-	const [currentProductTranslation, setCurrentProductTranslation] = useState<ProductTranslation>({
-		ID: 0,
-		PoductID: initialProduct.ID,
-		language: '',
-		name: '',
-		description: '',
-	});
+	
 
 	const handleDeleteError = (error: AppError) => {
 		setApiError(error);
@@ -157,7 +155,6 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 	};
 
 	
-
 	const handleAddToCart = (product: Product) => {
     if (product.stock <= 0) {
       toast.error('This product is out of stock');
@@ -410,7 +407,6 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 
 	if (!t) return <div>Loading...</div>;
 
-	// No loading/error states for the *initial* product here, as that's handled by the Server Component
 	// This component assumes it receives a valid `initialProduct`.
 
 	return (
@@ -614,7 +610,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 									{/* add product to card, fists section */}
 
 									<div className='card-body'>
-										<h4 className='card-title'>{currentProduct.price} XAF</h4>
+										<h4 className='card-title'> {formatPrice(currentProduct.price)} </h4>
 
 											<>
 												<div className='mb-3'>
@@ -626,9 +622,9 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 												<hr />
 
 												<div className='mb-3'>
-													<h6>Prix</h6>
+													<h6>{t?.product.price}</h6>
 													{currentProduct.price ? (
-														<h5 className='text-primary'>{currentProduct.price.toFixed(2)} FCFA</h5>
+														<h5 className='text-primary'> {formatPrice(currentProduct.price)}</h5>
 													) : (
 														<p className='text-muted'>Le prix du produit n'est pas disponible</p>
 													)}
@@ -646,7 +642,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 												{currentProduct.price ? (
 													<div className='mb-3'>
 														<h6>Pricing</h6>
-														<h5 className='text-primary'>${currentProduct.price.toFixed(2)}</h5>
+														<h5 className='text-primary'> {formatPrice(currentProduct.price)}</h5>
 													</div>
 												) : (
 													<p className='text-muted'> </p>

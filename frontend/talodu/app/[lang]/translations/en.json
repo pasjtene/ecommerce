@@ -51,7 +51,8 @@
     "edit_as": "Edit as:",
     "shop_owner": "Shop Owner",
     "admin": "Admin",
-    "super_admin": "Super Admin"
+    "super_admin": "Super Admin",
+    "price":"Price"
   },
  
   "privacy_policy": {
@@ -124,7 +125,9 @@
       "privacy": "Privacy Policy",
       "terms": "Terms of Service"
     },
-    "copyright": "&copy; {year} Talodu.com. All rights reserved."
+    "copyright": "&copy; {year} Talodu.com. All rights reserved.",
+    "country":"country",
+    "currency":"currency"
   },
 
   

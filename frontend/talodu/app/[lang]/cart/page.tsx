@@ -6,9 +6,11 @@ import { useAuth } from '../contexts/AuthContextNext';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import Button from 'react-bootstrap/Button';
+import { useCurrency } from '../contexts/CurrencyContext';
 
 const CartPage = () => {
   const { cartItems, cartItemCount, removeFromCart, updateQuantity, clearCart } = useCart();
+  const { currency, currencyRate, currencySymbol, formatPrice } = useCurrency();
   const params = useParams();
   const router = useRouter();
   const { user, token, showLogin, onRequireLogin } = useAuth();
@@ -75,7 +77,7 @@ const CartPage = () => {
                           <h5 className="card-title">{item.name}</h5>
                         </Link>
                         
-                        <p className="card-text">${item.price.toFixed(2)}</p>
+                        <p className="card-text">{formatPrice(item.price)}</p>
                         
                         <div className="d-flex align-items-center mb-3">
                           <Button 
@@ -123,7 +125,7 @@ const CartPage = () => {
                   <h5 className="card-title">Order Summary</h5>
                   <div className="d-flex justify-content-between mb-2">
                     <span>Subtotal ({cartItemCount} items)</span>
-                    <span>${totalPrice.toFixed(2)}</span>
+                    <span>{formatPrice(totalPrice)}</span>
                   </div>
                   <div className="d-flex justify-content-between mb-2">
                     <span>Shipping</span>
@@ -132,7 +134,7 @@ const CartPage = () => {
                   <hr />
                   <div className="d-flex justify-content-between fw-bold">
                     <span>Total</span>
-                    <span>${totalPrice.toFixed(2)}</span>
+                    <span>{formatPrice(totalPrice)}</span>
                   </div>
                   
                   <Button 

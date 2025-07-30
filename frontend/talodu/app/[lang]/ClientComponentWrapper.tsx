@@ -8,6 +8,7 @@ import dynamic from 'next/dynamic';
 import React, { useState, useCallback } from 'react';
 import { CartProvider } from './contexts/CartContext';
 import CookieConsent from './components/CookieConsent';
+import { CurrencyProvider } from './contexts/CurrencyContext';
 
 const Login = dynamic(() => import('./Login'), {
   ssr: false,
@@ -31,6 +32,7 @@ export default function ClientComponentWrapper({
   }, []);
   
   return (
+    <CurrencyProvider>
     <CartProvider>
       <AuthProvider 
         showLogin={handleShowLogin}
@@ -61,5 +63,6 @@ export default function ClientComponentWrapper({
          <CookieConsent />
       </AuthProvider>
     </CartProvider>
+    </CurrencyProvider>
   );
 }

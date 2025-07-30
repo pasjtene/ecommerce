@@ -7,9 +7,11 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import Button from 'react-bootstrap/Button';
 import { toast } from 'react-toastify';
+import { useCurrency } from '../contexts/CurrencyContext';
 
 const CheckoutPage = () => {
   const { cartItems, cartItemCount } = useCart();
+  const { currency, currencyRate, currencySymbol, formatPrice } = useCurrency();
   const { user, token, showLogin, onRequireLogin } = useAuth();
   const params = useParams();
   const router = useRouter();
@@ -74,7 +76,7 @@ const CheckoutPage = () => {
                           <h6>{item.name}</h6>
                           <small>Qty: {item.quantity}</small>
                         </div>
-                        <span>${(item.price * item.quantity).toFixed(2)}</span>
+                        <span>{formatPrice(item.price * item.quantity)}</span>
                       </li>
                     ))}
                   </ul>
@@ -88,7 +90,7 @@ const CheckoutPage = () => {
                   <h5 className="card-title">Order Summary</h5>
                   <div className="d-flex justify-content-between mb-2">
                     <span>Subtotal ({cartItemCount} items)</span>
-                    <span>${totalPrice.toFixed(2)}</span>
+                    <span>{formatPrice(totalPrice)}</span>
                   </div>
                   <div className="d-flex justify-content-between mb-2">
                     <span>Shipping</span>
@@ -97,7 +99,7 @@ const CheckoutPage = () => {
                   <hr />
                   <div className="d-flex justify-content-between fw-bold">
                     <span>Total</span>
-                    <span>${totalPrice.toFixed(2)}</span>
+                    <span>{formatPrice(totalPrice)}</span>
                   </div>
                   
                   <Button 
