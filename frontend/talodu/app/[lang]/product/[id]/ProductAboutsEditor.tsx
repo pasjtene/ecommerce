@@ -1,4 +1,4 @@
-// product/id/ProductAboutsEditor.tsx
+// app/[lang]/product/id/ProductAboutsEditor.tsx
 import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { Button, Form, Modal } from 'react-bootstrap';

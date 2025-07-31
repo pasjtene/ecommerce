@@ -32,7 +32,6 @@ import { useParams } from 'next/navigation';
 
 const ProductEditComponent = dynamic(() => import('./ProductEditComponent'), { ssr: false });
 const DynamicProductImageGallery = dynamic(() => import('./ProductImageGallery'), { ssr: false });
-const ProductTranslationForm = dynamic(() => import('./ProductTranslationForm'), { ssr: false });
 
 const ProductAboutsEditor = dynamic(() => import('./ProductAboutsEditor'), { ssr: false });
 const ProductAboutSection = dynamic(() => import('./ProductAboutSection'), { ssr: false });
@@ -264,33 +263,6 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 		return <LoadingSpinner />;
 	}
 
-	const handleSaveTranslation = async (updatedProductTranslation: ProductTranslation) => {
-		console.log('The prduct to update: ', updatedProductTranslation);
-		setLoading(true);
-		try {
-			const response = await axios.post(
-				API_BASE_URL + `/products/translate/${initialProduct.ID}`,
-				updatedProductTranslation,
-				
-				{
-					headers: { 
-					'Content-Type': 'application/json', 
-					Authorization: `${token}` 
-					}
-				}
-			);
-			setLoading(false);
-			router.push(`/product/${initialProduct.Slug}`);
-			setIsTranslating(false);
-			// Show success toast
-			toast.success(`Product updated savedsuccessfully`);
-		} catch (error) {
-			toast.error('Failed to update products');
-			//console.log(error);
-			// Show error toast
-		}
-	};
-
 	const handleDeleteImages = async (imageIds: string[]) => {
 		try {
 			setImages((prev) => prev.filter((i) => !imageIds.includes(i.ID)));
@@ -491,39 +463,21 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 
 						{(isShopOwner(shop) || hasAnyRole(['SuperAdmin', 'Admin'])) && (
 							<div>
+								
+
 								{!isTranslating && (
+									
 									<a
-										className='text-decoration-none  py-3 ms-3 text-success'
+										className='text-decoration-none py-3 ms-3 text-success'
 										onClick={() => {
-											setIsTranslating(true);
+										router.push(`/${params.lang}/product/${initialProduct.ID}/translations`);
 										}}
 										style={{ cursor: 'pointer' }}>
 										Add translations
 									</a>
+
 								)}
 
-								{isTranslating && (
-									<a
-										className='text-decoration-none  py-3 text-primary mx-3'
-										onClick={() => {
-											setIsTranslating(false);
-										}}
-										style={{ cursor: 'pointer' }}>
-										Cancel translations
-									</a>
-								)}
-
-								<div className='container mt-4'>
-									{isTranslating ? (
-										<ProductTranslationForm
-											product={currentProduct}
-											onSave={handleSaveTranslation}
-											onCancel={() => setIsTranslating(false)}
-										/>
-									) : (
-										<></>
-									)}
-								</div>
 
 								<div className='container mt-4'>
 									{isTranslating ? (
@@ -569,6 +523,8 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 										)}
 									</div>
 							</div>
+
+							{/*Product about details */}
 							
 							<div className='col-lg-3 col-md-6'>
 								
@@ -589,10 +545,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 										<div className='card shadow-sm product-details-card'>
 											<div className='card-body'>
 												<h4 className='card-title'>Product Details</h4>
-
-												
 													<>
-														
 														<hr />
 
 														<div className='d-grid gap-2'>
