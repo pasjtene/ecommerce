@@ -1,11 +1,11 @@
 //[lang]/components/HeaderNext.tsx
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
-import { Translation } from './types';
+import { Translation } from '../types';
 import { useRouter,useParams, usePathname, } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useAuth} from './contexts/AuthContextNext';
-import { useCart } from './contexts/CartContext';
+import { useAuth} from '../contexts/AuthContextNext';
+import { useCart } from '../contexts/CartContext';
 import {
   faUser,
   faShoppingCart,
@@ -21,20 +21,24 @@ import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 import Badge from 'react-bootstrap/Badge';
 import dynamic from 'next/dynamic';
+import { useCurrency } from '../contexts/CurrencyContext';
+import CountryCurrencySelector from './CountryCurrencySelector';
 
-const Login = dynamic(() => import('./Login'), { ssr: false });
-const Register = dynamic(() => import('./Register'), { ssr: false });
+const Login = dynamic(() => import('../Login'), { ssr: false });
+const Register = dynamic(() => import('../Register'), { ssr: false });
 
 
 
 const HeaderNext = () => {
     const { user, logout: contextLogout } = useAuth();
+    const { currency, currencyRate, currencySymbol, formatPrice, setCurrency, selectedCountry,
+      setSelectedCountry, } = useCurrency();
     const router = useRouter();
     const pathname = usePathname();
     const params = useParams();
     const [searchQuery, setSearchQuery] = useState('');
     //const [cartItemCount, setCartItemCount] = useState(0); // This should ideally come from global state/context
-    const { cartItemCount } = useCart();
+    const { cartItemCount, cartItems } = useCart();
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const [showAuthModal, setShowAuthModal] = useState<'login' | 'register' | null>(null);
@@ -43,27 +47,32 @@ const HeaderNext = () => {
     // Load translation
     useEffect(() => {
       const loadTranslation = async () => {
-        const t = await import(`./translations/${params.lang}.json`);
+        const t = await import(`../translations/${params.lang}.json`);
         setTranslation(t.default);
       };
       loadTranslation ();
     }, [params.lang]);
     
     // Add language switcher in header
-  const changeLanguage1 = (locale: string) => {
-    const newPathname = pathname.replace(`/${params.lang}`, '');
-    router.push(`/${locale}${newPathname}`);
-  };
 
         const changeLanguage = (locale: string) => {
-        
         const newPathname = (pathname || '/').replace(`/${params.lang}`, '') || '/';
+
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('selectedCurrency', currency);
+            localStorage.setItem('selectedCountry', selectedCountry);
+
+            {/*In certain circumstances, Cart items will be lost if not stored when switching language */}
+            localStorage.setItem('langCart', JSON.stringify(cartItems));
+        }
         
+
         if (typeof document !== 'undefined') {
             document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=${365 * 24 * 60 * 60}; SameSite=Lax`;
         }
 
         router.push(`/${locale}${newPathname}`);
+       
         };
 
 
@@ -148,6 +157,9 @@ const HeaderNext = () => {
                                 <FontAwesomeIcon icon={faSearch} size="sm" />
                             </Button>
                         </Form>
+
+                        {/* Country and currentcy */}
+                        <span>{selectedCountry}</span>
 
                         
                     {/* Language switcher */}

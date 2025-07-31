@@ -57,10 +57,10 @@ const defaultCountries: Country[] = [
 ];
 
 export function CurrencyProvider({ children }: { children: ReactNode }) {
-  const [currency, setCurrency] = useState('XAF');
+  const [currency, setCurrency] = useState('USD');
   const [currencyRate, setCurrencyRate] = useState(1);
   const [currencySymbol, setCurrencySymbol] = useState('FCFA');
-  const [selectedCountry, setSelectedCountry] = useState('CM');
+  const [selectedCountry, setSelectedCountry] = useState('US');
   const [currencies] = useState<Currency[]>(defaultCurrencies);
   const [countries] = useState<Country[]>(defaultCountries);
   const [isAutoDetected, setIsAutoDetected] = useState(false);
@@ -95,23 +95,30 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
   }, [countries]);
 
   // Initialize from localStorage if available
+  
   useEffect(() => {
+  const timer = setTimeout(() => {
     const savedCurrency = localStorage.getItem('selectedCurrency');
     const savedCountry = localStorage.getItem('selectedCountry');
 
+    console.log("Running after 5 seconds..",savedCurrency );
+
     if (savedCurrency) {
-      const currencyData = currencies.find(c => c.code === savedCurrency);
+      const currencyData = defaultCurrencies.find(c => c.code === savedCurrency);
       if (currencyData) {
         setCurrency(currencyData.code);
         setCurrencyRate(currencyData.rate);
         setCurrencySymbol(currencyData.symbol);
       }
     }
-
     if (savedCountry) {
       setSelectedCountry(savedCountry);
     }
-  }, [currencies]);
+  }, 100); // 5000 milliseconds = 5 seconds
+
+  // Cleanup function to clear the timeout if component unmounts
+  return () => clearTimeout(timer);
+}, [currencies]);
 
   // Update currency data when currency changes
   useEffect(() => {
@@ -123,9 +130,38 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
     }
   }, [currency, currencies]);
 
-  // Update country data when country changes
   useEffect(() => {
-    localStorage.setItem('selectedCountry', selectedCountry);
+  if (typeof window !== 'undefined') {
+    const pendingCurrency = localStorage.getItem('pendingCurrency');
+    //const pendingCountry = localStorage.getItem('pendingCountry');
+
+    //const pendingCurrency = localStorage.getItem('pendingCurrency');
+    const pendingCountry = localStorage.getItem('selectedCountry');
+
+
+    console.log("The pending 1.. currency is... ",pendingCurrency);
+    
+    if (pendingCurrency) {
+      setCurrency(pendingCurrency);
+      localStorage.removeItem('pendingCurrency');
+    }
+    
+    if (pendingCountry) {
+      //setSelectedCountry(pendingCountry);
+      localStorage.removeItem('pendingCountry');
+
+       const countryData = countries.find(c => c.code === pendingCountry);
+    if (countryData) {
+      setCurrency(countryData.currency);
+    }
+    }
+  }
+}, []);
+
+  // Update country data when country changes
+
+  useEffect(() => {
+    //localStorage.setItem('selectedCountry', selectedCountry);
     const countryData = countries.find(c => c.code === selectedCountry);
     if (countryData) {
       setCurrency(countryData.currency);

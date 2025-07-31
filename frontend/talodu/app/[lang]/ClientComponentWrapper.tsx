@@ -2,7 +2,7 @@
 // app/[lang]/ClientComponentWrapper.tsx
 'use client';
 import { AuthProvider } from './contexts/AuthContextNext';
-import HeaderNext from './HeaderNext';
+//import HeaderNext from './components/HeaderNext';
 import Footer from './components/Footer'
 import dynamic from 'next/dynamic';
 import React, { useState, useCallback } from 'react';
@@ -14,7 +14,13 @@ const Login = dynamic(() => import('./Login'), {
   ssr: false,
   loading: () => <div>Loading...</div>
 });
+
 const Register = dynamic(() => import('./Register'), {
+  ssr: false,
+  loading: () => <div>Loading...</div>
+});
+
+const HeaderNext = dynamic(() => import('./components/HeaderNext'), {
   ssr: false,
   loading: () => <div>Loading...</div>
 });

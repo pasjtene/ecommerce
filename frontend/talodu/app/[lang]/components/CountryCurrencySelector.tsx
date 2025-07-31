@@ -27,10 +27,14 @@ export default function CountryCurrencySelector({
 
   const handleCurrencyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setCurrency(e.target.value);
+    localStorage.setItem('selectedCurrency', e.target.value);
   };
 
   const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedCountry(e.target.value);
+    localStorage.setItem('setSelectedCountry', e.target.value);
+    
+
   };
 
   return (
@@ -39,10 +43,7 @@ export default function CountryCurrencySelector({
       <div className="d-flex align-items-center">
         <label htmlFor="country-select" className="me-2" style={{ color: 'rgba(255, 99, 71, 0.8)' }}>
             
-       
-           
-       
-      
+    
         {countries.find(c => c.code === selectedCountry)?.name}   {translations.country}:
         </label>
         <select
