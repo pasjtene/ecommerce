@@ -133,7 +133,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 	const [uploading, setUploading] = useState(false);
 	const [progress, setProgress] = useState(0);
 	const [refresh, setRefresh] = useState(false);
-	const [currentProduct, setCurrentProduct] = useState<Product>(initialProduct); // <--- CHANGE IS HERE
+	const [currentProduct, setCurrentProduct] = useState<Product>(initialProduct);
 	const [clientError, setClientError] = useState<string | null>(null);
 	// Initialize with initialProduct
 	const [loading, setLoading] = useState(false);
@@ -466,8 +466,8 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 								
 
 								{!isTranslating && (
-									
-									<a
+									<div>
+										<a
 										className='text-decoration-none py-3 ms-3 text-success'
 										onClick={() => {
 										router.push(`/${params.lang}/product/${initialProduct.ID}/translations`);
@@ -475,6 +475,18 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 										style={{ cursor: 'pointer' }}>
 										Add translations
 									</a>
+
+									<a
+										className='text-decoration-none py-3 ms-3 text-success'
+										onClick={() => {
+										router.push(`/${params.lang}/product/${initialProduct.ID}/edit`);
+										}}
+										style={{ cursor: 'pointer' }}>
+										Edit product
+									</a>
+									</div>
+									
+									
 
 								)}
 

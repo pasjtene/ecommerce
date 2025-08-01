@@ -544,7 +544,15 @@ func UpdateProduct(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		updatedProduct.Shop = newshop
-		db.Save(&updatedProduct)
+		//db.Save(&updatedProduct)
+		if err := db.Save(&updatedProduct).Error; err != nil {
+			fmt.Printf("Error saving updated product: %v\n", err) // Log the error
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "failed to save product with shop association",
+				"details": err.Error(),
+			})
+			return
+		}
 
 		fmt.Printf("ShopID before save: %d\n", updatedProduct.Shop.ID)
 

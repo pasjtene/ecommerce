@@ -95,13 +95,10 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
   }, [countries]);
 
   // Initialize from localStorage if available
-  
   useEffect(() => {
   const timer = setTimeout(() => {
     const savedCurrency = localStorage.getItem('selectedCurrency');
     const savedCountry = localStorage.getItem('selectedCountry');
-
-    console.log("Running after 5 seconds..",savedCurrency );
 
     if (savedCurrency) {
       const currencyData = defaultCurrencies.find(c => c.code === savedCurrency);
@@ -137,9 +134,6 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
 
     //const pendingCurrency = localStorage.getItem('pendingCurrency');
     const pendingCountry = localStorage.getItem('selectedCountry');
-
-
-    console.log("The pending 1.. currency is... ",pendingCurrency);
     
     if (pendingCurrency) {
       setCurrency(pendingCurrency);
