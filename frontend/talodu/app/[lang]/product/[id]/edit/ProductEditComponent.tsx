@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { User, Role, Product, Shop, ProductCategory } from '../../../types'
 import axios from 'axios';
 
+
 interface ProductEditProps {
   product: Product;
   onSave: (product: Product) => void;
@@ -72,6 +73,12 @@ const ProductEditComponent = ({ product, onSave, onCancel }: ProductEditProps) =
     <div className="card">
       <div className="card-header">
         <h3>Edit Product</h3>
+        <div>
+          <h2 className="mb-4">
+            {product.name}
+            
+          </h2>
+        </div>
       </div>
       <div className="card-body">
         <form onSubmit={handleSubmit}>

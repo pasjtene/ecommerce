@@ -46,8 +46,6 @@ export default function ProductTranslationPage() {
   useEffect(() => {
     if (!token) return; // Don't fetch until we have the token
     
-    
-    
     fetchProduct();
   }, [params.id, token]);
 
@@ -56,7 +54,7 @@ export default function ProductTranslationPage() {
 		setLoading(true);
 		try {
 			const response = await axios.put(API_BASE_URL + `/products/${product?.ID}`, updatedProduct);
-			//setCurrentProduct(response.data.product);
+			setProduct(response.data.product);
 			setLoading(false);
 			//router.push(`/product/${response.data.product.Slug}`);
 			//setIsEditing(false);

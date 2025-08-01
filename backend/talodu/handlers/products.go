@@ -474,6 +474,8 @@ func UpdateProduct(db *gorm.DB) gin.HandlerFunc {
 		// Generate new slug if name changed
 		if existingProduct.Name != request.Name {
 			product.Slug = generateSlug(request.Name) + "-" + productID
+			product.Name = request.Name
+
 		}
 
 		// 4. Update product
