@@ -2,26 +2,12 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useFormik } from 'formik';
-import Card, {
-	CardBody,
-	CardHeader,
-	CardLabel,
-	CardSubTitle,
-	CardTitle,
-} from '../../../../src/components/bootstrap/Card';
 
-import Icon from '../../../../src/components/icon/Icon';
-import Input from '../../../../src/components/bootstrap/forms/Input';
-import showNotification from '../../../../src/components/extras/showNotification';
 import { Product, ProductImage, Shop, AppError, ProductTranslation } from '../../types';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import Button from 'react-bootstrap/Button';
 import LoadingSpinner from '../../../api/LoadingSpinner';
 import { useAuth, AuthProvider } from '../../contexts/AuthContextNext';
-import ConfirmDelete from './ConfirmDeleteImages';
-import ErrorModal from '../../utils/ErrorModal';
 import { useCart } from '../../contexts/CartContext';
 import { useCurrency } from '../../contexts/CurrencyContext';
 
@@ -29,21 +15,13 @@ import { useCurrency } from '../../contexts/CurrencyContext';
 import dynamic from 'next/dynamic';
 import { useParams } from 'next/navigation';
 
-
-//const ProductEditComponent = dynamic(() => import('./ProductEditComponent'), { ssr: false });
 const DynamicProductImageGallery = dynamic(() => import('./ProductImageGallery'), { ssr: false });
-
 const ProductAboutsEditor = dynamic(() => import('./ProductAboutsEditor'), { ssr: false });
 const ProductAboutSection = dynamic(() => import('./ProductAboutSection'), { ssr: false });
-const ProductAboutTranslationsText = dynamic(() => import('./ProductAboutTranslationsText'), { ssr: false });
+const ProductAboutTranslationsText = dynamic(() => import('./ProductAboutTranslationsText'), {
+	ssr: false,
+});
 
-interface IValues {
-	name: string;
-	price: number;
-	stock: number;
-	category: string;
-	image?: string;
-}
 interface Dictionary {
 	product: {
 		back_to_list: string;
@@ -53,7 +31,7 @@ interface Dictionary {
 		shop_owner: string;
 		admin: string;
 		super_admin: string;
-		price:string
+		price: string;
 	};
 }
 
@@ -67,51 +45,9 @@ const defaultDictionary: Dictionary = {
 		shop_owner: 'Shop Owner',
 		admin: 'Admin',
 		super_admin: 'Super Admin',
-		price:"Price"
+		price: 'Price',
 	},
 };
-
-const validate = (values: IValues) => {
-	const errors = {
-		name: '',
-		price: '',
-		stock: '',
-		category: '',
-	};
-
-	if (!values.name) {
-		errors.name = 'Required';
-	} else if (values.name.length < 3) {
-		errors.name = 'Must be 3 characters or more';
-	} else if (values.name.length > 20) {
-		errors.name = 'Must be 20 characters or less';
-	}
-
-	if (!values.price) {
-		errors.price = 'Required';
-	} else if (values.price < 0) {
-		errors.price = 'Price should not be 0';
-	}
-
-	if (!values.stock) {
-		errors.stock = 'Required';
-	}
-
-	if (!values.category) {
-		errors.category = 'Required';
-	} else if (values.category.length < 3) {
-		errors.category = 'Must be 3 characters or more';
-	} else if (values.category.length > 20) {
-		errors.category = 'Must be 20 characters or less';
-	}
-
-	return errors;
-};
-
-type TTabs = 'Summary' | 'Comments' | 'Edit';
-interface ITabs {
-	[key: string]: TTabs;
-}
 
 interface ProductDetailsClientProps {
 	initialProduct: Product;
@@ -127,40 +63,25 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 	const params = useParams();
 	const [t, setDictionary] = useState<Dictionary>(defaultDictionary);
 	const [images, setImages] = useState<ProductImage[]>([]);
-	const [files, setFiles] = useState<File[]>([]);
-	const [uploading, setUploading] = useState(false);
-	const [progress, setProgress] = useState(0);
 	const [refresh, setRefresh] = useState(false);
 	const [currentProduct, setCurrentProduct] = useState<Product>(initialProduct);
 	const [clientError, setClientError] = useState<string | null>(null);
 	// Initialize with initialProduct
 	const [loading, setLoading] = useState(false);
 	const { user, isShopOwner, hasRole, hasAnyRole } = useAuth();
-	const [selectedImages, setSelectedImages] = useState<string[]>([]);
 	const [enableEdit, setEnableEdit] = useState<boolean>(false);
-	const [showConfirmModal, setShowConfirmModal] = useState(false);
-	const [apiError, setApiError] = useState<AppError>();
-	const [showErrorModal, setShowErrorModal] = useState(false);
 	const [isTranslating, setIsTranslating] = useState(false);
 	const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8888';
 
-	
-
-	const handleDeleteError = (error: AppError) => {
-		setApiError(error);
-		setShowErrorModal(true);
-	};
-
-	
 	const handleAddToCart = (product: Product) => {
-    if (product.stock <= 0) {
-      toast.error('This product is out of stock');
-      return;
-    }
-    
-    addToCart(product);
-    toast.success(`${product.name} added to cart`);
-  };
+		if (product.stock <= 0) {
+			toast.error('This product is out of stock');
+			return;
+		}
+
+		addToCart(product);
+		toast.success(`${product.name} added to cart`);
+	};
 
 	// Load translations
 	useEffect(() => {
@@ -173,9 +94,9 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 
 	// Apply translations to product data
 	useEffect(() => {
-		console.log("The products abouts is: ", initialProduct.abouts);
-		console.log("The products is: ", initialProduct);
-		
+		console.log('The products abouts is: ', initialProduct.abouts);
+		console.log('The products is: ', initialProduct);
+
 		//console.log("The language is: ",params.lang);
 		if (initialProduct.translations) {
 			const translation = initialProduct.translations.find((t: any) => t.language === params.lang);
@@ -220,19 +141,6 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 		}
 	}, [currentProduct, refresh]); // Depend on currentProduct.ID for image fetching
 
-	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.target.files) {
-			setFiles(Array.from(e.target.files));
-		}
-	};
-
-	// Toggle product selection
-	const toggleImageSelection = (imageId: string) => {
-		setSelectedImages((prev) =>
-			prev.includes(imageId) ? prev.filter((id) => id !== imageId) : [...prev, imageId],
-		);
-	};
-
 	// Toggle product selection
 	const toggleEnableEdit = () => {
 		setEnableEdit(!enableEdit);
@@ -242,127 +150,22 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 		return <LoadingSpinner />;
 	}
 
-	const handleDeleteImages = async (imageIds: string[]) => {
-		try {
-			setImages((prev) => prev.filter((i) => !imageIds.includes(i.ID)));
-			setSelectedImages([]);
-		} catch (error) {
-			//toast.error('Failed to delete products');
-		}
-	};
-
 	const handleShopNameClick = (shop: Shop) => {
 		console.log('The shop is:', shop);
 		if (shop.Slug) {
-			router.push(`/shop/products/${shop.Slug}`);
+			router.push(`/${params.lang}/shop/products/${shop.Slug}`);
 		} else {
-			router.push(`/shop/products/${shop.ID}`);
+			router.push(`/${params.lang}/shop/products/${shop.ID}`);
 		}
 	};
 
-	const handleUpload = async () => {
-		if (files.length === 0 || !currentProduct?.ID) return;
-
-		setUploading(true);
-		const formData = new FormData();
-
-		files.forEach((file) => {
-			formData.append('images', file);
-		});
-
-		try {
-			const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
-			const response = await axios.post(
-				`${API_URL}/images/product/${currentProduct?.ID}/batch`,
-				formData,
-				{
-					headers: {
-						'Content-Type': 'multipart/form-data',
-					},
-					onUploadProgress: (progressEvent) => {
-						if (progressEvent.total) {
-							const percentCompleted = Math.round(
-								(progressEvent.loaded * 100) / progressEvent.total,
-							);
-							setProgress(percentCompleted);
-						}
-					},
-				},
-			);
-
-			toast.success('Images uploaded successfully!');
-			setImages((prevImages) => [...prevImages, ...response.data.images]);
-			setFiles([]);
-		} catch (error) {
-			console.error('Upload failed:', error);
-			if (axios.isAxiosError(error)) {
-				toast.error(`Upload failed: ${error.response?.data?.error || error.message}`);
-			}
-		} finally {
-			setUploading(false);
-			setProgress(0);
-		}
-	};
-
-	const TABS: ITabs = {
-		SUMMARY: 'Summary',
-		COMMENTS: 'Comments',
-		EDIT: 'Edit',
-	};
-	const [activeTab, setActiveTab] = useState(TABS.SUMMARY);
-
-	const [editItem, setEditItem] = useState<IValues>({
-		name: initialProduct?.name || '',
-		price: initialProduct?.price || 0,
-		stock: initialProduct?.stock || 0,
-		category: '', // Assuming category is handled elsewhere or fetched
-	});
-
-	const formik = useFormik({
-		initialValues: {
-			name: initialProduct?.name || '',
-			price: initialProduct?.price || 0,
-			stock: initialProduct?.stock || 0,
-			category: '', // Assuming category is handled elsewhere or fetched
-		},
-		validate,
-		onSubmit: (values) => {
-			showNotification(
-				<span className='d-flex align-items-center'>
-					<Icon icon='Info' size='lg' className='me-1' />
-					<span>Updated Successfully</span>
-				</span>,
-				'Product has been updated successfully',
-			);
-			// You would typically send `values` to an API to update the product
-		},
-	});
-
-	useEffect(() => {
-		// Update formik and editItem values if initialProduct changes (e.g., if re-fetched)
-		if (initialProduct) {
-			formik.setValues({
-				name: initialProduct.name,
-				price: initialProduct.price,
-				stock: initialProduct.stock,
-				category: '', // Update if category is part of Product type
-			});
-			setEditItem({
-				name: initialProduct.name,
-				price: initialProduct.price,
-				stock: initialProduct.stock,
-				category: '', // Update if category is part of Product type
-			});
-		}
-	}, [initialProduct]); // Depend on initialProduct
-
-	if (!t) return <div>Loading...</div>;
+	if (!t) return <LoadingSpinner />;
 
 	// This component assumes it receives a valid `initialProduct`.
 
 	return (
 		<>
-			<div className="container py-4">
+			<div className='container py-4'>
 				{/* Removed redundant loading/error checks, assuming initialProduct is valid */}
 				<>
 					<div className='row'>
@@ -430,52 +233,45 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 
 						{(isShopOwner(shop) || hasAnyRole(['SuperAdmin', 'Admin'])) && (
 							<div>
-								
-
 								{!isTranslating && (
 									<div>
 										<a
-										className='text-decoration-none py-3 ms-3 text-success'
-										onClick={() => {
-										router.push(`/${params.lang}/product/${initialProduct.ID}/translations`);
-										}}
-										style={{ cursor: 'pointer' }}>
-										Add translations
-									</a>
+											className='text-decoration-none py-3 ms-3 text-success'
+											onClick={() => {
+												router.push(`/${params.lang}/product/${initialProduct.ID}/translations`);
+											}}
+											style={{ cursor: 'pointer' }}>
+											Add translations
+										</a>
 
-									<a
-										className='text-decoration-none py-3 ms-3 text-success'
-										onClick={() => {
-										router.push(`/${params.lang}/product/${initialProduct.ID}/edit`);
-										}}
-										style={{ cursor: 'pointer' }}>
-										Edit product
-									</a>
+										<a
+											className='text-decoration-none py-3 ms-3 text-success'
+											onClick={() => {
+												router.push(`/${params.lang}/product/${initialProduct.ID}/edit`);
+											}}
+											style={{ cursor: 'pointer' }}>
+											Edit product
+										</a>
 
-									<a
-										className='text-decoration-none py-3 ms-3 text-success'
-										onClick={() => {
-										router.push(`/${params.lang}/product/${initialProduct.ID}/images`);
-										}}
-										style={{ cursor: 'pointer' }}>
-										Images
-									</a>
+										<a
+											className='text-decoration-none py-3 ms-3 text-success'
+											onClick={() => {
+												router.push(`/${params.lang}/product/${initialProduct.ID}/images`);
+											}}
+											style={{ cursor: 'pointer' }}>
+											Images
+										</a>
 
-									<a
-										className='text-decoration-none py-3 ms-3 text-success'
-										onClick={() => {
-										router.push(`/${params.lang}/product/${initialProduct.ID}/abouts`);
-										}}
-										style={{ cursor: 'pointer' }}>
-										More details
-									</a>
-
+										<a
+											className='text-decoration-none py-3 ms-3 text-success'
+											onClick={() => {
+												router.push(`/${params.lang}/product/${initialProduct.ID}/abouts`);
+											}}
+											style={{ cursor: 'pointer' }}>
+											More details
+										</a>
 									</div>
-									
-									
-
 								)}
-
 
 								<div className='container mt-4'>
 									{isTranslating ? (
@@ -493,7 +289,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 										<ProductAboutTranslationsText
 											productId={currentProduct.ID}
 											abouts={initialProduct.aboutst}
-											languages={['en','fr','es']}
+											languages={['en', 'fr', 'es']}
 										/>
 									) : (
 										<></>
@@ -505,26 +301,26 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 						<div className='row'>
 							{/* Main Image Display Area - Left Side */}
 							<div className='col-lg-6 col-md-12'>
-
 								<div className='container py-4 border border-danger'>
 									<div>
-										<button onClick={() => handleAddToCart(currentProduct)} className='btn btn-danger'>
-													Add to card
+										<button
+											onClick={() => handleAddToCart(currentProduct)}
+											className='btn btn-danger'>
+											Add to card
 										</button>
 									</div>
-										{images?.length > 0 ? (
-											<DynamicProductImageGallery images={images} product={currentProduct} />
-										) : (
-											<div>No images</div>
-										)}
-									</div>
+									{images?.length > 0 ? (
+										<DynamicProductImageGallery images={images} product={currentProduct} />
+									) : (
+										<div>No images</div>
+									)}
+								</div>
 							</div>
 
 							{/*Product about details */}
-							
+
 							<div className='col-lg-3 col-md-6'>
-								
-								<h3 className="text-xl font-bold mb-4">{currentProduct.name}</h3>
+								<h3 className='text-xl font-bold mb-4'>{currentProduct.name}</h3>
 								<div>
 									{currentProduct.abouts.length > 0 ? (
 										<ProductAboutSection abouts={currentProduct.abouts} />
@@ -533,219 +329,65 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 									)}
 								</div>
 								<div></div>
-
 							</div>
 
 							<div className='col-lg-3 col-md-6'>
-								
-									{/* add product to card, fists section */}
+								{/* add product to card, fists section */}
+								<div className='card-body'>
+									<h4 className='card-title'> {formatPrice(currentProduct.price)} </h4>
 
-									<div className='card-body'>
-										<h4 className='card-title'> {formatPrice(currentProduct.price)} </h4>
+									<>
+										<div className='mb-3'>
+											<h6>Product Information</h6>
+											<p className='text-muted small mb-1'>Livraison: gratuite</p>
+											<p className='small'>Expédition: 2500 fcfa</p>
+										</div>
 
-											<>
-												<div className='mb-3'>
-													<h6>Product Information</h6>
-													<p className='text-muted small mb-1'>Livraison: gratuite</p>
-													<p className='small'>Expédition: 2500 fcfa</p>
-												</div>
+										<hr />
 
-												<hr />
-
-												<div className='mb-3'>
-													<h6>{t?.product.price}</h6>
-													{currentProduct.price ? (
-														<h5 className='text-primary'> {formatPrice(currentProduct.price)}</h5>
-													) : (
-														<p className='text-muted'>Le prix du produit n'est pas disponible</p>
-													)}
-												</div>
-
-												<div className='mb-3'>
-													<h6>Stock</h6>
-													{currentProduct.stock ? (
-														<h5 className='text-primary'>En Stock: {currentProduct.stock} disponible</h5>
-													) : (
-														<p className='text-muted'>Ce produit n'est pas disponible</p>
-													)}
-												</div>
-
-												{currentProduct.price ? (
-													<div className='mb-3'>
-														<h6>Pricing</h6>
-														<h5 className='text-primary'> {formatPrice(currentProduct.price)}</h5>
-													</div>
-												) : (
-													<p className='text-muted'> </p>
-												)}
-
-												<div className='mb-3'>
-													<h6>SKU</h6>
-													<p className='text-muted small'>{currentProduct.stock || 'Not specified'}</p>
-												</div>
-
-												<div className='d-grid gap-2'>
-													<button className='btn btn-primary'>Add to Cart</button>
-													<button className='btn btn-outline-secondary'>Add to whish list</button>
-												</div>
-											</>
-										
-									</div>
-									
-									{/* End add p to c first section */}
-							</div>
-						</div>
-
-
-						{/** if shop owner */}
-						{enableEdit && (
-							<div>
-								{(isShopOwner(shop) || hasAnyRole(['SuperAdmin', 'Admin'])) && (
-									<div className='row h-100 mt-5'>
-										<div className='mt-4'>
-											<h5 className='mb-3'>Current Images</h5>
-											<div className='d-flex justify-content-between align-items-center mb-3'>
-												<div>
-													{selectedImages.length > 0 && (
-														<button
-															//onClick={() => handleDeleteImages(selectedImages)}
-															onClick={() => {
-																setShowConfirmModal(true);
-															}}
-															className='btn btn-danger me-2'>
-															Delete {selectedImages.length} selected
-														</button>
-													)}
-												</div>
-												<div>
-													<span className='text-muted'>
-														{selectedImages.length} of {images.length} selected
-													</span>
-												</div>
-											</div>
-											{images?.length > 0 ? (
-												<div className='row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4'>
-													{images.map((image) => (
-														<div key={image.ID} className='col'>
-															<div className='card h-100 shadow-sm'>
-																<img
-																	src={API_URL + image.url}
-																	alt={image.altText || 'Product image'}
-																	className='card-img-top img-thumbnail'
-																	style={{ height: '200px', objectFit: 'cover' }}
-																/>
-																<div className='card-body'>
-																	<h6 className='card-title text-truncate'>
-																		{image.url.split('/').pop()}
-																	</h6>
-																	{image.altText && (
-																		<p className='card-text text-muted small'>{image.altText}</p>
-																	)}
-																</div>
-																<div className='card-footer bg-white'>
-																	<div className='d-flex justify-content-between'>
-																		<button className='btn btn-sm btn-outline-primary'>
-																			Set as Primary
-																		</button>
-																		<small className='text-danger'>delete image</small>
-																		<input
-																			type='checkbox'
-																			checked={selectedImages.includes(image.ID)}
-																			//onChange={() => toggleImageSelection(image.ID)}
-																			onChange={(e) => {
-																				e.stopPropagation();
-																				toggleImageSelection(image.ID);
-																			}}
-																			onClick={(e) => e.stopPropagation()}
-																			className='form-check-input'
-																		/>
-																	</div>
-																</div>
-															</div>
-														</div>
-													))}
-												</div>
+										<div className='mb-3'>
+											<h6>{t?.product.price}</h6>
+											{currentProduct.price ? (
+												<h5 className='text-primary'> {formatPrice(currentProduct.price)}</h5>
 											) : (
-												<div className='alert alert-info'>No images available for this product</div>
+												<p className='text-muted'>Le prix du produit n'est pas disponible</p>
 											)}
 										</div>
 
-										<div className='col-lg-8'>
-											<Card>
-												<CardHeader>
-													<CardLabel>
-														<CardTitle>Product Image</CardTitle>
-													</CardLabel>
-												</CardHeader>
-												<CardBody>
-													<div className='row'>
-														<div className='col-lg-8'>
-															<div className='row g-4'>
-																<div className='col-12'>
-																	<Input
-																		type='file'
-																		autoComplete='photo'
-																		onChange={handleFileChange}
-																		multiple
-																		accept='image/*'
-																	/>
-																</div>
-
-																<button
-																	onClick={handleUpload}
-																	disabled={uploading || files.length === 0}>
-																	{uploading ? `Uploading... ${progress}%` : 'Upload'}
-																</button>
-																{files.length > 0 && (
-																	<div>
-																		<p>Selected files:</p>
-																		<ul>
-																			{files.map((file, index) => (
-																				<li key={index}>{file.name}</li>
-																			))}
-																		</ul>
-																	</div>
-																)}
-																<div className='col-12'>
-																	<Button
-																		color='dark'
-																		onClick={() => {
-																			setEditItem({
-																				...editItem,
-																				image: undefined,
-																			});
-																		}}>
-																		Delete Image
-																	</Button>
-																</div>
-															</div>
-														</div>
-													</div>
-												</CardBody>
-											</Card>
+										<div className='mb-3'>
+											<h6>Stock</h6>
+											{currentProduct.stock ? (
+												<h5 className='text-primary'>
+													En Stock: {currentProduct.stock} disponible
+												</h5>
+											) : (
+												<p className='text-muted'>Ce produit n'est pas disponible</p>
+											)}
 										</div>
-									</div>
-								)}
+
+										{currentProduct.price ? (
+											<div className='mb-3'>
+												<h6>Pricing</h6>
+												<h5 className='text-primary'> {formatPrice(currentProduct.price)}</h5>
+											</div>
+										) : (
+											<p className='text-muted'> </p>
+										)}
+
+										<div className='mb-3'>
+											<h6>SKU</h6>
+											<p className='text-muted small'>{currentProduct.stock || 'Not specified'}</p>
+										</div>
+
+										<div className='d-grid gap-2'>
+											<button className='btn btn-primary'>Add to Cart</button>
+											<button className='btn btn-outline-secondary'>Add to whish list</button>
+										</div>
+									</>
+								</div>
+
+								{/* End add p to c first section */}
 							</div>
-						)}
-
-						{/** end check */}
-
-						<div>
-							<ConfirmDelete
-								shop={shop}
-								show={showConfirmModal}
-								onClose={() => setShowConfirmModal(false)}
-								onError={handleDeleteError}
-								imageIds={selectedImages}
-								onImagesDeleted={handleDeleteImages}
-							/>
-
-							<ErrorModal
-								show={showErrorModal}
-								onClose={() => setShowErrorModal(false)}
-								error={apiError}
-							/>
 						</div>
 					</div>
 				</>
