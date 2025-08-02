@@ -451,6 +451,25 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 										style={{ cursor: 'pointer' }}>
 										Edit product
 									</a>
+
+									<a
+										className='text-decoration-none py-3 ms-3 text-success'
+										onClick={() => {
+										router.push(`/${params.lang}/product/${initialProduct.ID}/images`);
+										}}
+										style={{ cursor: 'pointer' }}>
+										Images
+									</a>
+
+									<a
+										className='text-decoration-none py-3 ms-3 text-success'
+										onClick={() => {
+										router.push(`/${params.lang}/product/${initialProduct.ID}/abouts`);
+										}}
+										style={{ cursor: 'pointer' }}>
+										More details
+									</a>
+
 									</div>
 									
 									
@@ -480,8 +499,6 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 										<></>
 									)}
 								</div>
-
-								
 							</div>
 						)}
 
