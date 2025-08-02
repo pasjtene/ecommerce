@@ -187,8 +187,11 @@ const ProductImages = ({ product, onSave, onCancel }: ProductEditProps) => {
     <div>
         {(isShopOwner(product.shop) || hasAnyRole(['SuperAdmin', 'Admin'])) && (
             <div className='row h-100 mt-5'>
+                <div>
+            <h2 className="">{product.name}</h2>
+            </div>
 
-                  <div className='col-lg-8 mt-4 mb-4'>
+                  <div className='col-lg-8'>
                     <Card>
                         <CardHeader>
                             <CardLabel>
@@ -232,8 +235,8 @@ const ProductImages = ({ product, onSave, onCancel }: ProductEditProps) => {
                     </Card>
                 </div>
 
-                <div className='mt-4'>
-                    <h5 className='mb-3'>Current Images</h5>
+                <div className='mt-2'>
+                    <h5 className=''>Current Images</h5>
                     <div className='d-flex justify-content-between align-items-center mb-3'>
                         <div>
                             {selectedImages.length > 0 && (
