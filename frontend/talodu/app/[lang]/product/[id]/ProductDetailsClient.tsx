@@ -30,7 +30,7 @@ import dynamic from 'next/dynamic';
 import { useParams } from 'next/navigation';
 
 
-const ProductEditComponent = dynamic(() => import('./ProductEditComponent'), { ssr: false });
+//const ProductEditComponent = dynamic(() => import('./ProductEditComponent'), { ssr: false });
 const DynamicProductImageGallery = dynamic(() => import('./ProductImageGallery'), { ssr: false });
 
 const ProductAboutsEditor = dynamic(() => import('./ProductAboutsEditor'), { ssr: false });
@@ -125,8 +125,6 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 	const token = localStorage.getItem('j_auth_token');
 	const router = useRouter();
 	const params = useParams();
-	const [isEditing, setIsEditing] = useState(false);
-	//const [t, setDictionary] = useState<Dictionary | null>(null);
 	const [t, setDictionary] = useState<Dictionary>(defaultDictionary);
 	const [images, setImages] = useState<ProductImage[]>([]);
 	const [files, setFiles] = useState<File[]>([]);
@@ -238,25 +236,6 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 	// Toggle product selection
 	const toggleEnableEdit = () => {
 		setEnableEdit(!enableEdit);
-	};
-
-
-	const handleSave = async (updatedProduct: Product) => {
-		console.log('The prduct to update: ', updatedProduct);
-		setLoading(true);
-		try {
-			const response = await axios.put(API_BASE_URL + `/products/${currentProduct.ID}`, updatedProduct);
-			setCurrentProduct(response.data.product);
-			setLoading(false);
-			router.push(`/product/${response.data.product.Slug}`);
-			setIsEditing(false);
-			// Show success toast
-			toast.success(`Product updated savedsuccessfully`);
-		} catch (error) {
-			toast.error('Failed to update products');
-			console.log(error);
-			// Show error toast
-		}
 	};
 
 	if (loading) {
@@ -435,18 +414,6 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 						)}
 					</div>
 
-					<div className='container mt-4'>
-						{isEditing ? (
-							<ProductEditComponent
-								product={currentProduct}
-								onSave={handleSave}
-								onCancel={() => setIsEditing(false)}
-							/>
-						) : (
-							<></>
-						)}
-					</div>
-
 					<div>
 						<a
 							className='text-decoration-none display-6 py-3 text-danger'
@@ -553,25 +520,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 							</div>
 
 							<div className='col-lg-3 col-md-6'>
-								{user && (
-										<div className='card shadow-sm product-details-card'>
-											<div className='card-body'>
-												<h4 className='card-title'>Product Details</h4>
-													<>
-														<hr />
-
-														<div className='d-grid gap-2'>
-															<button onClick={() => setIsEditing(true)} className='btn btn-danger'>
-																Edit product
-															</button>
-															
-														</div>
-													</>
-												
-											</div>
-										</div>
-									)}
-
+								
 									{/* add product to card, fists section */}
 
 									<div className='card-body'>
@@ -628,8 +577,6 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 									
 									{/* End add p to c first section */}
 							</div>
-
-
 						</div>
 
 

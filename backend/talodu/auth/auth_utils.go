@@ -165,10 +165,10 @@ func GenerateToken(user *User) (string, error) {
 }
 
 const (
-	//AccessTokenExpiry  = time.Hour * 1      // 1 hour for access tokens
-	//RefreshTokenExpiry = time.Hour * 24 * 7 // 7 days for refresh tokens
-	AccessTokenExpiry  = time.Hour * 1 // 1 hour for access tokens
-	RefreshTokenExpiry = time.Hour * 2 // 2 hours for test refresh tokens
+	AccessTokenExpiry  = time.Hour * 1      // 1 hour for access tokens
+	RefreshTokenExpiry = time.Hour * 24 * 7 // 7 days for refresh tokens
+	//AccessTokenExpiry  = time.Hour * 1 // 1 hour for access tokens
+	//RefreshTokenExpiry = time.Hour * 2 // 2 hours for test refresh tokens
 )
 
 // GenerateTokens: this creates both access and refresh tokens

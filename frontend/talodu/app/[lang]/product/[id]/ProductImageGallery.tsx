@@ -10,7 +10,7 @@ import dynamic from 'next/dynamic';
 import LoadingSpinner from '../../../api/LoadingSpinner';
 import { useAuth, AuthProvider } from '../../contexts/AuthContextNext';
 
-const ProductEditComponent = dynamic(() => import('./ProductEditComponent'), { ssr: false });
+//const ProductEditComponent = dynamic(() => import('./ProductEditComponent'), { ssr: false });
 const ProductAboutSection = dynamic(() => import('./ProductAboutSection'), { ssr: false });
 
 const ProductImageGallery = ({ images, product }: { images: ProductImage[]; product: Product }) => {
@@ -62,7 +62,9 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
 		<div className='container mt-4'>
 			<div>{currentProduct.name} in productimegegalerycomponent</div>
 
-			<div className='container mt-4'>
+{/* 
+
+	<div className='container mt-4'>
 				{isEditing ? (
 					<ProductEditComponent
 						product={currentProduct}
@@ -73,6 +75,9 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
 					<></>
 				)}
 			</div>
+
+*/}
+			
 
 			<div className='row'>
 				{/* Main Image Display Area - Left Side */}

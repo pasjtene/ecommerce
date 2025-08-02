@@ -53,6 +53,23 @@
     "super_admin": "Super Administrateur",
     "price":"Prix"
   },
+  
+ "product_edit": {
+  "edit_product": "Modifier le produit",
+  "price": "Prix",
+  "name": "Nom",
+  "stock": "Stock",
+  "description": "Description",
+  "shop": "Boutique",
+  "categories": "Catégories",
+  "cancel": "Annuler",
+  "save_changes": "Enregistrer les modifications",
+  "saving": "Enregistrement en cours...",
+  "fetch_error": "Erreur de chargement des données",
+  "save_success": "Produit enregistré avec succès",
+  "save_error": "Échec de l'enregistrement du produit",
+  "no_categories": "Aucune catégorie disponible"
+},
   "privacy_policy": {
     "title": "Politique de Confidentialité",
     "sections": {

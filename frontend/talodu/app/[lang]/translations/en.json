@@ -54,6 +54,22 @@
     "super_admin": "Super Admin",
     "price":"Price"
   },
+  "product_edit": {
+  "edit_product": "Edit Product",
+  "price": "Price",
+  "name": "Name",
+  "stock": "Stock",
+  "description": "Description",
+  "shop": "Shop",
+  "categories": "Categories",
+  "cancel": "Cancel",
+  "save_changes": "Save Changes",
+  "saving": "Saving...",
+  "fetch_error": "Error loading data",
+  "save_success": "Product saved successfully",
+  "save_error": "Failed to save product",
+  "no_categories": "No categories available"
+},
  
   "privacy_policy": {
     "title": "Privacy Policy",

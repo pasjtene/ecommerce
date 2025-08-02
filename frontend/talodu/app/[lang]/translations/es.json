@@ -53,6 +53,22 @@
     "super_admin": "Super Administrador",
     "price":"Precio"
   },
+ "product_edit": {
+  "edit_product": "Editar Producto",
+  "price": "Precio",
+  "name": "Nombre",
+  "stock": "Inventario",
+  "description": "Descripción",
+  "shop": "Tienda",
+  "categories": "Categorías",
+  "cancel": "Cancelar",
+  "save_changes": "Guardar Cambios",
+  "saving": "Guardando...",
+  "fetch_error": "Error al cargar datos",
+  "save_success": "Producto guardado correctamente",
+  "save_error": "Error al guardar el producto",
+  "no_categories": "No hay categorías disponibles"
+},
  
   "privacy_policy": {
     "title": "Política de Privacidad",
