@@ -1,6 +1,7 @@
 // app/[lang]/layout.tsx
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../../src/pages/presentation/sales/ProductImageGallery.css';
+//import '../../src/pages/presentation/sales/ProductImageGallery.css';
+import './css/ProductImageGallery.css';
 import './css/global.css';
 import ClientComponentWrapper from './ClientComponentWrapper';
 

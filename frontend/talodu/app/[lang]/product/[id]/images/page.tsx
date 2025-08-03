@@ -1,4 +1,4 @@
-// app/[lang]/product/[id]/translations/page.tsx
+// app/[lang]/product/[id]/images/page.tsx
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
@@ -49,23 +49,7 @@ export default function ProductTranslationPage() {
     fetchProduct();
   }, [params.id, token]);
 
-  	const handleSave = async (updatedProduct: Product) => {
-		console.log('The prduct to update: ', updatedProduct);
-		setLoading(true);
-		try {
-			const response = await axios.put(API_BASE_URL + `/products/${product?.ID}`, updatedProduct);
-			setProduct(response.data.product);
-			setLoading(false);
-			//router.push(`/product/${response.data.product.Slug}`);
-			//setIsEditing(false);
-			// Show success toast
-			toast.success(`Product updated savedsuccessfully`);
-		} catch (error) {
-			toast.error('Failed to update products');
-			console.log(error);
-			// Show error toast
-		}
-	};
+  
 
 	if (loading || !product) {
 		return <LoadingSpinner />;
@@ -83,8 +67,7 @@ export default function ProductTranslationPage() {
       
       <ProductImages
         product={product}
-        onSave={handleSave}
-        onCancel={() => router.back()}
+        
       />
     </div>
   );
