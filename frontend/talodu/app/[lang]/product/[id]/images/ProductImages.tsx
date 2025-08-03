@@ -29,6 +29,7 @@ interface ImageModalState {
   currentIndex: number;
   isZoomed: boolean; // Add this
   zoomOffset: { x: number; y: number };
+  direction: 'left' | 'right' | null;
 }
 
 interface Dictionary {
@@ -70,7 +71,8 @@ const ProductImages = ({ product }: ProductImageProps) => {
     show: false,
     currentIndex: 0,
     isZoomed: false,
-    zoomOffset: { x: 0, y: 0 }
+    zoomOffset: { x: 0, y: 0 },
+    direction: null
   });
 
   const handleDeleteError = (error: AppError) => {
@@ -83,7 +85,8 @@ const ProductImages = ({ product }: ProductImageProps) => {
       show: true,
       currentIndex: index,
       isZoomed: false,
-      zoomOffset: { x: 0, y: 0 }
+      zoomOffset: { x: 0, y: 0 },
+      direction: null
     });
   };
 
@@ -92,18 +95,24 @@ const ProductImages = ({ product }: ProductImageProps) => {
   };
 
   const handlePrev = () => {
-    setImageModal(prev => ({
-      ...prev,
-      currentIndex: (prev.currentIndex - 1 + images.length) % images.length
-    }));
-  };
+  setImageModal(prev => ({
+    ...prev,
+    currentIndex: (prev.currentIndex - 1 + images.length) % images.length,
+    direction: 'left',
+    isZoomed: false, // Reset zoom when changing images
+    zoomOffset: { x: 0, y: 0 }
+  }));
+};
 
   const handleNext = () => {
-    setImageModal(prev => ({
-      ...prev,
-      currentIndex: (prev.currentIndex + 1) % images.length
-    }));
-  };
+  setImageModal(prev => ({
+    ...prev,
+    currentIndex: (prev.currentIndex + 1) % images.length,
+    direction: 'right',
+    isZoomed: false, // Reset zoom when changing images
+    zoomOffset: { x: 0, y: 0 }
+  }));
+};
 
   useEffect(() => {
     setToken(localStorage.getItem('j_auth_token'));
@@ -354,6 +363,70 @@ const ProductImages = ({ product }: ProductImageProps) => {
             height: 90vh;
             
           }
+             .image-slider {
+              position: relative;
+              width: 100%;
+              height: 100%;
+              overflow: hidden;
+            }
+               .slide {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: transform 0.5s ease-in-out;
+              }
+                .slide.current {
+                  transform: translateX(0);
+                  z-index: 1;
+                }
+
+                .slide.next {
+                  transform: translateX(100%);
+                }
+
+                .slide.previous {
+                  transform: translateX(-100%);
+                }
+                  .slide.entering-left {
+                  transform: translateX(100%);
+                  animation: slideInLeft 0.5s forwards;
+                }
+
+                .slide.entering-right {
+                  transform: translateX(-100%);
+                  animation: slideInRight 0.5s forwards;
+                }
+
+                .slide.exiting-left {
+                  animation: slideOutLeft 0.5s forwards;
+                }
+                   .slide.exiting-right {
+                      animation: slideOutRight 0.5s forwards;
+                    }
+
+                    @keyframes slideInLeft {
+                      from { transform: translateX(100%); }
+                      to { transform: translateX(0); }
+                    }
+
+                    @keyframes slideInRight {
+                      from { transform: translateX(-100%); }
+                      to { transform: translateX(0); }
+                    }
+                      @keyframes slideOutLeft {
+                      from { transform: translateX(0); }
+                      to { transform: translateX(-100%); }
+                    }
+
+                    @keyframes slideOutRight {
+                      from { transform: translateX(0); }
+                      to { transform: translateX(100%); }
+                    }
             .main-image-wrapper {
                 position: relative;
                 width: 100%;
@@ -515,6 +588,29 @@ const ProductImages = ({ product }: ProductImageProps) => {
                 <FaArrowLeft />
               </button>
 
+              {/* Image Slider */}
+              <div className="image-slider">
+              {images.map((image, index) => {
+                const position = 
+                  index === imageModal.currentIndex ? 'current' :
+                  index === (imageModal.currentIndex + 1) % images.length ? 'next' :
+                  index === (imageModal.currentIndex - 1 + images.length) % images.length ? 'previous' :
+                  'hidden';
+
+                const animationClass = 
+                  position === 'current' && imageModal.direction === 'left' ? 'entering-left' :
+                  position === 'current' && imageModal.direction === 'right' ? 'entering-right' :
+                  position === 'previous' && imageModal.direction === 'left' ? 'exiting-left' :
+                  position === 'next' && imageModal.direction === 'right' ? 'exiting-right' : '';
+
+                return (
+                  <div 
+                    key={image.ID} 
+                    className={`slide ${position} ${animationClass}`}
+                  >
+
+
+
               <div 
                 className="main-image-wrapper"
                 onClick={() => {
@@ -578,7 +674,14 @@ const ProductImages = ({ product }: ProductImageProps) => {
               />
                
               </div>
-              
+
+
+            </div>
+          );
+        })}
+      </div>
+
+
               <button 
                 onClick={handleNext}
                 className="nav-button"
