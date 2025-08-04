@@ -67,6 +67,7 @@ const ProductImages = ({ product }: ProductImageProps) => {
   const [apiError, setApiError] = useState<AppError>();
   const [showErrorModal, setShowErrorModal] = useState(false);
   const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
   const [imageModal, setImageModal] = useState<ImageModalState>({
     show: false,
@@ -644,22 +645,23 @@ const ProductImages = ({ product }: ProductImageProps) => {
         <div 
           className="image-slider"
           onTouchStart={(e) => {
-            this.touchStartX = e.touches[0].clientX;
-          }}
+                setTouchStartX(e.touches[0].clientX);
+            }}
           onTouchEnd={(e) => {
-            if (!this.touchStartX) return;
+            if (touchStartX === null) return;
             const touchEndX = e.changedTouches[0].clientX;
-            const diff = this.touchStartX - touchEndX;
+            const diff = touchStartX - touchEndX;
             
             if (diff > 50) {
-                // Swipe left - go to next image
-              handleNext();
+            // Swipe left - go to next image
+            handleNext();
             } else if (diff < -50) {
-              // Swipe right - go to previous image
-              handlePrev();
+            // Swipe right - go to previous image
+            handlePrev();
             }
-            this.touchStartX = null;
-          }}
+            
+    setTouchStartX(null);
+  }}
         >
             {images.map((image, index) => {
             const position = 
