@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import ProductImages from './ProductImages';
+import ProductImages from './ProductImages2';
 import { Product } from '../../../types';
 import LoadingSpinner from '../../../../api/LoadingSpinner';
 
