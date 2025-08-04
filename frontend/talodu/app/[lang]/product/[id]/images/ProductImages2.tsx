@@ -367,12 +367,12 @@ const ProductImages = ({ product }: ProductImageProps) => {
             
           }
 
-             .thumbnail-container {
+             .thumbnail-container-pr {
                 display: flex;
                 gap: 10px;
                 padding: 10px;
                 overflow-x: auto;
-                background-color: rgba(0,0,0,0.8);
+                
                 }
 
                  .thumbnail-item {
@@ -588,7 +588,7 @@ const ProductImages = ({ product }: ProductImageProps) => {
         flex-direction: row;
       }
       
-      .thumbnail-container {
+      .thumbnail-container-pr {
         flex-direction: column;
         width: 120px;
         height: 90vh;
@@ -607,7 +607,7 @@ const ProductImages = ({ product }: ProductImageProps) => {
         height: 100vh;
       }
       
-      .thumbnail-container {
+      .thumbnail-container-pr {
         position: absolute;
         bottom: 0;
         left: 0;
@@ -633,12 +633,13 @@ const ProductImages = ({ product }: ProductImageProps) => {
         >
           <FaTimes />
         </button>
-        <FaArrowLeft />
+        
         <button 
           onClick={handlePrev}
           className="nav-button"
           style={{ left: '10px' }}
         >
+            <FaArrowLeft />
         </button>
 
         {/* Image Slider */}
@@ -748,7 +749,7 @@ const ProductImages = ({ product }: ProductImageProps) => {
         </button>
       </div>
        {/* Thumbnail container - now at bottom for mobile */}
-      <div className="thumbnail-container">
+      <div className="thumbnail-container-pr">
         {images.map((image, index) => (
           <img
             key={image.ID}
