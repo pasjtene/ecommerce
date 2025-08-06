@@ -29,7 +29,7 @@ const AllProductsDisplay  = () => {
         }
     }, [searchTerm]);
 
-      const fetchShopProducts = async (page = 1, limit = 10, search = ''):Promise<void> => {
+      const fetchShopProducts = async (page = 1, limit = 30, search = ''):Promise<void> => {
             try {
                 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
                 setApibaseUrl(API_BASE_URL);
@@ -97,9 +97,7 @@ const AllProductsDisplay  = () => {
     return <div className="alert alert-danger my-5">{error}</div>;
   }
 
-  const handleImageClick = (productSlug: string, productId: number) => {
-   // navigate(`/products/${productSlug || productId}`);
-   };
+  
 
 // Flatten all product images from the shop
   const allImages = products.flatMap(product => 
@@ -118,13 +116,23 @@ const AllProductsDisplay  = () => {
     router.push(url);
        
       };
+      const handleImageClick = (productSlug: string, productId: number) => {
+    const url =   `/product/${productSlug}`;
+    router.push(url);
+   };
+
+      const handleViewproductBySlug = (productSlug: string) => {
+    const url =   `/product/${productSlug}`;
+    router.push(url);
+       
+      };
 
   return (
     <div className="container mt-4 py-4">
       <h2 className="mb-4"> {allImages.length} images</h2>
      
     {/** Products */}
-    <div className='m-4'>Tous les produits</div>
+    <div className='m-4'>All products</div>
     {(products?.length > 0) && (
     <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
         {products.map((prod) => (
@@ -184,7 +192,7 @@ const AllProductsDisplay  = () => {
     {/** End product */}
 
 
-        <div className='m-4'>Toutes les images</div>
+        <div className='m-4'>All images</div>
 
     {(allImages?.length > 0) && (
       <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">

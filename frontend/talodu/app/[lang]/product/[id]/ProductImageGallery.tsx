@@ -60,7 +60,7 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
 
 	return (
 		<div className='container mt-4'>
-			<div>{currentProduct.name} in productimegegalerycomponent</div>
+			<div>{currentProduct.name}</div>
 
 {/* 
 

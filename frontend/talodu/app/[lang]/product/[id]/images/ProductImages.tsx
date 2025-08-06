@@ -67,6 +67,7 @@ const ProductImages = ({ product }: ProductImageProps) => {
   const [apiError, setApiError] = useState<AppError>();
   const [showErrorModal, setShowErrorModal] = useState(false);
   const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
   const [imageModal, setImageModal] = useState<ImageModalState>({
     show: false,
@@ -350,6 +351,7 @@ const ProductImages = ({ product }: ProductImageProps) => {
         size="xl"
         className="image-modal"
         backdropClassName="modal-backdrop-transparent"
+        fullscreen="sm-down"
       >
         <style jsx>{`
           .thumbnail-container-pa {
@@ -364,6 +366,26 @@ const ProductImages = ({ product }: ProductImageProps) => {
             height: 90vh;
             
           }
+
+             .thumbnail-container-pr {
+                display: flex;
+                gap: 10px;
+                padding: 10px;
+                overflow-x: auto;
+                
+                }
+
+                 .thumbnail-item {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid transparent;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+          }
+
+
              .image-slider {
               position: relative;
               width: 100%;
@@ -470,15 +492,7 @@ const ProductImages = ({ product }: ProductImageProps) => {
                       }
                     }
           
-          .thumbnail-item {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            cursor: pointer;
-            border: 2px solid transparent;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-          }
+         
           
           .thumbnail-item:hover {
             transform: scale(1.05);
@@ -499,7 +513,7 @@ const ProductImages = ({ product }: ProductImageProps) => {
 
         
           
-          .main-image-container {
+          .main-image-container1 {
             flex: 1;
             display: flex;
             align-items: center;
@@ -512,6 +526,17 @@ const ProductImages = ({ product }: ProductImageProps) => {
             overflow: hidden;
             
           }
+            .main-image-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      height: calc(100vh - 120px); /* Adjust based on your needs */
+      overflow: hidden;
+      touch-action: pan-y; /* Enable touch scrolling */
+    }
+    
 
           .nav-button {
             position: absolute;
@@ -555,143 +580,189 @@ const ProductImages = ({ product }: ProductImageProps) => {
           .close-button:hover {
             background-color: rgba(0,0,0,0.7);
           }
+
+            /* Desktop styles */
+    @media (min-width: 768px) {
+      .modal-content-container {
+        display: flex;
+        flex-direction: row;
+      }
+      
+      .thumbnail-container-pr {
+        flex-direction: column;
+        width: 120px;
+        height: 90vh;
+        overflow-y: auto;
+      }
+        .main-image-container {
+        height: 90vh;
+      }
+    }
+
+    /* Mobile styles */
+    @media (max-width: 767px) {
+      .modal-content-container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+      
+      .thumbnail-container-pr {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 10;
+      }
+        .main-image-container {
+        height: calc(100% - 80px); /* Account for thumbnails */
+      }
+    }
+
+
         `}</style>
 
-        <Modal.Body style={{ padding: 0 }} className="p-0">
-          <div className="modal-content-container">
-            {/* Thumbnail sidebar */}
-            <div className="thumbnail-container-pa">
-              {images.map((image, index) => (
-                <img
-                  key={image.ID}
-                  src={API_URL + image.url}
-                  alt={image.altText || 'Product thumbnail'}
-                  className={`thumbnail-item ${imageModal.currentIndex === index ? 'active' : ''}`}
-                  onClick={() => setImageModal(prev => ({ ...prev, currentIndex: index }))}
-                />
-              ))}
-            </div>
+        
+          <Modal.Body style={{ padding: 0 }} className="p-0">
+    <div className="modal-content-container">
+      {/* Main image area */}
+      <div className="main-image-container">
+        <button 
+          onClick={handleCloseModal}
+          className="close-button"
+        >
+          <FaTimes />
+        </button>
+        
+        <button 
+          onClick={handlePrev}
+          className="nav-button"
+          style={{ left: '10px' }}
+        >
+            <FaArrowLeft />
+        </button>
+
+        {/* Image Slider */}
+        <div 
+          className="image-slider"
+          onTouchStart={(e) => {
+                setTouchStartX(e.touches[0].clientX);
+            }}
+          onTouchEnd={(e) => {
+            if (touchStartX === null) return;
+            const touchEndX = e.changedTouches[0].clientX;
+            const diff = touchStartX - touchEndX;
             
-            {/* Main image area */}
-            <div className="main-image-container">
-              <button 
-                onClick={handleCloseModal}
-                className="close-button"
+            if (diff > 50) {
+            // Swipe left - go to next image
+            handleNext();
+            } else if (diff < -50) {
+            // Swipe right - go to previous image
+            handlePrev();
+            }
+            
+    setTouchStartX(null);
+  }}
+        >
+            {images.map((image, index) => {
+            const position = 
+              index === imageModal.currentIndex ? 'current' :
+              index === (imageModal.currentIndex + 1) % images.length ? 'next' :
+              index === (imageModal.currentIndex - 1 + images.length) % images.length ? 'previous' :
+              'hidden';
+
+            const animationClass = 
+              position === 'current' && imageModal.direction === 'left' ? 'entering-left' :
+              position === 'current' && imageModal.direction === 'right' ? 'entering-right' :
+              position === 'previous' && imageModal.direction === 'left' ? 'exiting-left' :
+              position === 'next' && imageModal.direction === 'right' ? 'exiting-right' : '';
+
+            return (
+                <div 
+                key={image.ID} 
+                className={`slide ${position} ${animationClass}`}
               >
-                <FaTimes />
-              </button>
-              
-              <button 
-                onClick={handlePrev}
-                className="nav-button"
-                style={{ left: '10px' }}
-              >
-                <FaArrowLeft />
-              </button>
+                <div 
+                  className="main-image-wrapper"
+                  onClick={() => {
+                    setImageModal(prev => ({
+                      ...prev,
+                      isZoomed: !prev.isZoomed,
+                      zoomOffset: { x: 0, y: 0 }
+                    }));
+                  }}
+                  onMouseMove={(e) => {
+                    if (!imageModal.isZoomed) return;
+                    
+                    const wrapper = e.currentTarget;
+                    const img = wrapper.querySelector('.main-image') as HTMLImageElement;
+                    if (!img) return;
 
-              {/* Image Slider */}
-              <div className="image-slider">
-              {images.map((image, index) => {
-                const position = 
-                  index === imageModal.currentIndex ? 'current' :
-                  index === (imageModal.currentIndex + 1) % images.length ? 'next' :
-                  index === (imageModal.currentIndex - 1 + images.length) % images.length ? 'previous' :
-                  'hidden';
-
-                const animationClass = 
-                  position === 'current' && imageModal.direction === 'left' ? 'entering-left' :
-                  position === 'current' && imageModal.direction === 'right' ? 'entering-right' :
-                  position === 'previous' && imageModal.direction === 'left' ? 'exiting-left' :
-                  position === 'next' && imageModal.direction === 'right' ? 'exiting-right' : '';
-
-                return (
-                  <div 
-                    key={image.ID} 
-                    className={`slide ${position} ${animationClass}`}
-                  >
-
-
-
-              <div 
-                className="main-image-wrapper"
-                onClick={() => {
-                setImageModal(prev => ({
-                  ...prev,
-                  isZoomed: !prev.isZoomed,
-                  zoomOffset: { x: 0, y: 0 } // Reset position when toggling zoom
-                }));
-              }}
-                 onMouseMove={(e) => {
-                  if (!imageModal.isZoomed) return;
-                  
-                  const wrapper = e.currentTarget;
-                  const img = wrapper.querySelector('.main-image') as HTMLImageElement;
-                  if (!img) return;
-
-                  // Calculate mouse position relative to image
-                  const rect = wrapper.getBoundingClientRect();
-                  const x = e.clientX - rect.left;
-                  const y = e.clientY - rect.top;
-                  // Calculate percentage position (0-1)
-                const percentX = x / rect.width;
-                const percentY = y / rect.height;
-                
-                // Calculate new offset (centered on mouse position)
-                const offsetX = (percentX - 0.5) * img.offsetWidth;
-                const offsetY = (percentY - 0.5) * img.offsetHeight;
-                
-                setImageModal(prev => ({
-                  ...prev,
-                  zoomOffset: { x: -offsetX, y: -offsetY }
-                }));
-              }}
-
-              onMouseDown={() => {
-              if (imageModal.isZoomed) {
-                const img = document.querySelector('.main-image.zoomed');
-                img?.classList.add('grabbing');
-              }
-            }}
-            onMouseUp={() => {
-              const img = document.querySelector('.main-image.zoomed');
-              img?.classList.remove('grabbing');
-            }}
-            onMouseLeave={() => {
-                  const img = document.querySelector('.main-image.zoomed');
-                  img?.classList.remove('grabbing');
-                }}
-            >
-              
-              <img
-                src={API_URL + images[imageModal.currentIndex]?.url}
-                alt={images[imageModal.currentIndex]?.altText || 'Product image'}
-                className={`main-image ${imageModal.isZoomed ? 'zoomed' : ''}`}
-                style={{
-                  transform: imageModal.isZoomed 
-                    ? `scale(2) translate(${imageModal.zoomOffset.x}px, ${imageModal.zoomOffset.y}px)`
-                    : 'none'
-                }}
-                
-              />
-               
+                    const rect = wrapper.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const percentX = x / rect.width;
+                    const percentY = y / rect.height;
+                    const offsetX = (percentX - 0.5) * img.offsetWidth;
+                    const offsetY = (percentY - 0.5) * img.offsetHeight;
+                     setImageModal(prev => ({
+                      ...prev,
+                      zoomOffset: { x: -offsetX, y: -offsetY }
+                    }));
+                  }}
+                  onMouseDown={() => {
+                    if (imageModal.isZoomed) {
+                      const img = document.querySelector('.main-image.zoomed');
+                      img?.classList.add('grabbing');
+                    }
+                  }}
+                  onMouseUp={() => {
+                    const img = document.querySelector('.main-image.zoomed');
+                    img?.classList.remove('grabbing');
+                  }}
+                  onMouseLeave={() => {
+                    const img = document.querySelector('.main-image.zoomed');
+                    img?.classList.remove('grabbing');
+                  }}
+                >
+                  <img
+                    src={API_URL + images[imageModal.currentIndex]?.url}
+                    alt={images[imageModal.currentIndex]?.altText || 'Product image'}
+                    className={`main-image ${imageModal.isZoomed ? 'zoomed' : ''}`}
+                    style={{
+                        transform: imageModal.isZoomed 
+                        ? `scale(2) translate(${imageModal.zoomOffset.x}px, ${imageModal.zoomOffset.y}px)`
+                        : 'none'
+                    }}
+                  />
+                </div>
               </div>
-
-
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
+         <button 
+          onClick={handleNext}
+          className="nav-button"
+          style={{ right: '20px' }}
+        >
+          <FaArrowRight />
+        </button>
       </div>
-
-
-              <button 
-                onClick={handleNext}
-                className="nav-button"
-                style={{ right: '20px' }}
-              >
-                <FaArrowRight />
-              </button>
-            </div>
-          </div>
+       {/* Thumbnail container - now at bottom for mobile */}
+      <div className="thumbnail-container-pr">
+        {images.map((image, index) => (
+          <img
+            key={image.ID}
+            src={API_URL + image.url}
+            alt={image.altText || 'Product thumbnail'}
+            className={`thumbnail-item ${imageModal.currentIndex === index ? 'active' : ''}`}
+            onClick={() => setImageModal(prev => ({ ...prev, currentIndex: index }))}
+          />
+        ))}
+      </div>
+      </div>
+    
+               
         </Modal.Body>
       </Modal>
     </div>

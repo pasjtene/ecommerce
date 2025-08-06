@@ -301,7 +301,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 						<div className='row'>
 							{/* Main Image Display Area - Left Side */}
 							<div className='col-lg-6 col-md-12'>
-								<div className='container py-4 border border-danger'>
+								<div className='container py-4 border border-secondary'>
 									<div>
 										<button
 											onClick={() => handleAddToCart(currentProduct)}
