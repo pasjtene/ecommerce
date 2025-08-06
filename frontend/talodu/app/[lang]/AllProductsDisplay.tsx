@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import {Product} from './types';
 import axios from 'axios';
+import { useCurrency } from './contexts/CurrencyContext';
 
 import { useSearchParams } from 'next/navigation';
 
 const AllProductsDisplay  = () => {
     const searchParams = useSearchParams();
+    const { currency, currencyRate, currencySymbol, formatPrice } = useCurrency();
     const searchTerm = searchParams.get('q') || '';
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
@@ -170,7 +172,7 @@ const AllProductsDisplay  = () => {
                 </h5>
                 <p className="card-text">
                   <span className="fw-bold">
-                    {(prod.price).toFixed(0)} FCFA
+                     {formatPrice(prod.price)}
                   </span>
                 </p>
                 {prod.description && (
@@ -228,7 +230,8 @@ const AllProductsDisplay  = () => {
                 </h5>
                 <p className="card-text">
                   <span className="fw-bold">
-                    {(image.price || image.productPrice).toFixed(0)} FCFA
+                    
+                    {formatPrice(image.productPrice)}
                   </span>
                 </p>
                 {image.description && (
