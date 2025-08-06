@@ -18,7 +18,7 @@ const AllProductsDisplay  = () => {
     const router = useRouter();
     const [pagination, setPagination] = useState({
             page: 1,
-            limit: 10,
+            limit: 30,
             totalItems: 0,
             totalPages: 1
           });
