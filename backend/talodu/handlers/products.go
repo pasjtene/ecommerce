@@ -77,7 +77,8 @@ func ListProducts(db *gorm.DB) gin.HandlerFunc {
 				query = query.Order(sort)
 			}
 		} else {
-			query = query.Order("id") // Default sort
+			//query = query.Order("id") // Default sort
+			query = query.Order("created_at DESC")
 		}
 
 		//  Pagination
