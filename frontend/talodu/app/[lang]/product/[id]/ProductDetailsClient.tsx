@@ -380,7 +380,9 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 										</div>
 
 										<div className='d-grid gap-2'>
-											<button className='btn btn-primary'>Add to Cart</button>
+											<button 
+											onClick={() => handleAddToCart(currentProduct)}
+											className='btn btn-primary'>Add to Cart</button>
 											<button className='btn btn-outline-secondary'>Add to whish list</button>
 										</div>
 									</>

@@ -96,7 +96,7 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
 									alt={selectedImage.altText || 'Product image'}
 									className='main-product-image'
 								/>
-								{/* Magnifying glass lens */}
+								{/* Magnifying glass lens 
 								{isHovering && (
 									<div
 										className='magnifier-lens'
@@ -107,6 +107,7 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
 										}}
 									/>
 								)}
+									*/}
 							</>
 						) : (
 							<div className='no-image-placeholder'>
@@ -148,7 +149,7 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
 
 				{/* Right Side - Product Details + Magnified Image */}
 				<div className='col-lg-6 position-relative'>
-					{/* Magnified Image Preview (appears on hover) */}
+					{/* Magnified Image Preview (appears on hover) 
 					{isHovering && selectedImage && (
 						<div
 							className='magnified-preview'
@@ -158,6 +159,8 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
 							}}
 						/>
 					)}
+						*/}
+
 				</div>
 				{/* Product Details Card */}
 				
