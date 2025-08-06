@@ -6,6 +6,33 @@ import { useCurrency } from './contexts/CurrencyContext';
 
 import { useSearchParams } from 'next/navigation';
 
+interface Dictionary {
+	product: {
+		back_to_list: string;
+		by_shop: string;
+		no_images: string;
+		edit_as: string;
+		shop_owner: string;
+		admin: string;
+		super_admin: string;
+		price: string;
+	};
+}
+
+// Initialize with default values
+const defaultDictionary: Dictionary = {
+	product: {
+		back_to_list: 'Back to List',
+		by_shop: 'By {shopName}',
+		no_images: 'No images available',
+		edit_as: 'Edit as:',
+		shop_owner: 'Shop Owner',
+		admin: 'Admin',
+		super_admin: 'Super Admin',
+		price: 'Price',
+	},
+};
+
 const AllProductsDisplay  = () => {
     const searchParams = useSearchParams();
     const { currency, currencyRate, currencySymbol, formatPrice } = useCurrency();
@@ -14,9 +41,10 @@ const AllProductsDisplay  = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+    const [translation, setDictionary] = useState<Dictionary>(defaultDictionary);
     //const [searchTerm, setSearchTerm] = useState('');
     const [API_BASE_URL, setApibaseUrl] = useState<string | null>(null);
-    //const navigate = useNavigate();
+    const params = useParams();
     const router = useRouter();
     const [pagination, setPagination] = useState({
             page: 1,
@@ -30,6 +58,15 @@ const AllProductsDisplay  = () => {
             fetchShopProducts(1, pagination.limit, searchTerm);
         }
     }, [searchTerm]);
+
+    // Load translations
+      useEffect(() => {
+        const loadDictionary = async () => {
+          const dict = await import(`./translations/${params.lang}.json`);
+          setDictionary(dict.default);
+        };
+        loadDictionary();
+      }, [params.lang]);
 
       const fetchShopProducts = async (page = 1, limit = 30, search = ''):Promise<void> => {
             try {

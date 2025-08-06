@@ -26,6 +26,7 @@ func ListProducts(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var _ = models.Product{}
 		var products []models.Product
+		lang := strings.ToLower(strings.TrimSpace(c.Query("lang")))
 
 		//query := db.Model(&models.Product{})
 		query := db.Model(&models.Product{}).Preload("Translations").Preload("Images").Preload("Shop", func(db *gorm.DB) *gorm.DB {
@@ -88,6 +89,20 @@ func ListProducts(db *gorm.DB) gin.HandlerFunc {
 
 		// Execute query
 		query.Offset(offset).Limit(limit).Find(&products)
+
+		// Apply translations to each product if language is specified
+		if lang != "" {
+			for i := range products {
+				for _, t := range products[i].Translations {
+					if t.Language == lang {
+						products[i].Name = t.Name
+						products[i].Description = t.Description
+						break
+					}
+				}
+			}
+		}
+
 		//  Calculate total pages
 		totalPages := int(math.Ceil(float64(totalCount) / float64(limit)))
 
@@ -354,14 +369,6 @@ func CreateProduct(db *gorm.DB) gin.HandlerFunc {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Shop not found"})
 			return
 		}
-
-		/**
-		currentUserID := c.GetUint("userID")
-		if shop.OwnerID != currentUserID && !isEmployee(shop.Employees, currentUserID) {
-			c.JSON(http.StatusForbidden, gin.H{"error": "No permission to add products to this shop"})
-			return
-		}
-		*/
 
 		product := models.Product{
 			Name:        input.Name,
