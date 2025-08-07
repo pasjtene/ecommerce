@@ -1,3 +1,4 @@
+//[lang]/[lang]/[product]/[id]/ProductImageGallery.tsx
 //Copy rights Pascal J. Tene, all rights reserved
 'use client';
 import React, { useState, useRef } from 'react';
@@ -83,11 +84,12 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
 				{/* Main Image Display Area - Left Side */}
 				{/*<div className='col-lg-6'>*/}
 					{/* row col-lg-6 start above */}
+
 					<div
 						className='card mb-4 shadow-sm main-image-container'
 						ref={imageRef}
-						onMouseEnter={() => setIsHovering(true)}
-						onMouseLeave={() => setIsHovering(false)}
+						//onMouseEnter={() => setIsHovering(true)}
+						//onMouseLeave={() => setIsHovering(false)}
 						onMouseMove={handleMouseMove}>
 						{selectedImage ? (
 							<>
@@ -96,18 +98,7 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
 									alt={selectedImage.altText || 'Product image'}
 									className='main-product-image'
 								/>
-								{/* Magnifying glass lens 
-								{isHovering && (
-									<div
-										className='magnifier-lens'
-										style={{
-											left: `${hoverPosition.x}%`,
-											top: `${hoverPosition.y}%`,
-											transform: 'translate(-50%, -50%)',
-										}}
-									/>
-								)}
-									*/}
+								
 							</>
 						) : (
 							<div className='no-image-placeholder'>
