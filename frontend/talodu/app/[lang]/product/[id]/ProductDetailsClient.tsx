@@ -231,7 +231,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 								currentProduct?.shop?.name || 'Unknown Shop',
 							)}
 						</a>
-						<div className='display-4 fw-bold py-3'>{currentProduct?.name}</div>
+						<div className='display-6 fw-bold py-3'>{currentProduct?.name}</div>
 
 						{(isShopOwner(shop) || hasAnyRole(['SuperAdmin', 'Admin'])) && (
 							<div>
