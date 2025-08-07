@@ -32,6 +32,9 @@ interface Dictionary {
 		admin: string;
 		super_admin: string;
 		price: string;
+		in_stock:string;
+		available:string;
+		delivery:string;
 	};
 }
 
@@ -46,6 +49,9 @@ const defaultDictionary: Dictionary = {
 		admin: 'Admin',
 		super_admin: 'Super Admin',
 		price: 'Price',
+		in_stock:"in stock",
+		available:"available",
+		delivery:"Delivery",
 	},
 };
 
@@ -339,8 +345,8 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 									<>
 										<div className='mb-3'>
 											<h6>Product Information</h6>
-											<p className='text-muted small mb-1'>Livraison: gratuite</p>
-											<p className='small'>Expédition: 2500 fcfa</p>
+											<p className='text-muted small mb-1'>{t?.product.delivery}: Free</p>
+											
 										</div>
 
 										<hr />
@@ -350,7 +356,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 											{currentProduct.price ? (
 												<h5 className='text-primary'> {formatPrice(currentProduct.price)}</h5>
 											) : (
-												<p className='text-muted'>Le prix du produit n'est pas disponible</p>
+												<p className='text-muted'>The price of this product is not available</p>
 											)}
 										</div>
 
@@ -358,25 +364,18 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 											<h6>Stock</h6>
 											{currentProduct.stock ? (
 												<h5 className='text-primary'>
-													En Stock: {currentProduct.stock} disponible
+													{t.product.in_stock}: {currentProduct.stock} {t.product.available}
 												</h5>
 											) : (
-												<p className='text-muted'>Ce produit n'est pas disponible</p>
+												<p className='text-muted'>This product is not available</p>
 											)}
 										</div>
 
-										{currentProduct.price ? (
-											<div className='mb-3'>
-												<h6>Pricing</h6>
-												<h5 className='text-primary'> {formatPrice(currentProduct.price)}</h5>
-											</div>
-										) : (
-											<p className='text-muted'> </p>
-										)}
+										
 
 										<div className='mb-3'>
 											<h6>SKU</h6>
-											<p className='text-muted small'>{currentProduct.stock || 'Not specified'}</p>
+											<p className='text-muted small'>{currentProduct.stock || 'Not specified'}2677899</p>
 										</div>
 
 										<div className='d-grid gap-2'>

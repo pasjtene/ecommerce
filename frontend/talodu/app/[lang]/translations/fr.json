@@ -51,7 +51,10 @@
     "shop_owner": "Propriétaire du magasin",
     "admin": "Administrateur",
     "super_admin": "Super Administrateur",
-    "price":"Prix"
+    "price":"Prix",
+    "in_stock":"en stock",
+		"available":"disponible",
+    "delivery":"Livraison"
   },
   
  "product_edit": {

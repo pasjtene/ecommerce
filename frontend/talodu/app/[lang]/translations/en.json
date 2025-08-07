@@ -52,7 +52,10 @@
     "shop_owner": "Shop Owner",
     "admin": "Admin",
     "super_admin": "Super Admin",
-    "price":"Price"
+    "price":"Price",
+    "in_stock":"in stock",
+		"available":"available",
+    "delivery":"delivery"
   },
   "product_edit": {
   "edit_product": "Edit Product",
