@@ -417,6 +417,16 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
       }
     }
 
+    @media (max-width: 375px) { /* Targets iPhone 8 and similar small screens */
+  .close-button {
+    width: 36px;
+    height: 36px;
+    font-size: 1.2rem;
+    top: 15px;
+    right: 15px;
+  }
+}
+
     /* Mobile styles */
     @media (max-width: 767px) {
       .modal-content-container {
@@ -448,7 +458,18 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
           onClick={handleCloseModal}
           className="close-button"
         >
-          <FaTimes />
+          <svg 
+    width="24" 
+    height="24" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="white" 
+    strokeWidth="2" 
+    strokeLinecap="round"
+  >
+    <line x1="18" y1="6" x2="6" y2="18"></line>
+    <line x1="6" y1="6" x2="18" y2="18"></line>
+  </svg>
         </button>
         
         <button 
