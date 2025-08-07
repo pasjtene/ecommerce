@@ -379,22 +379,24 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
             background-color: rgba(0,0,0,0.7);
           }
 
-          .close-button {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background-color: rgba(0,0,0,0.5);
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 11;
-          }
+        .close-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: rgba(0,0,0,0.8) !important; /* Increased opacity */
+  border: 2px solid white !important; /* Added border */
+  color: white !important;
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 11;
+  text-shadow: 0 0 2px rgba(0,0,0,0.5); /* Helps visibility */
+  box-shadow: 0 0 5px rgba(0,0,0,0.3); /* Adds depth */
+}
 
           .close-button:hover {
             background-color: rgba(0,0,0,0.7);
