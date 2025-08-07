@@ -100,10 +100,6 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 
 	// Apply translations to product data
 	useEffect(() => {
-		console.log('The products abouts is: ', initialProduct.abouts);
-		console.log('The products is: ', initialProduct);
-
-		//console.log("The language is: ",params.lang);
 		if (initialProduct.translations) {
 			const translation = initialProduct.translations.find((t: any) => t.language === params.lang);
 			if (translation) {
@@ -157,7 +153,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 	}
 
 	const handleShopNameClick = (shop: Shop) => {
-		console.log('The shop is:', shop);
+		
 		if (shop.Slug) {
 			router.push(`/${params.lang}/shop/products/${shop.Slug}`);
 		} else {
