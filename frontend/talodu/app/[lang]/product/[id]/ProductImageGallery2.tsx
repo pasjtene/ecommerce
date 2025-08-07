@@ -417,14 +417,21 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
       }
     }
 
-    @media (max-width: 375px) { /* Targets iPhone 8 and similar small screens */
+    @media (max-width: 430px) { /* Targets iPhone 8 and iphone 15 pro and similar small screens */
   .close-button {
     width: 36px;
     height: 36px;
     font-size: 1.2rem;
     top: 15px;
     right: 15px;
+    background-color: rgba(0,0,0,0.8);
+    color: white;
   }
+    
+  .nav-button {
+        display: none;
+        }
+
 }
 
     /* Mobile styles */
@@ -434,6 +441,7 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
         flex-direction: column;
         height: 100vh;
       }
+        
       
       .thumbnail-container-pr {
         position: absolute;

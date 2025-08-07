@@ -25,7 +25,7 @@ pm2 delete talodu-next || echo "No existing PM2 process found (continuing anyway
 
 # Install dependencies and build
 echo "Installing dependencies..."
-npm install || { echo "npm install failed"; exit 1; }
+#npm install || { echo "npm install failed"; exit 1; }
 
 echo "Building Next.js application..."
 npm run nextbuild || { echo "Build failed"; exit 1; }
