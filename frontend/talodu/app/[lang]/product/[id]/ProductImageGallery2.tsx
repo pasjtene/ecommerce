@@ -6,19 +6,14 @@ import { FaArrowLeft, FaArrowRight, FaTimes } from 'react-icons/fa';
 import React, { useState, useRef } from 'react';
 import './ProductImageGallery.css'; // We'll create this CSS file
 import { ProductImage, Product } from '../../types';
-import { useRouter } from 'next/navigation';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import dynamic from 'next/dynamic';
 import LoadingSpinner from '../../../api/LoadingSpinner';
 import { useAuth, AuthProvider } from '../../contexts/AuthContextNext';
 
-const ProductAboutSection = dynamic(() => import('./ProductAboutSection'), { ssr: false });
 
 interface ImageModalState {
   show: boolean;
   currentIndex: number;
-  isZoomed: boolean; // Add this
+  isZoomed: boolean; 
   zoomOffset: { x: number; y: number };
   direction: 'left' | 'right' | null;
 }
@@ -26,12 +21,9 @@ interface ImageModalState {
 const ProductImageGallery = ({ images, product }: { images: ProductImage[]; product: Product }) => {
 	const [selectedImage, setSelectedImage] = useState<ProductImage | null>(images[0] || null);
 	const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
-	const [isHovering, setIsHovering] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 	const imageRef = useRef<HTMLDivElement>(null);
-	const [isEditing, setIsEditing] = useState(false);
 	const [currentProduct, setCurrentProduct] = useState<Product>(product);
-	const router = useRouter();
 	const [loading, setLoading] = useState(false);
 	const { user } = useAuth();
 	const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8888';
@@ -172,27 +164,7 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
 							)}
 						</div>
 					</div>
-					{/* row col-lg-6 end below */}
-			{/*	</div> */}
-
-				{/* Right Side - Product Details + Magnified Image */}
-				<div className='col-lg-6 position-relative'>
-					{/* Magnified Image Preview (appears on hover) 
-					{isHovering && selectedImage && (
-						<div
-							className='magnified-preview'
-							style={{
-								backgroundImage: `url(${API_BASE_URL + selectedImage.url})`,
-								backgroundPosition: `${hoverPosition.x}% ${hoverPosition.y}%`,
-							}}
-						/>
-					)}
-						*/}
-
-				</div>
 				{/* Product Details Card */}
-				
-				
 			</div>
 
 
@@ -499,11 +471,12 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
             const diff = touchStartX - touchEndX;
             
             if (diff > 50) {
-            // Swipe left - go to next image
-            handleNext();
-            } else if (diff < -50) {
-            // Swipe right - go to previous image
+            // Swipe left - go to previous image
             handlePrev();
+            
+            } else if (diff < -50) {
+            // Swipe right - go to next image
+            handleNext();
             }
             
     setTouchStartX(null);
