@@ -13,7 +13,7 @@ import Dropdown, {
 } from '../../../../src/components/bootstrap/Dropdown';
 import axios from 'axios';
 import { User, Role, Product, Shop } from '../../types';
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import { toast } from 'react-toastify';
 import { useAuth, AuthProvider } from '../../contexts/AuthContextNext';
 import ErrorDisplay from '../../utils/ErrorDisplayPage'
@@ -45,10 +45,7 @@ interface EditFormData2 {
 }
 
 const ShopsList = () => {
-	//const { darkModeStatus } = useDarkMode();
-
-	//const navigate = useNavigate();
-	// Available roles from your API or state
+	const params = useParams();
 	const { user,isShopOwner, hasRole, hasAnyRole } = useAuth();
     const router = useRouter();
 	const [editFormData, setEditFormData] = useState<EditFormData>({
@@ -87,7 +84,7 @@ const ShopsList = () => {
 	};
 
 	const handleCreateShop = () => {
-		//navigate(`../${demoPagesMenu.sales.subMenu.shopCreate.path}`, { state:  { user } })
+		router.push(`/${params.lang}/shop/createshop`);
 	};
 
 	// Toggle product selection
@@ -470,11 +467,11 @@ const ShopsList = () => {
 		<div className='container-fluid'>
 			
 			<button color='info' className='container-fluid' onClick={() => handleCreateShop()}>
-				Créer une boutique
+				Create my shop
 			</button>
 
 			<div>
-				<h3> Liste des boutiques</h3>
+				<h3> List of shops</h3>
 				{( hasAnyRole(['SuperAdmin', 'Admin'])) && (
 							<div className='col-md-6 col-12 col-sm-12 col-lg-6 col-xs-12 ms-2 mt-2 mb-2'>
 								
@@ -633,7 +630,7 @@ const ShopsList = () => {
 										</tbody>
 									</table>
 								) : (
-									<div>No users found in list.</div>
+									<div>You don't have any shop. You can create your shop and start selling on Talodu</div>
 								)}
 							</div>
 

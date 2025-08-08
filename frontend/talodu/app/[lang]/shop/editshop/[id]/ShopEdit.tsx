@@ -125,22 +125,16 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
 	};
 
 	const handleSave = async (newProduct: Product) => {
-		console.log('The prduct to update: ', newProduct);
-        console.log("The authenticated user is: ",user);
 		try {
             if (typeof window !== 'undefined') {
                 const access_token = localStorage.getItem('j_auth_token');
                 
                 localStorage.setItem('j_user', JSON.stringify(user));
-              
                 axios.defaults.headers.common['Authorization'] = `${access_token}`;
                 }
 			const response = await axios.post(API_BASE_URL + `/products`, newProduct);
 			//setCurrentProduct(response.data);
 			setisAddingProduct(false);
-			//handleViewShopProducts(shop)
-			//handleManageShop();
-			//console.log('Produc update result: ', response.data);
 			toast.success(`Product created savedsuccessfully`);
 			handleViewDetailsLug(response.data);
 			// Show success toast
@@ -275,18 +269,18 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
 							<div className='card'>
 								{isEditing ? (
 									<div className='card-header'>
-										<h3>Modiffication de {editedShop?.name}</h3>
+										<h3>Modiffication of {editedShop?.name}</h3>
 									</div>
 								) : (
 									<div className='card-header'>
-										<h3>Détailles de {editedShop?.name}</h3>
+										<h3>Details of {editedShop?.name}</h3>
 										<Button
 											color='info'
 											isLink
 											onClick={() => {
 												handleViewShopProducts(shop);
 											}}>
-											Voir en ligne
+											See online
 										</Button>
 									</div>
 								)}
@@ -362,7 +356,7 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
 										)}
 
 										<div className='mb-3'>
-											<label className='form-label'>Proprietaire: </label>
+											<label className='form-label'>Owner: </label>
 											<div className='row'>
 												{editedShop.owner.FirstName} {editedShop.owner.LastName}
 											</div>
@@ -374,13 +368,13 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
 												setisAddingProduct(true);
 												setIsEditing(false);
 											}}>
-											Ajouter un produit
+											Add a product
 										</Button>
 
 										{isEditing && (
 											<div className='d-flex justify-content-end gap-2'>
 												<button type='submit' className='btn btn-primary' disabled={isLoading}>
-													Enregistrer
+													Save
 												</button>
 											</div>
 										)}
@@ -392,13 +386,6 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
 				</div>
 			</Page>
 
-			{/**
-             * <div>     
-                <ShopProductDisplayComponent shop={shop} />
-            </div>
-             */}
-
-			 
 			<div>
 				<div>
 				<ShopProductListNext shop={shop} />
@@ -414,8 +401,6 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
 				<ErrorModal 
 					show={showErrorModal}
 					onClose={() => setShowErrorModal(false)}
-					//errorMessage={errorMessage}
-					//errorDetails ={errorDetails}
 					error={apiError}
 				/>
 

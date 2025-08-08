@@ -84,8 +84,6 @@ func UpdateShop(db *gorm.DB) gin.HandlerFunc {
 		// Print all request fields with detailed information
 		fmt.Println("\n=== Request Payload ===")
 		fmt.Printf("Name: %s\n", request.Name)
-		//fmt.Printf("Price: %.2f\n", request.Description)
-		//fmt.Printf("Stock: %d\n", request.Moto)
 		fmt.Printf("Description: %s\n", request.Description)
 
 		// 2. Get existing product
@@ -117,12 +115,9 @@ func UpdateShop(db *gorm.DB) gin.HandlerFunc {
 		var updatedShop models.Shop
 		if err := db.Preload("Owner").Preload("Employees").Preload("Products").
 			First(&updatedShop, shopID).Error; err != nil {
-			//c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch updated shop"})
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-
-		//c.JSON(http.StatusOK, updatedProduct)
 
 		// Return response
 		c.JSON(http.StatusOK, gin.H{
@@ -302,7 +297,6 @@ func ListShops(db *gorm.DB) gin.HandlerFunc {
 		} else {
 
 			// Get user roles safely
-			//userRolesInterface, exists := c.Get("roles")
 			roles, exists := c.Get("roles")
 			if !exists {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "User roles not found"})
