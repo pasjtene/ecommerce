@@ -139,7 +139,7 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
     return (
       <div className="container-fluid mt-4">
         
-        <h2 className="mb-4">Aucun produit trouvé pour {shop.name}</h2>
+        <h2 className="mb-4">No product found for {shop.name}</h2>
        
       </div>
     );
@@ -150,7 +150,7 @@ const ImageDisplayComponent: React.FC<ImageDisplayProps> = ({ shop }) => {
       <h2 className="mb-4"> {products.length} Products</h2>
 
  {/** Products */}
- <div className='m-4'>Tous les produits</div>
+ <div className='m-4'>All products</div>
     {(products?.length > 0) && (
     <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
         {products.map((prod) => (

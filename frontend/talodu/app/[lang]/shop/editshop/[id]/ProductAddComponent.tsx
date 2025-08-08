@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { User, Role, Product, Shop, ProductCategory, Translation } from '../../../types'
 import axios from 'axios';
-//import { API_BASE_URL } from '../auth/api'
 
 interface ShopAddProps {
   shop: Shop;
@@ -90,7 +89,7 @@ const ProductAddComponent = ({ shop, onSave, onCancel }: ShopAddProps) => {
   return (
     <div className="card">
       <div className="card-header">
-        <h3>Ajouter un produit dans ma boutique: <span className='text text-danger'>{shop.name}</span></h3>
+        <h3>Add a new product to shop: <span className='text text-danger'>{shop.name}</span></h3>
       </div>
       <div className="card-body">
         <form onSubmit={handleSubmit}>
@@ -147,32 +146,7 @@ const ProductAddComponent = ({ shop, onSave, onCancel }: ShopAddProps) => {
 
           <div className="mb-3">
             <label className="form-label">Shop: {shop.name}</label>
-            {/**
-             * <select
-              className="form-select"
-              name="shop"
-              value={editedProduct.shop?.ID}
-              onChange={(e) => {
-                console.log("The selected product is: ",editedProduct)
-                const selectedShop = shops.find(s => s.ID === Number(e.target.value));
-
-                if (selectedShop) {
-                  setEditedProduct(prev => ({
-                    ...prev,
-                    shop: selectedShop,
-                    ShopID: selectedShop.ID
-                  }));
-                }
-              }}
-              required
-            >
-              {shops.map(shop => (
-                <option key={shop.ID} value={shop.ID}>
-                  {shop.name}
-                </option>
-              ))}
-            </select>
-             */}
+           
             
           </div>
 

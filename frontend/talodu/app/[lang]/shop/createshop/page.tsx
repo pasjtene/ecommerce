@@ -1,26 +1,33 @@
 // app/[lang]/shop/createshop/page.tsx
 "use client";
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '../../contexts/AuthContextNext';
 import axios from 'axios';
-import { Form, Button, Container, Alert, Card } from 'react-bootstrap';
+import { Form, Button, Container, Alert, Card, Spinner } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStore, faInfoCircle, faQuoteLeft } from '@fortawesome/free-solid-svg-icons';
 
 const CreateShopPage = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
+  const params = useParams();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [moto, setMoto] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, authLoading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
+    setSubmitting(true);
 
     try {
       if (!user) {
@@ -28,33 +35,49 @@ const CreateShopPage = () => {
       }
 
       const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8888";
-      const response = await axios.post(`${API_BASE_URL}/shops`, {
+       const payload = {
         name,
         description,
         moto,
-        owner_id: user.id
-      }, {
+        owner_id: user.ID // Make sure this is included
+      };
+
+      const response = await axios.post(`${API_BASE_URL}/shops`, payload, {
         headers: {
-          Authorization: localStorage.getItem('j_auth_token') || ''
+          Authorization: `Bearer ${localStorage.getItem('j_auth_token') || ''}`
         }
       });
 
       if (response.data) {
-        router.push(`/shop/${response.data.id}/products`);
+        router.push(`/${params.lang}/shop/listshops`);
       }
     } catch (err: unknown) {
       console.error('Shop creation failed:', err);
       if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.error || 'Failed to create shop');
+        // Improved error message extraction
+        const errorMessage = err.response?.data?.error || 
+                            err.response?.data?.message || 
+                            'Failed to create shop';
+        setError(errorMessage);
       } else if (err instanceof Error) {
         setError(err.message);
       } else {
         setError('An unexpected error occurred');
       }
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
+
+  if (authLoading || !user) {
+    return (
+      <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </Container>
+    );
+  }
 
   return (
     <Container className="py-5">
@@ -67,7 +90,7 @@ const CreateShopPage = () => {
             </h2>
 
             {error && (
-              <Alert variant="danger" className="mb-4">
+              <Alert variant="danger" className="mb-4" onClose={() => setError('')} dismissible>
                 {error}
               </Alert>
             )}
@@ -81,7 +104,11 @@ const CreateShopPage = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
+                  minLength={3}
                 />
+                <Form.Text className="text-muted">
+                  This will be your public shop name
+                </Form.Text>
               </Form.Group>
 
               <Form.Group className="mb-3">
@@ -95,7 +122,11 @@ const CreateShopPage = () => {
                   placeholder="Tell customers about your shop"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
+                  maxLength={500}
                 />
+                <Form.Text className="text-muted">
+                  Maximum 500 characters
+                </Form.Text>
               </Form.Group>
 
               <Form.Group className="mb-4">
@@ -108,6 +139,7 @@ const CreateShopPage = () => {
                   placeholder="A short tagline for your shop"
                   value={moto}
                   onChange={(e) => setMoto(e.target.value)}
+                  maxLength={100}
                 />
               </Form.Group>
 
@@ -115,9 +147,23 @@ const CreateShopPage = () => {
                 <Button
                   variant="primary"
                   type="submit"
-                  disabled={loading}
+                  disabled={submitting || !name}
                 >
-                  {loading ? 'Creating...' : 'Create Shop'}
+                  {submitting ? (
+                    <>
+                      <Spinner
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                        className="me-2"
+                      />
+                      Creating...
+                    </>
+                  ) : (
+                    'Create Shop'
+                  )}
                 </Button>
               </div>
             </Form>

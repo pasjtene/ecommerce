@@ -209,13 +209,13 @@ import { useAuth, AuthProvider } from '../../../contexts/AuthContextNext';
             
             {isShopOwner(shop) &&(
                 <div>
-                    <span>Vous etes propriétaire de cette boutique</span> 
+                    <span>You are the owner of this shop</span> 
                 <div className='col-md-4 col-6 mt-4'>
                 <Button
                         color='primary'
                         isLight
                         onClick={() => {setisAddingProduct(true);}}>
-                        Ajouter un Product 
+                        Add a new product
                     </Button>
                 </div>
                 </div>
@@ -244,7 +244,7 @@ import { useAuth, AuthProvider } from '../../../contexts/AuthContextNext';
                         //className="btn btn-warning me-2 mb-2"
                         //isLight
                         onClick={() => {handleManageShop();}}>
-                        Gerer ma boutique 
+                        Manage my shop
                     </button>
                 </div>
 
@@ -257,7 +257,7 @@ import { useAuth, AuthProvider } from '../../../contexts/AuthContextNext';
                         color='danger'
                         isLight
                         onClick={() => {handleCreateShop();}}>
-                        Créer ma boutique
+                        Create a new shop
                     </Button>
             </div>
             )}

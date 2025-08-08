@@ -214,7 +214,7 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
 							setisAddingProduct(true);
 							setIsEditing(false);
 						}}>
-						Ajouter un produit
+						Add a product
 					</Button>
 				</div>
 			</div>
@@ -319,7 +319,7 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
 													/>
 												</div>
 											) : (
-												<div>Slogan: {editedShop?.moto}</div>
+												<div>Moto: {editedShop?.moto}</div>
 											)}
 
 											{isEditing ? (
@@ -334,7 +334,7 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
 													/>
 												</div>
 											) : (
-												<div>Ville: {editedShop?.City}</div>
+												<div>City: {editedShop?.City}</div>
 											)}
 										</div>
 

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -82,18 +83,6 @@ type UpdateUserRequest struct {
 	RoleIDs   []uint `json:"roles" binding:"required,min=1"`
 }
 
-type Shop struct {
-	gorm.Model
-	Name        string    `json:"name" gorm:"unique"`
-	Slug        string    `gorm:"unique"`
-	Description string    `json:"description"`
-	Moto        string    `json:"moto" binding:"max=100"`
-	OwnerID     uint      `json:"owner_id"`
-	Owner       User      `json:"owner" gorm:"foreignKey:OwnerID"`
-	Employees   []User    `json:"employees" gorm:"many2many:shop_employees;"`
-	Products    []Product `json:"products" gorm:"foreignKey:ShopID"`
-}
-
 type Category struct {
 	gorm.Model
 	Name        string    `json:"name" gorm:"unique"`
@@ -106,4 +95,22 @@ type ProductImage struct {
 	ProductID uint   `json:"product_id"`
 	URL       string `json:"url" gorm:"size:500"`
 	AltText   string `json:"alt_text" gorm:"size:100"`
+}
+
+type Shop struct {
+	gorm.Model
+	Name        string    `json:"name" gorm:"unique"`
+	Slug        string    `gorm:"unique"`
+	Description string    `json:"description"`
+	Moto        string    `json:"moto" binding:"max=100"`
+	OwnerID     uint      `json:"owner_id"`
+	Owner       User      `json:"owner" gorm:"foreignKey:OwnerID"`
+	Employees   []User    `json:"employees" gorm:"many2many:shop_employees;"`
+	Products    []Product `json:"products" gorm:"foreignKey:ShopID"`
+}
+
+// Generate slug after the record is created
+func (shop *Shop) AfterCreate(tx *gorm.DB) (err error) {
+	shop.Slug = generateSlug(shop.Name) + "-" + fmt.Sprint(shop.ID)
+	return tx.Save(shop).Error
 }
