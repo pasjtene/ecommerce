@@ -541,7 +541,7 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
 
 							{/* Image Slider */}
 							<div
-								className='image-slider'
+								className='image-slider border border-warning'
 								onTouchStart={(e) => {
 									// Only set touch start if not zoomed or not dragging
 									if (!imageModal.isZoomed || !isDragging) {
