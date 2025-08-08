@@ -29,6 +29,8 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
 	const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8888';
     const [touchStartX, setTouchStartX] = useState<number | null>(null);
     const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
+    const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
+    const [isDragging, setIsDragging] = useState(false);
 
 	const [imageModal, setImageModal] = useState<ImageModalState>({
     show: false,
@@ -37,6 +39,42 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
     zoomOffset: { x: 0, y: 0 },
     direction: null
   });
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+  if (!imageModal.isZoomed) return;
+  
+  setTouchStart({
+    x: e.touches[0].clientX,
+    y: e.touches[0].clientY
+  });
+  setIsDragging(true);
+};
+
+const handleTouchMove = (e: React.TouchEvent) => {
+  if (!imageModal.isZoomed || !isDragging) return;
+  e.preventDefault();
+  
+  const touch = e.touches[0];
+  const deltaX = touch.clientX - touchStart.x;
+  const deltaY = touch.clientY - touchStart.y;
+  
+  setImageModal(prev => ({
+    ...prev,
+    zoomOffset: {
+      x: prev.zoomOffset.x + deltaX,
+      y: prev.zoomOffset.y + deltaY
+    }
+  }));
+
+   setTouchStart({
+    x: touch.clientX,
+    y: touch.clientY
+  });
+};
+
+const handleTouchEnd = () => {
+  setIsDragging(false);
+};
 
   const handleImageClick = (index: number) => {
     setImageModal({
@@ -294,8 +332,9 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
                   .main-image.zoomed {
                  transform: scale(2);
                   cursor: grab;
+                  touch-action: none;
                 }
-                  .main-image.zoomed.grabbing {
+                  .main-image.zoomed.grabbing, .main-image.zoomed:active {
                     cursor: grabbing;
                     transition: none;
                   }
@@ -443,6 +482,13 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
         flex-direction: column;
         height: 100vh;
       }
+        .main-image-wrapper {
+    cursor: pointer;
+  }
+  
+  .main-image.zoomed {
+    cursor: pointer;
+  }
         
       
       .thumbnail-container-pr {
@@ -573,6 +619,9 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
                     const img = document.querySelector('.main-image.zoomed');
                     img?.classList.remove('grabbing');
                   }}
+                  onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
                 >
                     <img
                                         src={API_URL + images[imageModal.currentIndex]?.url}
