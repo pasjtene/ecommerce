@@ -422,23 +422,28 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
 					}
 
 					.close-button {
-						position: absolute;
-						top: 20px;
-						right: 20px;
-						background-color: rgba(0, 0, 0, 0.8) !important; /* Increased opacity */
-						border: 2px solid white !important; /* Added border */
-						color: white !important;
-						font-size: 1.5rem;
-						width: 40px;
-						height: 40px;
-						border-radius: 50%;
-						display: flex;
-						align-items: center;
-						justify-content: center;
-						z-index: 11;
-						text-shadow: 0 0 2px rgba(0, 0, 0, 0.5); /* Helps visibility */
-						box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Adds depth */
-					}
+                        position: absolute;
+                        top: 20px;
+                        right: 20px;
+                        width: 44px;  /* Increased from 40px for better touch target */
+                        height: 44px; 
+                        background-color: rgba(0, 0, 0, 0.7) !important;
+                        border: 2px solid white !important;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        z-index: 11;
+                        cursor: pointer;
+                        padding: 0;
+                        margin: 0;
+                        color: white; /* Ensures SVG inherits this color */
+                        }
+                        .close-button svg {
+                        width: 20px;  /* Slightly reduced from 24px to fit better */
+                        height: 20px; 
+                        filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5)); /* Adds contrast */
+                        }
 
 					.close-button:hover {
 						background-color: rgba(0, 0, 0, 0.7);
@@ -464,14 +469,18 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
 					@media (max-width: 430px) {
 						/* Targets iPhone 8 and iphone 15 pro and similar small screens */
 						.close-button {
-							width: 36px;
-							height: 36px;
-							font-size: 1.2rem;
-							top: 15px;
-							right: 15px;
-							background-color: rgba(0, 0, 0, 0.8);
-							color: white;
-						}
+                            top: 10px;
+                            right: 10px;
+                            width: 40px;
+                            height: 40px;
+                            background-color: rgba(0, 0, 0, 0.8) !important;
+                        }
+                        
+                        .close-button svg {
+                            width: 18px;
+                            height: 18px;
+                            stroke-width: 2.5; /* Slightly thicker for small screens */
+                        }
 
 						.nav-button {
 							display: none;
@@ -511,17 +520,19 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
 						{/* Main image area */}
 						<div className='main-image-container'>
 							<button onClick={handleCloseModal} className='close-button'>
-								<svg
-									width='24'
-									height='24'
-									viewBox='0 0 24 24'
-									fill='none'
-									stroke='white'
-									strokeWidth='2'
-									strokeLinecap='round'>
-									<line x1='18' y1='6' x2='6' y2='18'></line>
-									<line x1='6' y1='6' x2='18' y2='18'></line>
-								</svg>
+								 <svg 
+                                    width="24" 
+                                    height="24" 
+                                    viewBox="0 0 24 24"
+                                    fill="none" 
+                                    stroke="currentColor" 
+                                    strokeWidth="3"  // Increased from 2 to 3
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    >
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg>
 							</button>
 
 							<button onClick={handlePrev} className='nav-button' style={{ left: '10px' }}>
