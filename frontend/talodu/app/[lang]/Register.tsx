@@ -1,10 +1,12 @@
+// app/[lang]/Register.tsx
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faUser, faLock, faEnvelope, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import { useAuth} from './contexts/AuthContextNext';
+import { useAuth } from './contexts/AuthContextNext';
+import axios from 'axios';
 
 interface RegisterProps {
   show: boolean;
@@ -17,15 +19,38 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  //const { register } = useAuth();
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    setLoading(true);
+
     try {
-      //await register(firstName, lastName, email, password);
-      onClose();
-    } catch (error) {
-      console.error('Registration failed:', error);
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8888";
+      const response = await axios.post(`${API_BASE_URL}/register`, {
+        first_name: firstName,
+        last_name: lastName,
+        Email: email,
+        Password: password,
+        Roles: ['Visitor'] // Default role for new registrations
+      });
+
+      // Automatically log in the user after successful registration
+      if (response.data.user) {
+        await login(email, password);
+        onClose();
+      }
+    } catch (err) {
+      console.error('Registration failed:', err);
+      if (axios.isAxiosError(err)) {
+      // Handle Axios errors (response errors)
+      setError(err.response?.data?.error || 'Registration failed. Please try again.');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -60,6 +85,12 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
         </Button>
 
         <h4 className="mb-4 text-center">Create Your Account</h4>
+        
+        {error && (
+          <div className="alert alert-danger" role="alert">
+            {error}
+          </div>
+        )}
         
         <Form onSubmit={handleSubmit}>
           <div className="row mb-3">
@@ -123,16 +154,21 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                minLength={6}
               />
             </div>
+            <Form.Text className="text-muted">
+              Password must be at least 6 characters long
+            </Form.Text>
           </Form.Group>
 
           <Button 
             variant="primary" 
             type="submit" 
             className="w-100 mb-3"
+            disabled={loading}
           >
-            Register
+            {loading ? 'Registering...' : 'Register'}
           </Button>
 
           <div className="text-center">
@@ -141,6 +177,7 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
               variant="outline-secondary" 
               onClick={onSwitchToLogin}
               className="w-100"
+              disabled={loading}
             >
               <FontAwesomeIcon icon={faSignInAlt} className="me-2" />
               Login
