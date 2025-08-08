@@ -377,18 +377,7 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
 						display: flex;
 						flex-direction: row;
 					}
-					.main-image-container1 {
-						flex: 1;
-						display: flex;
-						align-items: center;
-						justify-content: center;
-
-						position: relative;
-						height: 90vh;
-						margin: 30px;
-
-						overflow: hidden;
-					}
+					
 					.main-image-container {
 						flex: 1;
 						display: flex;
@@ -398,6 +387,8 @@ const ProductImageGallery = ({ images, product }: { images: ProductImage[]; prod
 						height: calc(100vh - 120px); /* Adjust based on your needs */
 						overflow: hidden;
 						touch-action: pan-y; /* Enable touch scrolling */
+                        padding-top: 20px; 
+                        padding-bottom: 20px;
 					}
 
 					.nav-button {
