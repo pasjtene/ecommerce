@@ -8,6 +8,8 @@ interface AppError {
   message: string;
   details?: string;
   code?: string;
+  response?: string;
+  error?: string;
 }
 
 interface ErrorModalProps {
@@ -31,7 +33,32 @@ const ErrorModal: React.FC<ErrorModalProps> = ({
       </Modal.Header>
       <Modal.Body>
        <div className="alert alert-danger">
-          <strong>{error?.message || 'An unknown error occurred'}</strong>
+          <strong>{error?.message}</strong>
+          
+           
+            {!error?.message && (
+            <div className="mt-2 text-muted">
+              <strong>{error?.error} <div>Contact an admin if you need help</div></strong>
+              {error?.code && (
+                <div className="mt-1">
+                  <small>Contact an admin if you need help </small>
+                </div>
+              )}
+            </div>
+          )}
+          {(!error?.message && !error?.error) && (
+            <div className="mt-2 text-muted">
+              <strong>{error?.error}</strong>
+              {error?.code && (
+                <div className="mt-1">
+                  <small>An unknown error occurred </small>
+                </div>
+              )}
+            </div>
+          )}
+           
+           
+         
           {error?.details && (
             <div className="mt-2 text-muted">
               <small>{error.details}</small>

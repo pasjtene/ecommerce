@@ -5,7 +5,6 @@ import Page from '../../../../../src/layout/Page/Page';
 import Card, { CardBody } from '../../../../../src/components/bootstrap/Card';
 
 import Button from '../../../../../src/components/bootstrap/Button';
-//import useDarkMode from '../../../hooks/useDarkMode';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { User, Role, Shop, ShopUser, Product } from '../../../types';
@@ -25,6 +24,7 @@ interface AppError {
   message: string;
   details?: string;
   code?: string;
+  error?: string;
 }
 
 interface ShopeditProps {
@@ -58,29 +58,11 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
   const handleDeleteError = (error: AppError) => {
 	
 	setApiError(error);
+
     setShowErrorModal(true);
   };
 
-	const toggleDropdown = (userId: number) => {
-		setOpenDropdownId((prevId) => (prevId === userId ? null : userId));
-	};
-
-	const handleConfirmDelete = () => {
-
-	}
-
-	const useDropdownActions = () => {
-		const handleActionClick = (e: React.MouseEvent<HTMLDivElement>, action: () => void) => {
-			e.stopPropagation();
-			action();
-			setOpenDropdownId(null); // Close dropdown after action
-		};
-
-		return { handleActionClick };
-	};
-
-	//{
-		
+	
              useEffect(() => {
                const stateShop = shop;
               if (stateShop) {
@@ -92,7 +74,7 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
               }
             }, []);
                
-	//}
+	
 
 	// Handle input changes
 	const handleChange = (
@@ -139,10 +121,20 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
 			handleViewDetailsLug(response.data);
 			// Show success toast
 		} catch (error) {
+			
+
 			if (axios.isAxiosError(error)) {
-				// The error has a response from the server
+				setApiError(error);
+	
+    			setShowErrorModal(true);
+				console.log("The save product error is", error)
+				
 				if (error.response) {
-					toast.error(`Failed to create product: ${error.response.data.error || error.message}`);
+					console.log("The error response is: ",error.response.data)
+					
+					setApiError(error.response.data);
+	
+    			setShowErrorModal(true);
 				}
 			}
 		}
