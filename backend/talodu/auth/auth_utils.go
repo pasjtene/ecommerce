@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -419,6 +420,17 @@ func RegisterUser(db *gorm.DB) gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
+
+		// Check if email already exists
+		var existingUser User
+		if err := db.Where("email = ?", input.Email).First(&existingUser).Error; err == nil {
+			c.JSON(http.StatusConflict, gin.H{
+				"error": "Email already registered",
+				"code":  "EMAIL_EXISTS",
+			})
+			return
+		}
+
 		// Check if assigning restricted roles (e.g., SuperAdmin)
 		currentUserRoles, _ := c.Get("roles")
 		for _, roleName := range input.Roles {
@@ -474,6 +486,26 @@ func RegisterUser(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// Pre-check if email exists
+func CheckEmail(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		email := c.Query("email")
+		if email == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Email parameter is required"})
+			return
+		}
+
+		var user User
+		if err := db.Where("email = ?", email).First(&user).Error; err == nil {
+			c.JSON(http.StatusOK, gin.H{"exists": true})
+		} else if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusOK, gin.H{"exists": false})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error checking email"})
+		}
+	}
+}
+
 func CreateUser(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		type RegisterInput struct {
@@ -484,7 +516,7 @@ func CreateUser(db *gorm.DB) gin.HandlerFunc {
 			LastName  string `json:"last_name" binding:"required"`
 			//Password  string `json:"password" binding:"required"`
 			Password string
-			//Roles     []string `json:"roles"` // e.g., ["Admin", "Sales"]
+
 			Roles []int `json:"roles"` // e.g., ["Admin", "Sales"]
 		}
 

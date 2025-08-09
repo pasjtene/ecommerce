@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"talodu/models"
@@ -22,37 +21,6 @@ type UserResponse struct {
 }
 
 // PUT - Update /users/:id
-func UpdateUser2(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		var user User
-		id := c.Param("id")
-
-		if err := db.First(&user, id).Error; err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-			return
-		}
-
-		fmt.Println("Received user", user)
-
-		var input struct {
-			gorm.Model
-			Username  string `gorm:"unique"`
-			Email     string `gorm:"unique"`
-			FirstName string
-			LastName  string
-			Roles     []Role `gorm:"many2many:user_roles;"`
-		}
-
-		if err := c.ShouldBindJSON(&input); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-
-		db.Model(&user).Updates(input)
-		c.JSON(http.StatusOK, user)
-	}
-}
-
 func UpdateUser(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Get user ID from URL
@@ -126,7 +94,7 @@ func UpdateUser(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		frontendUser := user.ToFrontend()
-		
+
 		c.JSON(http.StatusOK, gin.H{
 			"message": "User updated successfully",
 			"user":    frontendUser,

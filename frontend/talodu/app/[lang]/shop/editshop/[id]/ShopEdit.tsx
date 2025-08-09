@@ -49,9 +49,6 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
 	const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
 
 	const [showConfirmModal, setShowConfirmModal] = useState(false);
-  
-  //const [errorMessage, setErrorMessage] = useState('');
-  //const [errorDetails, setErrorDetails ] = useState('');
   const [apiError, setApiError] = useState<AppError>();
   const [showErrorModal, setShowErrorModal] = useState(false);
 
@@ -395,8 +392,6 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
 					onClose={() => setShowErrorModal(false)}
 					error={apiError}
 				/>
-
-				
 			</div>
 
 		</PageWrapper>

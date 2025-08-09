@@ -1,5 +1,6 @@
 // app/[lang]/Register.tsx
-import React, { useState } from 'react';
+'use client'
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faUser, faLock, faEnvelope, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
@@ -21,7 +22,37 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, hideLogin } = useAuth();
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8888";
+
+  // Pre-check if email is registered
+useEffect(() => {
+  const delayDebounceFn = setTimeout(async () => {
+    if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      const isAvailable = await checkEmailAvailability(email);
+      if (!isAvailable) {
+        setError('Email already registered');
+      } else if (error === 'Email already registered') {
+        setError('');
+      }
+    }
+  }, 500);
+
+  return () => clearTimeout(delayDebounceFn);
+}, [email]);
+
+const checkEmailAvailability = async (email: string): Promise<boolean> => {
+  try {
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8888";
+    const response = await axios.get(`${API_BASE_URL}/auth/check-email`, {
+      params: { email }
+    });
+    return !response.data.exists;
+  } catch (err) {
+    console.error('Error checking email:', err);
+    return true; // Assume available if check fails
+  }
+};
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +60,7 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
     setLoading(true);
 
     try {
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8888";
+      
       const response = await axios.post(`${API_BASE_URL}/register`, {
         first_name: firstName,
         last_name: lastName,
@@ -41,14 +72,23 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
       // Automatically log in the user after successful registration
       if (response.data.user) {
         await login(email, password);
+        hideLogin();
         onClose();
       }
     } catch (err) {
-      console.error('Registration failed:', err);
-      if (axios.isAxiosError(err)) {
-      // Handle Axios errors (response errors)
-      setError(err.response?.data?.error || 'Registration failed. Please try again.');
+       console.error('Registration failed:', err);
+    if (axios.isAxiosError(err)) {
+      // Handle specific error cases
+      if (err.response?.data?.code === 'EMAIL_EXISTS') {
+        setError('This email is already registered. Please use a different email or login.');
+      } else {
+        setError(err.response?.data?.error || 'Registration failed. Please try again.');
       }
+    } else if (err instanceof Error) {
+      setError(err.message);
+    } else {
+      setError('An unexpected error occurred');
+    }
     } finally {
       setLoading(false);
     }

@@ -216,6 +216,15 @@ func main() {
 		users.PUT("/:id", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.UpdateUser(s.DB))
 	}
 
+	authRoutes := r.Group("/auth")
+	{
+		authRoutes.POST("/register", auth.RegisterUser(s.DB))
+		authRoutes.POST("/login", auth.Login(s.DB))
+		authRoutes.POST("/logout", auth.AuthMiddleware(), auth.Logout(s.DB))
+		authRoutes.POST("/refresh", auth.RefreshToken(s.DB))
+		authRoutes.GET("/check-email", auth.CheckEmail(s.DB))
+	}
+
 	// Routes
 	// r.GET("/products", listProducts(db))         // List with search/sort/pagination
 
