@@ -13,6 +13,7 @@ import ProductAddComponent  from './ProductAddComponent'
 import { useAuth, AuthProvider } from '../../../contexts/AuthContextNext';
 import ConfirmDelete from '../../../utils/ConfirmDelete';
 import ErrorModal from '../../../utils/ErrorModal';
+import ErrorDisplay from '../../../utils/ErrorDisplayPage'
 
 import ShopProductListNext from '../../../shop/products/[id]/ShopProductListNext';
 
@@ -51,6 +52,8 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
 	const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [apiError, setApiError] = useState<AppError>();
   const [showErrorModal, setShowErrorModal] = useState(false);
+  
+	const jwtToken = localStorage.getItem('j_auth_token'); 
 
   const handleDeleteError = (error: AppError) => {
 	
@@ -70,6 +73,16 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
                   return;
               }
             }, []);
+			
+			useEffect(() => {
+					if (!jwtToken || !user) {
+						
+						setError('You must be authenticated to view this page');
+						setLoading(false);
+					}
+				}, [jwtToken, loading]); 
+
+
                
 	
 
@@ -168,12 +181,12 @@ const ShopEdit = ({ shop }: ShopeditProps) => {
 			</div>
 		);
 
-	if (error) {
-		return <div>Error loading users: {error}</div>;
-	}
 
-	if (!user) {
-		return <div>Vous devez etre connecté pour voir cette page</div>;
+	if (error) {
+	  return <ErrorDisplay 
+			   error={error} 
+			   title="Failed to load shops" 
+			 />;
 	}
 
 	return (

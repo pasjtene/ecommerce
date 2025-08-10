@@ -102,7 +102,7 @@ const HeaderNext = () => {
 
       const logout = () => {
         contextLogout();
-        setShowAuthModal('login');
+        //setShowAuthModal('login');
         setShowDropdown(false);
     };
 
