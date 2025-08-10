@@ -2,10 +2,19 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faUser, faLock, faEnvelope, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
+import { 
+  faTimes, 
+  faUser, 
+  faLock, 
+  faEnvelope, 
+  faSignInAlt,
+  faCheck,
+  faTimes as faXmark
+} from '@fortawesome/free-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
+import ProgressBar from 'react-bootstrap/ProgressBar';
 import { useAuth } from './contexts/AuthContextNext';
 import axios from 'axios';
 
@@ -14,6 +23,44 @@ interface RegisterProps {
   onClose: () => void;
   onSwitchToLogin: () => void;
 }
+
+// Password strength checker
+const checkPasswordStrength = (password: string) => {
+  let strength = 0;
+  const requirements = {
+    length: false,
+    hasUpperCase: false,
+    hasLowerCase: false,
+    hasNumber: false,
+    hasSpecialChar: false
+  };
+
+  if (password.length >= 8) {
+    strength += 1;
+    requirements.length = true;
+  }
+  if (/[A-Z]/.test(password)) {
+    strength += 1;
+    requirements.hasUpperCase = true;
+  }
+  if (/[a-z]/.test(password)) {
+    strength += 1;
+    requirements.hasLowerCase = true;
+  }
+  if (/[0-9]/.test(password)) {
+    strength += 1;
+    requirements.hasNumber = true;
+  }
+  if (/[^A-Za-z0-9]/.test(password)) {
+    strength += 1;
+    requirements.hasSpecialChar = true;
+  }
+
+  return {
+    strength: Math.min(strength, 5), // Max strength of 5
+    requirements
+  };
+};
 
 const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) => {
   const [firstName, setFirstName] = useState('');
@@ -24,73 +71,118 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
   const [loading, setLoading] = useState(false);
   const { login, hideLogin } = useAuth();
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8888";
+  
+  // Password strength state
+  const [passwordStrength, setPasswordStrength] = useState({
+    strength: 0,
+    requirements: {
+      length: false,
+      hasUpperCase: false,
+      hasLowerCase: false,
+      hasNumber: false,
+      hasSpecialChar: false
+    }
+  });
+
+  // Update password strength on change
+  useEffect(() => {
+    setPasswordStrength(checkPasswordStrength(password));
+  }, [password]);
 
   // Pre-check if email is registered
-useEffect(() => {
-  const delayDebounceFn = setTimeout(async () => {
-    if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      const isAvailable = await checkEmailAvailability(email);
-      if (!isAvailable) {
-        setError('Email already registered');
-      } else if (error === 'Email already registered') {
-        setError('');
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+      if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        const isAvailable = await checkEmailAvailability(email);
+        if (!isAvailable) {
+          setError('Email already registered');
+        } else if (error === 'Email already registered') {
+          setError('');
+        }
       }
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [email]);
+
+  const checkEmailAvailability = async (email: string): Promise<boolean> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/auth/check-email`, {
+        params: { email }
+      });
+      return !response.data.exists;
+    } catch (err) {
+      console.error('Error checking email:', err);
+      return true; // Assume available if check fails
     }
-  }, 500);
-
-  return () => clearTimeout(delayDebounceFn);
-}, [email]);
-
-const checkEmailAvailability = async (email: string): Promise<boolean> => {
-  try {
-    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8888";
-    const response = await axios.get(`${API_BASE_URL}/auth/check-email`, {
-      params: { email }
-    });
-    return !response.data.exists;
-  } catch (err) {
-    console.error('Error checking email:', err);
-    return true; // Assume available if check fails
-  }
-};
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
+    
+    // Check password strength before submitting
+    if (passwordStrength.strength < 3) {
+      setError('Please choose a stronger password');
+      return;
+    }
 
+    setLoading(true);
     try {
-      
       const response = await axios.post(`${API_BASE_URL}/register`, {
         first_name: firstName,
         last_name: lastName,
-        Email: email,
-        Password: password,
-        Roles: ['Visitor'] // Default role for new registrations
+        email: email,
+        password: password,
+        roles: ['Visitor']
       });
 
-      // Automatically log in the user after successful registration
       if (response.data.user) {
         await login(email, password);
         hideLogin();
         onClose();
       }
     } catch (err) {
-       console.error('Registration failed:', err);
-    if (axios.isAxiosError(err)) {
-      // Handle specific error cases
-      if (err.response?.data?.code === 'EMAIL_EXISTS') {
-        setError('This email is already registered. Please use a different email or login.');
+      console.error('Registration failed:', err);
+      if (axios.isAxiosError(err)) {
+        if (err.response?.data?.code === 'EMAIL_EXISTS') {
+          setError('This email is already registered. Please use a different email or login.');
+        } else {
+          setError(err.response?.data?.error || 'Registration failed. Please try again.');
+        }
+      } else if (err instanceof Error) {
+        setError(err.message);
       } else {
-        setError(err.response?.data?.error || 'Registration failed. Please try again.');
+        setError('An unexpected error occurred');
       }
-    } else if (err instanceof Error) {
-      setError(err.message);
-    } else {
-      setError('An unexpected error occurred');
-    }
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Password strength name
+  const getStrengthName = (strength: number): string => {
+  switch (strength) {
+    case 0: return 'Very Weak';
+    case 1: return 'Weak';
+    case 2: return 'Fair';
+    case 3: return 'Good';
+    case 4: return 'Strong';
+    case 5: return 'Very Strong';
+    default: return 'Weak';
+  }
+};
+
+  // Password strength colors
+  const getStrengthColor = () => {
+    switch (passwordStrength.strength) {
+      case 0: return 'danger';
+      case 1: return 'danger';
+      case 2: return 'warning';
+      case 3: return 'info';
+      case 4: return 'success';
+      case 5: return 'success';
+      default: return 'danger';
     }
   };
 
@@ -194,19 +286,67 @@ const checkEmailAvailability = async (email: string): Promise<boolean> => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={6}
+                minLength={8}
               />
             </div>
-            <Form.Text className="text-muted">
-              Password must be at least 6 characters long
-            </Form.Text>
+            
+            {/* Password Strength Meter */}
+            {password && (
+              <div className="mt-2">
+                <ProgressBar 
+                  now={passwordStrength.strength * 20} 
+                  variant={getStrengthColor()}
+                  className="mb-2"
+                />
+                <div className="password-requirements">
+                  <small>Password Requirements:</small>
+                  <small>
+                    <span className={`fw-bold text-${getStrengthColor()}`}>
+                      {getStrengthName(passwordStrength.strength)}
+                    </span> 
+                  </small>
+                  <ul className="list-unstyled">
+                    <li>
+                      <FontAwesomeIcon 
+                        icon={passwordStrength.requirements.length ? faCheck : faXmark} 
+                        className={passwordStrength.requirements.length ? "text-success" : "text-danger"} 
+                      /> At least 8 characters
+                    </li>
+                    <li>
+                      <FontAwesomeIcon 
+                        icon={passwordStrength.requirements.hasUpperCase ? faCheck : faXmark} 
+                        className={passwordStrength.requirements.hasUpperCase ? "text-success" : "text-danger"} 
+                      /> Uppercase letter
+                    </li>
+                    <li>
+                      <FontAwesomeIcon 
+                        icon={passwordStrength.requirements.hasLowerCase ? faCheck : faXmark} 
+                        className={passwordStrength.requirements.hasLowerCase ? "text-success" : "text-danger"} 
+                      /> Lowercase letter
+                    </li>
+                    <li>
+                      <FontAwesomeIcon 
+                        icon={passwordStrength.requirements.hasNumber ? faCheck : faXmark} 
+                        className={passwordStrength.requirements.hasNumber ? "text-success" : "text-danger"} 
+                      /> Number
+                    </li>
+                    <li>
+                      <FontAwesomeIcon 
+                        icon={passwordStrength.requirements.hasSpecialChar ? faCheck : faXmark} 
+                        className={passwordStrength.requirements.hasSpecialChar ? "text-success" : "text-danger"} 
+                      /> Special character
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            )}
           </Form.Group>
 
           <Button 
             variant="primary" 
             type="submit" 
             className="w-100 mb-3"
-            disabled={loading}
+            disabled={loading || passwordStrength.strength < 3}
           >
             {loading ? 'Registering...' : 'Register'}
           </Button>
