@@ -9,6 +9,7 @@ import (
 	"strings"
 	"talodu/models"
 	"time"
+	"unicode"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -403,6 +404,60 @@ func CheckPassword(password, hash string) bool {
 	return err == nil
 }
 
+func checkPasswordStrength(password string) error {
+	var (
+		hasMinLen  = false
+		hasUpper   = false
+		hasLower   = false
+		hasNumber  = false
+		hasSpecial = false
+	)
+
+	// First check minimum length. The password must have at least 8 char in all cases
+	if len(password) < 8 {
+		return errors.New("password must be at least 8 characters long")
+	}
+
+	if len(password) >= 8 {
+		hasMinLen = true
+	}
+	for _, char := range password {
+		switch {
+		case unicode.IsUpper(char):
+			hasUpper = true
+		case unicode.IsLower(char):
+			hasLower = true
+		case unicode.IsNumber(char):
+			hasNumber = true
+		case strings.ContainsRune("!@#$%^&*()-_=+{};:,<.>/?", char):
+			hasSpecial = true
+		}
+	}
+	// Require at least 3 of 5 criteria
+	criteriaMet := 0
+	if hasMinLen {
+		criteriaMet++
+	}
+	if hasUpper {
+		criteriaMet++
+	}
+	if hasLower {
+		criteriaMet++
+	}
+	if hasNumber {
+		criteriaMet++
+	}
+	if hasSpecial {
+		criteriaMet++
+	}
+
+	if criteriaMet < 3 {
+		return errors.New("password does not meet strength requirements")
+	}
+
+	return nil
+}
+
 func RegisterUser(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		type RegisterInput struct {
@@ -418,6 +473,25 @@ func RegisterUser(db *gorm.DB) gin.HandlerFunc {
 		var input RegisterInput
 		if err := c.ShouldBindJSON(&input); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		// Check password strength
+		if err := checkPasswordStrength(input.Password); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+				"code":  "WEAK_PASSWORD",
+				"details": map[string]interface{}{
+					"minimum_length": 8,
+					"requirements": []string{
+						"At least one uppercase letter (A-Z)",
+						"At least one lowercase letter (a-z)",
+						"At least one number (0-9)",
+						"At least one special character (!@#$%^&*)",
+					},
+					"required_meet": 3, // Must meet 3 of the above
+				},
+			})
 			return
 		}
 

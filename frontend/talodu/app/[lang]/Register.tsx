@@ -18,6 +18,8 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 import { useAuth } from './contexts/AuthContextNext';
 import axios from 'axios';
 
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+
 interface RegisterProps {
   show: boolean;
   onClose: () => void;
@@ -71,6 +73,7 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
   const [loading, setLoading] = useState(false);
   const { login, hideLogin } = useAuth();
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8888";
+  const [showPassword, setShowPassword] = React.useState(false);
   
   // Password strength state
   const [passwordStrength, setPasswordStrength] = useState({
@@ -281,13 +284,21 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
                 <FontAwesomeIcon icon={faLock} />
               </span>
               <Form.Control
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={8}
               />
+              <span className="input-group-text text-success"
+                onMouseLeave={() => setShowPassword(false)} // In case cursor leaves while holding
+                onTouchStart={() => setShowPassword(true)}
+                onTouchEnd={() => setShowPassword(false)}
+                onMouseUp={()=>{setShowPassword(false)}}
+                onMouseDown={()=>{setShowPassword(true)}}>
+                  <FontAwesomeIcon icon={faEye} />
+                </span>
             </div>
             
             {/* Password Strength Meter */}
