@@ -297,10 +297,10 @@ func Login(db *gorm.DB) gin.HandlerFunc {
 
 		// Check if user email is verified
 		if !user.IsVerified {
-			c.JSON(http.StatusForbidden, gin.H{
-				"error": "Email not verified",
-				"code":  "EMAIL_NOT_VERIFIED",
-			})
+			//c.JSON(http.StatusForbidden, gin.H{ "error": "Email not verified", "code":  "EMAIL_NOT_VERIFIED",})
+
+			log.Printf("User not verified: %s", user.Email)
+
 			//return
 		}
 
