@@ -1,10 +1,8 @@
-//app/AuthContextNext.tsx
+//app/[lang]/context/AuthContextNext.tsx
 "use client"
 import React, {createContext, useCallback, useContext, useState, useEffect, ReactNode } from "react";
 import axios from 'axios';
-//import { useNavigate } from "react-router-dom";
 import { useRouter } from "next/navigation";
-//import { API_BASE_URL } from '../auth/api'
 import { Shop } from '../types'
 
 
@@ -162,6 +160,7 @@ const hideLogin = () => setShowLoginModal(false);
 
             onLoginSuccess?.();
             return user;
+            
         } catch (error) {
             console.log("Login failled", error);
             throw error;

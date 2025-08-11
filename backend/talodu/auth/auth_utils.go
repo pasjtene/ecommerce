@@ -4,10 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"strings"
 	"talodu/models"
+	"talodu/utils/mail"
 	"time"
 	"unicode"
 
@@ -293,6 +295,15 @@ func Login(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
+		// Check if user email is verified
+		if !user.IsVerified {
+			c.JSON(http.StatusForbidden, gin.H{
+				"error": "Email not verified",
+				"code":  "EMAIL_NOT_VERIFIED",
+			})
+			return
+		}
+
 		if !CheckPassword(input.Password, user.Password) {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 			return
@@ -522,14 +533,22 @@ func RegisterUser(db *gorm.DB) gin.HandlerFunc {
 				}
 			}
 		}
+
+		// Generate verification token
+		verifyToken := GenerateRandomToken(32) // Implement this function
+		verifyExpiry := time.Now().Add(24 * time.Hour)
+
 		// Create user
 		hashedPassword, _ := HashPassword(input.Password)
 		user := User{
-			Username:  input.Email,
-			Email:     input.Email,
-			FirstName: input.FirstName,
-			LastName:  input.LastName,
-			Password:  hashedPassword,
+			Username:     input.Email,
+			Email:        input.Email,
+			FirstName:    input.FirstName,
+			LastName:     input.LastName,
+			Password:     hashedPassword,
+			IsVerified:   false,
+			VerifyToken:  verifyToken,
+			VerifyExpiry: verifyExpiry,
 		}
 
 		// Assign roles
@@ -547,16 +566,77 @@ func RegisterUser(db *gorm.DB) gin.HandlerFunc {
 		}
 		user.Roles = roles
 
-		db.Create(&user)
+		if err := db.Create(&user).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
+			return
+		}
+
+		// Send verification email
+		verificationLink := fmt.Sprintf(
+			"%s/verify-email?token=%s&email=%s",
+			os.Getenv("FRONTEND_URL"),
+			verifyToken,
+			user.Email,
+		)
+
+		if err := mail.SendVerificationEmail(user.Email, verificationLink); err != nil {
+			log.Printf("Failed to send verification email: %v", err)
+			// Continue anyway, but log the error
+		}
 
 		//
 		frontendUser := user.ToFrontend() // this is to match what React expects at frontend
 
-		c.JSON(http.StatusOK, gin.H{
-			"message": "User updated successfully",
+		c.JSON(http.StatusCreated, gin.H{
+			"message": "You have been registered successfully. Please check your email to verify your account.",
 			"user":    frontendUser,
 		})
 
+	}
+}
+
+func GenerateRandomToken(length int) string {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[rand.Intn(len(charset))]
+	}
+	return string(b)
+}
+
+func VerifyEmail(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := c.Query("token")
+		email := c.Query("email")
+
+		if token == "" || email == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Token and email are required"})
+			return
+		}
+
+		var user User
+		if err := db.Where("email = ? AND verify_token = ?", email, token).First(&user).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid verification token"})
+			return
+		}
+
+		// Check if token is expired
+		if time.Now().After(user.VerifyExpiry) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Verification token has expired"})
+			return
+		}
+
+		// Mark as verified and clear token
+		user.IsVerified = true
+		user.VerifyToken = ""
+		user.VerifyExpiry = time.Time{}
+
+		if err := db.Save(&user).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to verify email"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "Email verified successfully"})
 	}
 }
 

@@ -140,9 +140,7 @@ const ShopsList = () => {
 	});
 
 	const [error, setError] = useState<string | null>(null);
-	const jwtToken = localStorage.getItem('j_auth_token'); // Assuming you store the token in localStorage
-
-	// Function to handle after user is updated
+	const jwtToken = localStorage.getItem('j_auth_token'); 
 
 	const insertUser = (newUser: User, index: number) => {
 		setUsers((prev) => [...prev.slice(0, index), newUser, ...prev.slice(index)]);

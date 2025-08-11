@@ -62,14 +62,6 @@ type Product struct {
 	AboutsWithTranlations []ProductAbout       `json:"aboutst" gorm:"foreignKey:ProductID"`
 }
 
-// Generate slug before creating/updating
-/*
-func (p *Product) BeforeSave(tx *gorm.DB) (err error) {
-	p.Slug = generateSlug(p.Name) + "-" + fmt.Sprint(p.ID)
-	return nil
-}
-*/
-
 // Generate slug after the record is created
 func (p *Product) AfterCreate(tx *gorm.DB) (err error) {
 	p.Slug = generateSlug(p.Name) + "-" + fmt.Sprint(p.ID)

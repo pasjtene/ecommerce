@@ -623,7 +623,7 @@ const ProductImages = ({ product }: ProductImageProps) => {
         `}</style>
 
         
-          <Modal.Body style={{ padding: 0 }} className="p-0">
+  <Modal.Body style={{ padding: 0 }} className="p-0">
     <div className="modal-content-container">
       {/* Main image area */}
       <div className="main-image-container">
@@ -765,6 +765,7 @@ const ProductImages = ({ product }: ProductImageProps) => {
                
         </Modal.Body>
       </Modal>
+      {/* Image Modal with Thumbnails */}
     </div>
   );
 };

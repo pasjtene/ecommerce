@@ -26,6 +26,9 @@ type User struct {
 	EmployedAt    []Shop    `json:"employed_at" gorm:"many2many:shop_employees;"`
 	Roles         []Role    `gorm:"many2many:user_roles;"`
 	Pin           uint
+	IsVerified    bool      `gorm:"default:false"`
+	VerifyToken   string    // Stores the email verification token
+	VerifyExpiry  time.Time // Token expiration time
 }
 
 type FrontendUserResponse struct {
