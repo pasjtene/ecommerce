@@ -17,7 +17,7 @@ func SendVerificationEmail(to, verificationLink string) error {
 
 	//testRecipient := "pasjtene@yahoo.co.uk"
 	testRecipient := to
-	verificationLink = "https://" + getHostname() + verificationLink
+	verificationLink = "https://" + getHostname() + "/auth" + verificationLink
 
 	from := os.Getenv("MAIL_FROM")
 	if from == "" {

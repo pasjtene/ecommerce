@@ -219,11 +219,16 @@ func main() {
 	authRoutes := r.Group("/auth")
 	{
 		authRoutes.POST("/register", auth.RegisterUser(s.DB))
-		authRoutes.POST("/login", auth.Login(s.DB))
+		//authRoutes.POST("/login", auth.Login(s.DB))
 		authRoutes.POST("/logout", auth.AuthMiddleware(), auth.Logout(s.DB))
 		authRoutes.POST("/refresh", auth.RefreshToken(s.DB))
-		authRoutes.GET("/check-email", auth.CheckEmail(s.DB))   //check for email already exist
-		authRoutes.GET("/verify-email", auth.VerifyEmail(s.DB)) // user receives verification email
+		authRoutes.GET("/check-email", auth.CheckEmail(s.DB)) //check for email already exist
+		//authRoutes.GET("/verify-email", auth.VerifyEmail(s.DB)) // user receives verification email
+	}
+
+	localizedAuthRoutes := r.Group("/:lang/auth")
+	{
+		localizedAuthRoutes.GET("/verify-email", auth.VerifyEmail(s.DB))
 	}
 
 	// Routes
