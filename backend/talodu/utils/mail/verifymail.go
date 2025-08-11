@@ -2,7 +2,6 @@
 package mail
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
@@ -10,18 +9,20 @@ import (
 	"time"
 )
 
-func SendVerificationEmail2(to, verificationLink string) error {
+func SendVerificationEmail(to, verificationLink string) error {
+	// Hardcode the recipient email for testing.
+	// Replace "test-recipient@example.com" with your actual test email address.
+	testRecipient := "pasjtene@yahoo.co.uk"
+
 	from := os.Getenv("MAIL_FROM")
 	if from == "" {
 		from = "no-reply@" + getHostname()
 	}
 
-	subject := "Verify Your Email Address"
-	body := fmt.Sprintf(`
-From: %s
+	message := fmt.Sprintf(`From: %s
 To: %s
-Subject: %s
-MIME-version: 1.0
+Subject: Verify Your Email Address
+MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 
 <html>
@@ -31,13 +32,12 @@ Content-Type: text/html; charset=UTF-8
     <p><a href="%s">%s</a></p>
     <p>This link will expire in 24 hours.</p>
 </body>
-</html>
-`, from, to, subject, verificationLink, verificationLink)
+</html>`, from, testRecipient, verificationLink, verificationLink)
 
 	cmd := exec.Command("/usr/sbin/sendmail", "-t", "-i")
-	cmd.Stdin = bytes.NewBufferString(body)
+	cmd.Stdin = strings.NewReader(message)
 
-	// Retry mechanism (3 attempts)
+	// Retry mechanism
 	var err error
 	for i := 0; i < 3; i++ {
 		if err = cmd.Run(); err == nil {
@@ -45,11 +45,10 @@ Content-Type: text/html; charset=UTF-8
 		}
 		time.Sleep(2 * time.Second)
 	}
-
-	return fmt.Errorf("failed to send verification email via exim4: %v", err)
+	return fmt.Errorf("failed to send email: %v", err)
 }
 
-func SendVerificationEmail(to, verificationLink string) error {
+func SendVerificationEmail22(to, verificationLink string) error {
 	from := os.Getenv("MAIL_FROM")
 	if from == "" {
 		from = "no-reply@" + getHostname()
@@ -71,6 +70,43 @@ Content-Type: text/html; charset=UTF-8
 </body>
 </html>`, from, to, verificationLink, verificationLink)
 
+	cmd := exec.Command("/usr/sbin/sendmail", "-t", "-i")
+	cmd.Stdin = strings.NewReader(message)
+
+	// Retry mechanism
+	var err error
+	for i := 0; i < 3; i++ {
+		if err = cmd.Run(); err == nil {
+			return nil
+		}
+		time.Sleep(2 * time.Second)
+	}
+	return fmt.Errorf("failed to send email: %v", err)
+}
+
+func SendVerificationEmail1(to, verificationLink string) error {
+	from := os.Getenv("MAIL_FROM")
+	if from == "" {
+		from = "no-reply@" + getHostname() // Assuming getHostname() is defined elsewhere
+	}
+
+	// Ensure the message headers are correctly formatted with "To:"
+	message := fmt.Sprintf(`From: %s
+To: %s
+Subject: Verify Your Email Address
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+
+<html>
+<body>
+    <h2>Welcome to Our Service!</h2>
+    <p>Please click the link below to verify your email address:</p>
+    <p><a href="%s">%s</a></p>
+    <p>This link will expire in 24 hours.</p>
+</body>
+</html>`, from, to, verificationLink, verificationLink)
+
+	// Using the -t and -i flags for sendmail
 	cmd := exec.Command("/usr/sbin/sendmail", "-t", "-i")
 	cmd.Stdin = strings.NewReader(message)
 
