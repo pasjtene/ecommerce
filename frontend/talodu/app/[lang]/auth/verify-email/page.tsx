@@ -30,8 +30,8 @@ export default function VerifyEmail() {
         if (response.data.success) {
           setStatus('success')
           setMessage(response.data.message || 'Email verified successfully!')
-          // Redirect to login after 3 seconds
-          setTimeout(() => router.push('/login'), 3000)
+          // Redirect to login after 30 seconds
+          setTimeout(() => router.push('/'), 30000)
         } else {
           setStatus('error')
           setMessage(response.data.error || 'Verification failed')
@@ -76,10 +76,10 @@ export default function VerifyEmail() {
               <h2 className="text-2xl font-bold mb-2">Verification Failed</h2>
               <p className="mb-4">{message}</p>
               <button
-                onClick={() => router.push('/register')}
+                onClick={() => router.push('/')}
                 className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
               >
-                Go to Registration
+                Go to Home page
               </button>
             </>
           )}
