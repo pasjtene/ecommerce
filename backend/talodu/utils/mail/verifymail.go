@@ -15,7 +15,9 @@ func SendVerificationEmail(to, verificationLink string) error {
 	log.Printf("Attempting to send verification email to: %s", to)
 	log.Printf("Verification link: %s", verificationLink)
 
-	testRecipient := "pasjtene@yahoo.co.uk"
+	//testRecipient := "pasjtene@yahoo.co.uk"
+	testRecipient := to
+	verificationLink = "https://" + getHostname() + verificationLink
 
 	from := os.Getenv("MAIL_FROM")
 	if from == "" {
@@ -55,79 +57,6 @@ Content-Type: text/html; charset=UTF-8
 
 	log.Printf("Email sent successfully to: %s", to)
 
-	return fmt.Errorf("failed to send email: %v", err)
-}
-
-func SendVerificationEmail22(to, verificationLink string) error {
-	from := os.Getenv("MAIL_FROM")
-	if from == "" {
-		from = "no-reply@" + getHostname()
-	}
-
-	// Proper MIME format
-	message := fmt.Sprintf(`From: %s
-To: %s
-Subject: Verify Your Email Address
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-
-<html>
-<body>
-    <h2>Welcome to Our Service!</h2>
-    <p>Please click the link below to verify your email address:</p>
-    <p><a href="%s">%s</a></p>
-    <p>This link will expire in 24 hours.</p>
-</body>
-</html>`, from, to, verificationLink, verificationLink)
-
-	cmd := exec.Command("/usr/sbin/sendmail", "-t", "-i")
-	cmd.Stdin = strings.NewReader(message)
-
-	// Retry mechanism
-	var err error
-	for i := 0; i < 3; i++ {
-		if err = cmd.Run(); err == nil {
-			return nil
-		}
-		time.Sleep(2 * time.Second)
-	}
-	return fmt.Errorf("failed to send email: %v", err)
-}
-
-func SendVerificationEmail1(to, verificationLink string) error {
-	from := os.Getenv("MAIL_FROM")
-	if from == "" {
-		from = "no-reply@" + getHostname() // Assuming getHostname() is defined elsewhere
-	}
-
-	// Ensure the message headers are correctly formatted with "To:"
-	message := fmt.Sprintf(`From: %s
-To: %s
-Subject: Verify Your Email Address
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-
-<html>
-<body>
-    <h2>Welcome to Our Service!</h2>
-    <p>Please click the link below to verify your email address:</p>
-    <p><a href="%s">%s</a></p>
-    <p>This link will expire in 24 hours.</p>
-</body>
-</html>`, from, to, verificationLink, verificationLink)
-
-	// Using the -t and -i flags for sendmail
-	cmd := exec.Command("/usr/sbin/sendmail", "-t", "-i")
-	cmd.Stdin = strings.NewReader(message)
-
-	// Retry mechanism
-	var err error
-	for i := 0; i < 3; i++ {
-		if err = cmd.Run(); err == nil {
-			return nil
-		}
-		time.Sleep(2 * time.Second)
-	}
 	return fmt.Errorf("failed to send email: %v", err)
 }
 

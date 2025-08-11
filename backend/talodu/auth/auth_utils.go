@@ -535,7 +535,7 @@ func RegisterUser(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		// Generate verification token
-		verifyToken := GenerateRandomToken(32) // Implement this function
+		verifyToken := GenerateRandomToken(64)
 		verifyExpiry := time.Now().Add(24 * time.Hour)
 
 		// Create user
