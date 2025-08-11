@@ -1,13 +1,13 @@
 // app/[lang]/auth/verify-email/page.tsx
 'use client'
 import { useEffect, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import axios from 'axios'
-import { useRouter } from 'next/navigation'
+import { FaCheckCircle, FaTimesCircle, FaSpinner } from 'react-icons/fa'
 
 export default function VerifyEmail() {
-  const [status, setStatus] = useState('verifying')
-  const [error, setError] = useState('')
+  const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying')
+  const [message, setMessage] = useState('')
   const searchParams = useSearchParams()
   const router = useRouter()
 
@@ -18,26 +18,31 @@ export default function VerifyEmail() {
 
       if (!token || !email) {
         setStatus('error')
-        setError('Invalid verification link')
+        setMessage('Invalid verification link - missing parameters')
         return
       }
 
       try {
-        const response = await axios.get('/api/auth/verify-email', {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/verify-email`, {
           params: { token, email }
         })
 
         if (response.data.success) {
           setStatus('success')
-          // Redirect after 3 seconds
+          setMessage(response.data.message || 'Email verified successfully!')
+          // Redirect to login after 3 seconds
           setTimeout(() => router.push('/login'), 3000)
         } else {
           setStatus('error')
-          setError(response.data.error || 'Verification failed')
+          setMessage(response.data.error || 'Verification failed')
         }
-      } catch (err) {
+      } catch (error) {
         setStatus('error')
-        setError('Failed to verify email. Please try again.')
+        if (axios.isAxiosError(error)) {
+          setMessage(error.response?.data?.error || 'Failed to verify email')
+        } else {
+          setMessage('An unexpected error occurred')
+        }
       }
     }
 
@@ -45,38 +50,40 @@ export default function VerifyEmail() {
   }, [searchParams, router])
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
-        {status === 'verifying' && (
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Verifying your email...</h2>
-            <p>Please wait while we verify your email address.</p>
-          </div>
-        )}
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        <div className="text-center">
+          {status === 'verifying' && (
+            <>
+              <FaSpinner className="animate-spin text-blue-500 text-5xl mx-auto mb-4" />
+              <h2 className="text-2xl font-bold mb-2">Verifying Your Email</h2>
+              <p>Please wait while we verify your email address...</p>
+            </>
+          )}
 
-        {status === 'success' && (
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4 text-green-600">
-              Email Verified!
-            </h2>
-            <p>Your email has been successfully verified. Redirecting to login...</p>
-          </div>
-        )}
+          {status === 'success' && (
+            <>
+              <FaCheckCircle className="text-green-500 text-5xl mx-auto mb-4" />
+              <h2 className="text-2xl font-bold mb-2">Email Verified!</h2>
+              <p className="mb-4">{message}</p>
+              <p className="text-gray-500">You will be redirected shortly...</p>
+            </>
+          )}
 
-        {status === 'error' && (
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4 text-red-600">
-              Verification Failed
-            </h2>
-            <p className="mb-4">{error}</p>
-            <button
-              onClick={() => window.location.href = '/register'}
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            >
-              Go to Registration
-            </button>
-          </div>
-        )}
+          {status === 'error' && (
+            <>
+              <FaTimesCircle className="text-red-500 text-5xl mx-auto mb-4" />
+              <h2 className="text-2xl font-bold mb-2">Verification Failed</h2>
+              <p className="mb-4">{message}</p>
+              <button
+                onClick={() => router.push('/register')}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+              >
+                Go to Registration
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </div>
   )

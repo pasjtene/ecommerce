@@ -604,7 +604,7 @@ func GenerateRandomToken(length int) string {
 	return string(b)
 }
 
-func VerifyEmail(db *gorm.DB) gin.HandlerFunc {
+func VerifyEmail2(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.Query("token")
 		email := c.Query("email")
@@ -637,6 +637,66 @@ func VerifyEmail(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, gin.H{"message": "Email verified successfully"})
+	}
+}
+
+func VerifyEmail(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := c.Query("token")
+		email := c.Query("email")
+
+		// Validate parameters
+		if token == "" || email == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"error":   "Token and email are required",
+			})
+			return
+		}
+
+		// Find user with matching email and token
+		var user User
+		if err := db.Where("email = ? AND verify_token = ?", email, token).First(&user).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				c.JSON(http.StatusNotFound, gin.H{
+					"success": false,
+					"error":   "Invalid verification link",
+				})
+			} else {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"success": false,
+					"error":   "Database error",
+				})
+			}
+			return
+		}
+
+		// Check if token is expired
+		if time.Now().After(user.VerifyExpiry) {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"error":   "Verification link has expired",
+			})
+			return
+		}
+
+		// Update user as verified
+		if err := db.Model(&user).Updates(map[string]interface{}{
+			"is_verified":   true,
+			"verify_token":  nil,
+			"verify_expiry": nil,
+		}).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"success": false,
+				"error":   "Failed to verify email",
+			})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"message": "Email verified successfully",
+		})
 	}
 }
 

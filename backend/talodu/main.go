@@ -222,17 +222,18 @@ func main() {
 		//authRoutes.POST("/login", auth.Login(s.DB))
 		authRoutes.POST("/logout", auth.AuthMiddleware(), auth.Logout(s.DB))
 		authRoutes.POST("/refresh", auth.RefreshToken(s.DB))
-		authRoutes.GET("/check-email", auth.CheckEmail(s.DB)) //check for email already exist
-		//authRoutes.GET("/verify-email", auth.VerifyEmail(s.DB)) // user receives verification email
+		authRoutes.GET("/check-email", auth.CheckEmail(s.DB))   //check for email already exist
+		authRoutes.GET("/verify-email", auth.VerifyEmail(s.DB)) // user receives verification email
 	}
 
-	localizedAuthRoutes := r.Group("/:lang/auth")
+	localizedAuthRoutes := r.Group("/:lang/auth1")
 	{
 		localizedAuthRoutes.GET("/verify-email", auth.VerifyEmail(s.DB))
 	}
-	r.GET("/en/auth/verify-email", auth.VerifyEmail(s.DB))
-	r.GET("/fr/auth/verify-email", auth.VerifyEmail(s.DB))
-	r.GET("/es/auth/verify-email", auth.VerifyEmail(s.DB))
+
+	//r.GET("/en/auth/verify-email", auth.VerifyEmail(s.DB))
+	//r.GET("/fr/auth/verify-email", auth.VerifyEmail(s.DB))
+	//r.GET("/es/auth/verify-email", auth.VerifyEmail(s.DB))
 
 	// Routes
 	// r.GET("/products", listProducts(db))         // List with search/sort/pagination
