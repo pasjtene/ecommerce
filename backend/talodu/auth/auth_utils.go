@@ -301,7 +301,7 @@ func Login(db *gorm.DB) gin.HandlerFunc {
 				"error": "Email not verified",
 				"code":  "EMAIL_NOT_VERIFIED",
 			})
-			return
+			//return
 		}
 
 		if !CheckPassword(input.Password, user.Password) {

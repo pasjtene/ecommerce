@@ -3,6 +3,7 @@ package mail
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"strings"
@@ -11,7 +12,9 @@ import (
 
 func SendVerificationEmail(to, verificationLink string) error {
 	// Hardcode the recipient email for testing.
-	// Replace "test-recipient@example.com" with your actual test email address.
+	log.Printf("Attempting to send verification email to: %s", to)
+	log.Printf("Verification link: %s", verificationLink)
+
 	testRecipient := "pasjtene@yahoo.co.uk"
 
 	from := os.Getenv("MAIL_FROM")
@@ -45,6 +48,13 @@ Content-Type: text/html; charset=UTF-8
 		}
 		time.Sleep(2 * time.Second)
 	}
+	if err := cmd.Run(); err != nil {
+		log.Printf("Sendmail error: %v", err) // Add this line
+		return err
+	}
+
+	log.Printf("Email sent successfully to: %s", to)
+
 	return fmt.Errorf("failed to send email: %v", err)
 }
 
