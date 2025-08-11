@@ -15,7 +15,6 @@ func SendVerificationEmail(to, verificationLink string) error {
 	log.Printf("Attempting to send verification email to: %s", to)
 	log.Printf("Verification link: %s", verificationLink)
 
-	//testRecipient := "pasjtene@yahoo.co.uk"
 	testRecipient := to
 	verificationLink = "https://" + getHostname() + "/auth" + verificationLink
 

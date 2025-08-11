@@ -230,6 +230,9 @@ func main() {
 	{
 		localizedAuthRoutes.GET("/verify-email", auth.VerifyEmail(s.DB))
 	}
+	r.GET("/en/auth/verify-email", auth.VerifyEmail(s.DB))
+	r.GET("/fr/auth/verify-email", auth.VerifyEmail(s.DB))
+	r.GET("/es/auth/verify-email", auth.VerifyEmail(s.DB))
 
 	// Routes
 	// r.GET("/products", listProducts(db))         // List with search/sort/pagination
