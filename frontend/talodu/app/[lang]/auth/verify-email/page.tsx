@@ -4,12 +4,17 @@ import { useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import axios from 'axios'
 import { FaCheckCircle, FaTimesCircle, FaSpinner } from 'react-icons/fa'
+import { useAuth } from '../../contexts/AuthContextNext';
+//import dynamic from 'next/dynamic';
+
+//const Login = dynamic(() => import('../../Login'), { ssr: false });
 
 export default function VerifyEmail() {
   const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying')
   const [message, setMessage] = useState('')
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { user, token, showLogin, onRequireLogin } = useAuth();
 
   useEffect(() => {
     const verifyEmail = async () => {
@@ -30,8 +35,9 @@ export default function VerifyEmail() {
         if (response.data.success) {
           setStatus('success')
           setMessage(response.data.message || 'Email verified successfully!')
-          // Redirect to login after 30 seconds
-          setTimeout(() => router.push('/'), 30000)
+          // Redirect to home page after 30 seconds
+          //setTimeout(() => router.push('/'), 30000)
+          showLogin()
         } else {
           setStatus('error')
           setMessage(response.data.error || 'Verification failed')

@@ -297,11 +297,11 @@ func Login(db *gorm.DB) gin.HandlerFunc {
 
 		// Check if user email is verified
 		if !user.IsVerified {
-			//c.JSON(http.StatusForbidden, gin.H{ "error": "Email not verified", "code":  "EMAIL_NOT_VERIFIED",})
+			c.JSON(http.StatusForbidden, gin.H{"error": "Email not verified", "code": "EMAIL_NOT_VERIFIED"})
 
 			log.Printf("User not verified: %s", user.Email)
 
-			//return
+			return
 		}
 
 		if !CheckPassword(input.Password, user.Password) {
@@ -567,9 +567,14 @@ func RegisterUser(db *gorm.DB) gin.HandlerFunc {
 		user.Roles = roles
 
 		if err := db.Create(&user).Error; err != nil {
+			log.Printf("Trying to Create user with email: %v", input.Email)
+			log.Printf("Failed to create user: %v", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
 			return
 		}
+
+		log.Printf("Created user with email: %v", input.Email)
+		log.Printf("Sending verification email to: %v", input.Email)
 
 		// Send verification email
 		verificationLink := fmt.Sprintf(
@@ -602,42 +607,6 @@ func GenerateRandomToken(length int) string {
 		b[i] = charset[rand.Intn(len(charset))]
 	}
 	return string(b)
-}
-
-func VerifyEmail2(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		token := c.Query("token")
-		email := c.Query("email")
-
-		if token == "" || email == "" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Token and email are required"})
-			return
-		}
-
-		var user User
-		if err := db.Where("email = ? AND verify_token = ?", email, token).First(&user).Error; err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid verification token"})
-			return
-		}
-
-		// Check if token is expired
-		if time.Now().After(user.VerifyExpiry) {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Verification token has expired"})
-			return
-		}
-
-		// Mark as verified and clear token
-		user.IsVerified = true
-		user.VerifyToken = ""
-		user.VerifyExpiry = time.Time{}
-
-		if err := db.Save(&user).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to verify email"})
-			return
-		}
-
-		c.JSON(http.StatusOK, gin.H{"message": "Email verified successfully"})
-	}
 }
 
 func VerifyEmail(db *gorm.DB) gin.HandlerFunc {
