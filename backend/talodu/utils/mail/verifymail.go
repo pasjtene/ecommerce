@@ -97,8 +97,15 @@ func ResendVerificationEmail(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
+		verificationLink := fmt.Sprintf(
+			"%s/verify-email?token=%s&email=%s",
+			os.Getenv("FRONTEND_URL"),
+			verificationToken,
+			user.Email,
+		)
+
 		// Send verification email (implement your email sending logic here)
-		err := SendVerificationEmail(user.Email, verificationToken)
+		err := SendVerificationEmail(user.Email, verificationLink)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send verification email"})
 			return

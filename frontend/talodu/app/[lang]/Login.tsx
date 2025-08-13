@@ -42,6 +42,7 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
   const { login } = useAuth();
   const params = useParams();
   const [t, setTranslation] = useState<Dictionary | null>(null);
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8888';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,7 +71,7 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
 
   const handleResendVerification = async () => {
     try {
-      const response = await fetch('/api/auth/resend-verification', {
+      const response = await fetch(API_BASE_URL+'/auth/resend-verification', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
