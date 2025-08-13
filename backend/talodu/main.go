@@ -11,7 +11,6 @@ import (
 
 	"talodu/handlers"
 	s "talodu/settings"
-	"talodu/utils/mail"
 
 	//_ "talodu/handlers"
 	"talodu/auth"
@@ -225,9 +224,9 @@ func main() {
 		authRoutes.POST("/refresh", auth.RefreshToken(s.DB))
 		authRoutes.GET("/check-email", auth.CheckEmail(s.DB))   //check for email already exist
 		authRoutes.GET("/verify-email", auth.VerifyEmail(s.DB)) // user receives verification email
-		authRoutes.POST("/resend-verification", mail.ResendVerificationEmail(s.DB))
-		authRoutes.POST("/forgot-password", mail.InitiatePasswordReset(s.DB))
-		authRoutes.POST("/reset-password", mail.CompletePasswordReset(s.DB))
+		authRoutes.POST("/resend-verification", auth.ResendVerificationEmail(s.DB))
+		authRoutes.POST("/forgot-password", auth.InitiatePasswordReset(s.DB))
+		authRoutes.POST("/reset-password", auth.CompletePasswordReset(s.DB))
 	}
 
 	// Routes

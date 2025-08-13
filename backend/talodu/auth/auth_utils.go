@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 	"talodu/models"
-	"talodu/utils/mail"
+
 	"time"
 	"unicode"
 
@@ -536,7 +536,7 @@ func RegisterUser(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		// Generate verification token
-		verifyToken := mail.GenerateRandomToken(64)
+		verifyToken := GenerateRandomToken(64)
 		verifyExpiry := time.Now().Add(24 * time.Hour)
 
 		// Create user
@@ -585,7 +585,7 @@ func RegisterUser(db *gorm.DB) gin.HandlerFunc {
 			user.Email,
 		)
 
-		if err := mail.SendVerificationEmail(user.Email, verificationLink); err != nil {
+		if err := SendVerificationEmail(user.Email, verificationLink); err != nil {
 			log.Printf("Failed to send verification email: %v", err)
 			// Continue anyway, but log the error
 		}
