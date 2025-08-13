@@ -9,6 +9,7 @@ import Modal from 'react-bootstrap/Modal';
 import { toast } from 'react-toastify';
 import { useAuth} from './contexts/AuthContextNext';
 import { useParams } from 'next/navigation';
+import ForgotPassword from './auth/reset-password/ForgotPassword'
 import Link from 'next/link';
 
 interface LoginProps {
@@ -41,10 +42,11 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
   const [showPassword, setShowPassword] = useState(false);
   //const [error, setError] = useState<{message: string, code?: string} | null>(null);
   const [error, setError] = useState<{message: string, code?: string, resent?: boolean} | null>(null);
-  const { login } = useAuth();
+  const { login, hideLogin } = useAuth();
   const params = useParams();
   const [t, setTranslation] = useState<Dictionary | null>(null);
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8888';
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,6 +113,7 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
   }
 
   return (
+    <>
     <Modal
       show={show}
       onHide={onClose}
@@ -199,6 +202,7 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
               </span>
             </div>
           </Form.Group>
+          
 
           <Button 
             variant="primary" 
@@ -209,7 +213,8 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
           </Button>
 
           <div className="text-center mb-3">
-            <Button variant="link" size="sm">
+            
+            <Button variant="link" size="sm" onClick={() => {setShowForgotPassword(true)}}>
               {t.login.forgot_password}
             </Button>
           </div>
@@ -228,6 +233,12 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
         </Form>
       </div>
     </Modal>
+    <ForgotPassword 
+            show={showForgotPassword}
+            onClose={() => setShowForgotPassword(false)}
+            onSwitchToLogin={() => setShowForgotPassword(false)}
+          />
+          </>
   );
 };
 

@@ -226,6 +226,8 @@ func main() {
 		authRoutes.GET("/check-email", auth.CheckEmail(s.DB))   //check for email already exist
 		authRoutes.GET("/verify-email", auth.VerifyEmail(s.DB)) // user receives verification email
 		authRoutes.POST("/resend-verification", mail.ResendVerificationEmail(s.DB))
+		authRoutes.POST("/forgot-password", mail.InitiatePasswordReset(s.DB))
+		authRoutes.POST("/reset-password", mail.CompletePasswordReset(s.DB))
 	}
 
 	// Routes

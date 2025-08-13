@@ -43,6 +43,13 @@
     "success_message": "Sesión iniciada correctamente",
     "show_password": "Mostrar contraseña"
   },
+   "forgotPassword": {
+    "title": "Forgot password",
+    "email_placeholder": "Enter your email",
+    "submit_button": "Submit",
+    "back_to_login": "Back to login",
+    "success_message": "Your password has been resset"
+  },
    "product": {
     "back_to_list": "Volver a la lista",
     "by_shop": "Por {shopName}",

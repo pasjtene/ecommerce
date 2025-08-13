@@ -44,6 +44,13 @@
     "success_message": "Successfully logged in",
     "show_password": "Show password"
   },
+  "forgotPassword": {
+    "title": "Forgot password",
+    "email_placeholder": "Enter your email",
+    "submit_button": "Submit",
+    "back_to_login": "Back to login",
+    "success_message": "Your password has been resset"
+  },
   "product": {
     "back_to_list": "Back to List",
     "by_shop": "By {shopName}",

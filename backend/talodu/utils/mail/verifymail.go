@@ -131,3 +131,136 @@ func getHostname() string {
 	}
 	return hostname
 }
+
+func SendPasswordResetEmail(to, resetLink string) error {
+	log.Printf("Attempting to send password reset email to: %s", to)
+	log.Printf("Reset link: %s", resetLink)
+
+	from := os.Getenv("MAIL_FROM")
+	if from == "" {
+		from = "no-reply@" + getHostname()
+	}
+
+	message := fmt.Sprintf(`From: %s
+To: %s
+Subject: Password Reset Request
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+
+<html>
+<body>
+    <h2>Password Reset Request</h2>
+    <p>We received a request to reset your password. Click the link below to proceed:</p>
+    <p><a href="%s">%s</a></p>
+    <p>This link will expire in 1 hour. If you didn't request this, please ignore this email.</p>
+</body>
+</html>`, from, to, resetLink, resetLink)
+
+	cmd := exec.Command("/usr/sbin/sendmail", "-t", "-i")
+	cmd.Stdin = strings.NewReader(message)
+
+	// Retry mechanism
+	var err error
+	for i := 0; i < 3; i++ {
+		if err = cmd.Run(); err == nil {
+			return nil
+		}
+		time.Sleep(2 * time.Second)
+	}
+	if err := cmd.Run(); err != nil {
+		log.Printf("Sendmail error for password reset: %v", err)
+		return err
+	}
+
+	log.Printf("Password reset email sent successfully to: %s", to)
+	return nil
+}
+
+func InitiatePasswordReset(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var input struct {
+			Email string `json:"email" binding:"required"`
+		}
+
+		if err := c.ShouldBindJSON(&input); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		var user models.User
+		if err := db.Where("email = ?", input.Email).First(&user).Error; err != nil {
+			// Don't reveal if user exists or not for security
+			c.JSON(http.StatusOK, gin.H{"message": "If an account exists with this email, a password reset link has been sent"})
+			return
+		}
+
+		// Generate reset token
+		resetToken := GenerateRandomToken(64)
+		user.ResetPwToken = resetToken
+		user.ResetPwExpiry = time.Now().Add(1 * time.Hour) // 1 hour expiry
+		if err := db.Save(&user).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate reset token"})
+			return
+		}
+
+		resetLink := fmt.Sprintf(
+			"%s/reset-password?token=%s&email=%s",
+			os.Getenv("FRONTEND_URL"),
+			resetToken,
+			user.Email,
+		)
+
+		err := SendPasswordResetEmail(user.Email, resetLink)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send password reset email"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "Password reset email sent successfully"})
+	}
+}
+
+func CompletePasswordReset(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var input struct {
+			Token    string `json:"token" binding:"required"`
+			Email    string `json:"email" binding:"required"`
+			Password string `json:"password" binding:"required,min=8"`
+		}
+
+		if err := c.ShouldBindJSON(&input); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		var user models.User
+		if err := db.Where("email = ? AND reset_token = ?", input.Email, input.Token).First(&user).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid or expired reset token"})
+			return
+		}
+
+		// Check if token is expired
+		if time.Now().After(user.ResetExpiry) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Reset token has expired"})
+			return
+		}
+
+		// Hash new password
+		hashedPassword, err := models.HashPassword(input.Password)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+			return
+		}
+
+		// Update user
+		user.Password = hashedPassword
+		user.ResetToken = ""
+		user.ResetExpiry = time.Time{}
+		if err := db.Save(&user).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update password"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "Password reset successfully"})
+	}
+}

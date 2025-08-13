@@ -43,6 +43,13 @@
     "success_message": "Connexion réussie",
     "show_password": "Afficher le mot de passe"
   },
+   "forgotPassword": {
+    "title": "Mot de passe oublié",
+    "email_placeholder": "Enter your email",
+    "submit_button": "Submit",
+    "back_to_login": "Back to login",
+    "success_message": "Your password has been resset"
+  },
   "product": {
     "back_to_list": "Retour à la liste",
     "by_shop": "Par {shopName}",

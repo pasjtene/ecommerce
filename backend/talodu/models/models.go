@@ -29,6 +29,8 @@ type User struct {
 	IsVerified    bool      `gorm:"default:false"`
 	VerifyToken   string    // Stores the email verification token
 	VerifyExpiry  time.Time // Token expiration time
+	ResetPwToken  string    `gorm:"size:255" json:"reset_token"`
+	ResetPwExpiry time.Time `json:"reset_expiry"`
 }
 
 type FrontendUserResponse struct {

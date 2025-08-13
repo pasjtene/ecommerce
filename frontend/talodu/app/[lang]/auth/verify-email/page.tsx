@@ -34,10 +34,10 @@ export default function VerifyEmail() {
 
         if (response.data.success) {
           setStatus('success')
-          setMessage(response.data.message || 'Email verified successfully!')
+          setMessage(response.data.message || 'Email verified successfully. You will be redirected to home page in 15 seconds!')
           // Redirect to home page after 30 seconds
-          //setTimeout(() => router.push('/'), 30000)
-          showLogin()
+          setTimeout(() => router.push('/'), 15000) // We need to redirect to a login page. That needs to be created.
+         // showLogin()
         } else {
           setStatus('error')
           setMessage(response.data.error || 'Verification failed')
