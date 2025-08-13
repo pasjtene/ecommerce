@@ -136,6 +136,8 @@ func SendPasswordResetEmail(to, resetLink string) error {
 	log.Printf("Attempting to send password reset email to: %s", to)
 	log.Printf("Reset link: %s", resetLink)
 
+	resetLink = "https://" + getHostname() + "/auth" + resetLink
+
 	from := os.Getenv("MAIL_FROM")
 	if from == "" {
 		from = "no-reply@" + getHostname()
