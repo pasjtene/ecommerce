@@ -50,6 +50,15 @@
     "back_to_login": "Back to login",
     "success_message": "Your password has been resset"
   },
+  
+   "resetPassword": {
+    "title": "Reset password",
+    "new_password": "New Password",
+    "confirm_password": "Confirm password",
+    "submit_button": "Submit",
+    "success_message": "Your password has been reset",
+    "passwords_mismatch": "Pasword d'ont match"
+  },
    "product": {
     "back_to_list": "Volver a la lista",
     "by_shop": "Por {shopName}",
