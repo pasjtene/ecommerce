@@ -88,7 +88,7 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
       toast.success('Verification email resent. Please check your inbox.');
       setError({ 
         message: t?.login.verification_resent || 'Verification email resent. Please check your inbox.',
-        code: 'EMAIL_NOT_VERIFIED',
+        code: 'EMAIL_NOT_VERIFIED_RESENT',
         resent: true
       });
     } catch (err) {
