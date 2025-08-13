@@ -290,7 +290,8 @@ func Login(db *gorm.DB) gin.HandlerFunc {
 		}
 		var user User
 		if err := db.Preload("Roles").Where("email = ?", input.Email).First(&user).Error; err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+			//c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+			c.JSON(http.StatusForbidden, gin.H{"error": "Invalid credentials", "code": "INVALID_CREDENTIALS"})
 			return
 		}
 
@@ -304,7 +305,8 @@ func Login(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		if !CheckPassword(input.Password, user.Password) {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+			//c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+			c.JSON(http.StatusForbidden, gin.H{"error": "Invalid credentials", "code": "INVALID_CREDENTIALS"})
 			return
 		}
 

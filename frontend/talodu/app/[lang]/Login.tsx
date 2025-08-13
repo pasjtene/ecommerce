@@ -145,7 +145,7 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
                   className="p-0 text-danger" 
                   onClick={handleResendVerification}
                 >
-                  {t.login.resend_verification}
+                  {t.login.resend_verification || "Resend verification email"}
                 </Button>
               </div>
             )}
