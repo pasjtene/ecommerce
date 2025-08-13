@@ -31,15 +31,16 @@ interface Dictionary {
     verification_required: string;
     resend_verification: string;
     invalid_credentials: string;
+    verification_resent: string;
   };
 }
 
 const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [color, setColor] = useState('danger');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<{message: string, code?: string} | null>(null);
+  //const [error, setError] = useState<{message: string, code?: string} | null>(null);
+  const [error, setError] = useState<{message: string, code?: string, resent?: boolean} | null>(null);
   const { login } = useAuth();
   const params = useParams();
   const [t, setTranslation] = useState<Dictionary | null>(null);
@@ -85,7 +86,11 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
       }
       
       toast.success('Verification email resent. Please check your inbox.');
-      setColor("success")
+      setError({ 
+        message: t?.login.verification_resent || 'Verification email resent. Please check your inbox.',
+        code: 'EMAIL_NOT_VERIFIED',
+        resent: true
+      });
     } catch (err) {
       console.error('Error resending verification email:', err);
       toast.error('Failed to resend verification email');
@@ -139,13 +144,14 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
         
         {/* Error message display */}
         {error && (
-          <div className="alert alert-danger">
+          
+             <div className={`alert alert-${error.resent ? 'success' : 'danger'}`}>
             {error.message}
             {error.code === 'EMAIL_NOT_VERIFIED' && (
               <div className="mt-2">
                 <Button 
                   variant="link" 
-                  className="p-0 text-{color}" 
+                  className="p-0 text-danger" 
                   onClick={handleResendVerification}
                 >
                   {t.login.resend_verification || "Resend verification email"}
