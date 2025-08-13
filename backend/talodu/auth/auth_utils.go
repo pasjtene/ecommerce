@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"math/rand"
 	"net/http"
 	"os"
 	"strings"
@@ -535,7 +534,7 @@ func RegisterUser(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		// Generate verification token
-		verifyToken := GenerateRandomToken(64)
+		verifyToken := mail.GenerateRandomToken(64)
 		verifyExpiry := time.Now().Add(24 * time.Hour)
 
 		// Create user
@@ -598,15 +597,6 @@ func RegisterUser(db *gorm.DB) gin.HandlerFunc {
 		})
 
 	}
-}
-
-func GenerateRandomToken(length int) string {
-	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	b := make([]byte, length)
-	for i := range b {
-		b[i] = charset[rand.Intn(len(charset))]
-	}
-	return string(b)
 }
 
 func VerifyEmail(db *gorm.DB) gin.HandlerFunc {

@@ -9,6 +9,7 @@ import Modal from 'react-bootstrap/Modal';
 import { toast } from 'react-toastify';
 import { useAuth} from './contexts/AuthContextNext';
 import { useParams } from 'next/navigation';
+import Link from 'next/link';
 
 interface LoginProps {
   show: boolean;
@@ -27,6 +28,9 @@ interface Dictionary {
     create_account: string;
     success_message: string;
     show_password: string;
+    verification_required: string;
+    resend_verification: string;
+    invalid_credentials: string;
   };
 }
 
@@ -34,12 +38,14 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<{message: string, code?: string} | null>(null);
   const { login } = useAuth();
   const params = useParams();
   const [t, setTranslation] = useState<Dictionary | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null); // Reset error on new submission
     try {
         if (typeof window !== 'undefined') {
             await login(email, password);
@@ -47,12 +53,43 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
       onClose();
       toast.success('Succes vous etes connecté');
       window.location.reload();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login failed:', error);
+      if (error.response?.data?.code === 'EMAIL_NOT_VERIFIED') {
+        setError({ 
+          message: t?.login.verification_required || 'Email not verified. Please check your inbox.', 
+          code: 'EMAIL_NOT_VERIFIED' 
+        });
+      } else {
+        setError({ 
+          message: t?.login.invalid_credentials || 'Invalid email or password' 
+        });
+      }
     }
   };
 
-   // Load dictionary
+  const handleResendVerification = async () => {
+    try {
+      const response = await fetch('/api/auth/resend-verification', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to resend verification email');
+      }
+      
+      toast.success('Verification email resent. Please check your inbox.');
+    } catch (err) {
+      console.error('Error resending verification email:', err);
+      toast.error('Failed to resend verification email');
+    }
+  };
+
+  // Load dictionary
   useEffect(() => {
     const loadDictionary = async () => {
       const dict = await import(`./translations/${params.lang}.json`);
@@ -60,7 +97,6 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
     };
     loadDictionary();
   }, [params.lang]);
-
 
   if (!t) {
     return null; // or loading spinner
@@ -98,6 +134,24 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
 
         <h4 className="mb-4 text-center">{t.login.title}</h4>
         
+        {/* Error message display */}
+        {error && (
+          <div className="alert alert-danger">
+            {error.message}
+            {error.code === 'EMAIL_NOT_VERIFIED' && (
+              <div className="mt-2">
+                <Button 
+                  variant="link" 
+                  className="p-0 text-danger" 
+                  onClick={handleResendVerification}
+                >
+                  {t.login.resend_verification}
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
+        
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
             <div className="input-group">
@@ -120,7 +174,6 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
                 <FontAwesomeIcon icon={faLock} />
               </span>
               <Form.Control
-                
                 type={showPassword ? 'text' : 'password'}
                 placeholder={t.login.password_placeholder}
                 value={password}
