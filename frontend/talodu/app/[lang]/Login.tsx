@@ -37,6 +37,7 @@ interface Dictionary {
 const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [color, setColor] = useState('danger');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<{message: string, code?: string} | null>(null);
   const { login } = useAuth();
@@ -84,6 +85,7 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
       }
       
       toast.success('Verification email resent. Please check your inbox.');
+      setColor("success")
     } catch (err) {
       console.error('Error resending verification email:', err);
       toast.error('Failed to resend verification email');
@@ -143,7 +145,7 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
               <div className="mt-2">
                 <Button 
                   variant="link" 
-                  className="p-0 text-danger" 
+                  className="p-0 text-{color}" 
                   onClick={handleResendVerification}
                 >
                   {t.login.resend_verification || "Resend verification email"}
