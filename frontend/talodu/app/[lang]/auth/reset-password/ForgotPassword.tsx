@@ -93,7 +93,9 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ show, onClose, onSwitch
           <FontAwesomeIcon icon={faTimes} />
         </Button>
 
-        <h4 className="mb-4 text-center">{t.forgotPassword.title || 'Forgot Password'}</h4>
+        <h4 className="mb-4 text-center">{t.forgotPassword.title || 'Forgot Password'} ?</h4>
+        <div className="mb-4 text-center">We will sent a link for you to resset your email</div>
+        <div className="mb-4 text-center">Please check your spam folder if you don't see the email in your mailbox</div>
         
         {success ? (
           <div className="alert alert-success">
