@@ -48,6 +48,7 @@ export default function ResetPassword() {
   }, [token, email, router, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
    setError(null); // Clear previous errors
     
     if (password !== confirmPassword) {
@@ -79,7 +80,7 @@ export default function ResetPassword() {
       setSuccess(true);
       setTimeout(() => {
         router.push('/'); //should go to login page
-      }, 2000);
+      }, 20000);
     } catch (error) {
       console.error('Error:', error);
       setError(
