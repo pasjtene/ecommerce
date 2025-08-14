@@ -8,21 +8,21 @@ import Modal from 'react-bootstrap/Modal';
 
 interface VerificationEmailModalProps {
   show: boolean;
-  onClose: () => void;
+  onClosem: () => void;
   email: string;
   onResend: () => void;
 }
 
 const VerificationEmailModal: React.FC<VerificationEmailModalProps> = ({ 
   show, 
-  onClose, 
+  onClosem, 
   email,
   onResend 
 }) => {
   return (
     <Modal
       show={show}
-      onHide={onClose}
+      onHide={onClosem}
       centered
       backdropClassName="auth-backdrop"
       contentClassName="auth-content"
@@ -38,7 +38,7 @@ const VerificationEmailModal: React.FC<VerificationEmailModalProps> = ({
       }}>
         <Button 
           variant="link" 
-          onClick={onClose}
+          onClick={onClosem}
           style={{
             position: 'absolute',
             top: '10px',
@@ -77,7 +77,7 @@ const VerificationEmailModal: React.FC<VerificationEmailModalProps> = ({
         <Button 
           variant="primary" 
           className="w-100 mt-3"
-          onClick={onClose}
+          onClick={onClosem}
         >
           Got It
         </Button>

@@ -38,7 +38,7 @@ Content-Type: text/html; charset=UTF-8
 
 <html>
 <body>
-    <h2>Welcome to Our Service!</h2>
+    <h2>Welcome to Talodu.com !</h2>
     <p>Please click the link below to verify your email address:</p>
     <p><a href="%s">%s</a></p>
     <p>This link will expire in 24 hours.</p>

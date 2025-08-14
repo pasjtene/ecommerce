@@ -399,7 +399,7 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
      {/* Verification Email Modal */}
       <VerificationEmailModal
         show={showVerificationModal}
-        onClose={() => setShowVerificationModal(false)}
+        onClosem={() => setShowVerificationModal(false)}
         email={registeredEmail}
         onResend={handleResendVerification}
       />
