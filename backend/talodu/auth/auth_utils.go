@@ -594,8 +594,12 @@ func RegisterUser(db *gorm.DB) gin.HandlerFunc {
 		frontendUser := user.ToFrontend() // this is to match what React expects at frontend
 
 		c.JSON(http.StatusCreated, gin.H{
-			"message": "You have been registered successfully. Please check your email to verify your account.",
+			"message": "Registration successful. Please check your email to verify your account.",
 			"user":    frontendUser,
+			"verify": gin.H{
+				"email": user.Email,
+				"sent":  true,
+			},
 		})
 
 	}

@@ -49,7 +49,7 @@
     "email_placeholder": "Enter your email",
     "submit_button": "Submit",
     "back_to_login": "Back to login",
-    "success_message": "Your password has been resset"
+    "success_message": "success, a password reset link was sent to you. Please check you mailbox or spam folder."
   },
    "resetPassword": {
     "title": "Reset password",

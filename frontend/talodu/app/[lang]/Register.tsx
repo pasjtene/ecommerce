@@ -17,6 +17,7 @@ import Modal from 'react-bootstrap/Modal';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import { useAuth } from './contexts/AuthContextNext';
 import axios from 'axios';
+import VerificationEmailModal from './auth/register/VerificationEmailModal';
 
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
@@ -74,6 +75,8 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
   const { login, hideLogin } = useAuth();
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8888";
   const [showPassword, setShowPassword] = React.useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState('');
   
   // Password strength state
   const [passwordStrength, setPasswordStrength] = useState({
@@ -141,9 +144,13 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
       });
 
       if (response.data.user) {
-        await login(email, password);
-        hideLogin();
+        setRegisteredEmail(email);
+        setShowVerificationModal(true);
         onClose();
+
+        //await login(email, password);
+        //hideLogin();
+        //onClose();
       }
     } catch (err) {
       console.error('Registration failed:', err);
@@ -160,6 +167,17 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+    const handleResendVerification = async () => {
+    try {
+      await axios.post(`${API_BASE_URL}/auth/resend-verification`, {
+        email: registeredEmail
+      });
+      // You might want to show a toast notification here
+    } catch (err) {
+      console.error('Failed to resend verification email:', err);
     }
   };
 
@@ -190,6 +208,7 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
   };
 
   return (
+    <>
     <Modal
       show={show}
       onHide={onClose}
@@ -377,6 +396,14 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
         </Form>
       </div>
     </Modal>
+     {/* Verification Email Modal */}
+      <VerificationEmailModal
+        show={showVerificationModal}
+        onClose={() => setShowVerificationModal(false)}
+        email={registeredEmail}
+        onResend={handleResendVerification}
+      />
+    </>
   );
 };
 
