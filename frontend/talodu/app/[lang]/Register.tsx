@@ -145,8 +145,9 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
 
       if (response.data.user) {
         setRegisteredEmail(email);
-        setShowVerificationModal(true);
+        
         onClose();
+        setShowVerificationModal(true);
 
         //await login(email, password);
         //hideLogin();
@@ -399,7 +400,7 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
      {/* Verification Email Modal */}
       <VerificationEmailModal
         show={showVerificationModal}
-        onClosem={() => setShowVerificationModal(false)}
+        onClose={() => setShowVerificationModal(false)}
         email={registeredEmail}
         onResend={handleResendVerification}
       />

@@ -1,4 +1,4 @@
-// app/[lang]/VerificationEmailModal.tsx
+// app/[lang]/auth/register/VerificationEmailModal.tsx
 'use client'
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,21 +8,21 @@ import Modal from 'react-bootstrap/Modal';
 
 interface VerificationEmailModalProps {
   show: boolean;
-  onClosem: () => void;
+  onClose: () => void;
   email: string;
   onResend: () => void;
 }
 
 const VerificationEmailModal: React.FC<VerificationEmailModalProps> = ({ 
   show, 
-  onClosem, 
+  onClose, 
   email,
   onResend 
 }) => {
   return (
     <Modal
       show={show}
-      onHide={onClosem}
+      onHide={onClose}
       centered
       backdropClassName="auth-backdrop"
       contentClassName="auth-content"
@@ -38,7 +38,7 @@ const VerificationEmailModal: React.FC<VerificationEmailModalProps> = ({
       }}>
         <Button 
           variant="link" 
-          onClick={onClosem}
+          onClick={onClose}
           style={{
             position: 'absolute',
             top: '10px',
@@ -77,7 +77,7 @@ const VerificationEmailModal: React.FC<VerificationEmailModalProps> = ({
         <Button 
           variant="primary" 
           className="w-100 mt-3"
-          onClick={onClosem}
+          onClick={onClose}
         >
           Got It
         </Button>
