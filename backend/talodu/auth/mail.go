@@ -1,4 +1,5 @@
 // auth/mail.go
+// By Pascal Tene
 package auth
 
 import (
@@ -236,7 +237,7 @@ func CompletePasswordReset(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		var user models.User
-		if err := db.Where("email = ? AND reset_token = ?", input.Email, input.Token).First(&user).Error; err != nil {
+		if err := db.Where("email = ? AND reset_pw_token = ?", input.Email, input.Token).First(&user).Error; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid or expired reset token"})
 			return
 		}
