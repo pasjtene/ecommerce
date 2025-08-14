@@ -1,14 +1,17 @@
+//app/[lang]/auth/reset-password/page.tsx
 "use client"
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLock, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faLock, faCheck, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import { useParams } from 'next/navigation';
+import Alert from 'react-bootstrap/Alert';
+
 
 interface Dictionary {
   resetPassword: {
@@ -31,22 +34,24 @@ export default function ResetPassword() {
   const params = useParams();
   const [t, setTranslation] = useState<any>(null);
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8888';
+  const [error, setError] = useState<string | null>(null);
 
   const token = searchParams.get('token');
   const email = searchParams.get('email');
 
   useEffect(() => {
     if (!token || !email) {
-      toast.error('Invalid reset link');
-     // router.push('/');
+      setError(t?.resetPassword.invalid_link || 'Invalid reset link');
+      toast.error(t?.resetPassword.invalid_link || 'Invalid reset link');
+      //router.push('/');
     }
-  }, [token, email, router]);
+  }, [token, email, router, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+   setError(null); // Clear previous errors
     
     if (password !== confirmPassword) {
-      toast.error(t?.resetPassword.passwords_mismatch || 'Passwords do not match');
+      setError(t?.resetPassword.passwords_mismatch || 'Passwords do not match');
       return;
     }
 
@@ -66,17 +71,22 @@ export default function ResetPassword() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to reset password');
+        const errorData = await response.json();
+        throw new Error(errorData.error || t?.resetPassword.reset_error || 'Failed to reset password');
       }
 
       toast.success(t?.resetPassword.success_message || 'Password reset successfully!');
       setSuccess(true);
       setTimeout(() => {
-        router.push('/login');
+        router.push('/'); //should go to login page
       }, 2000);
     } catch (error) {
       console.error('Error:', error);
-      toast.error('Failed to reset password');
+      setError(
+    error instanceof Error 
+      ? error.message 
+      : t?.resetPassword.reset_error || 'Failed to reset password'
+  );
     } finally {
       setIsLoading(false);
     }
@@ -108,9 +118,17 @@ export default function ResetPassword() {
   }
 
   return (
-    <Container className="d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '100vh' }}>
-      <div style={{ maxWidth: '400px', width: '100%' }}>
+    <Container className="py-5">
+      <div className="mx-auto" style={{ maxWidth: '500px', marginTop: '5rem' }}>
         <h2 className="mb-4 text-center">{t.resetPassword.title || 'Reset Password'}</h2>
+        
+        {/* Error display at the top */}
+        {error && (
+          <Alert variant="danger" className="mb-4">
+            <FontAwesomeIcon icon={faExclamationTriangle} className="me-2" />
+            {error}
+          </Alert>
+        )}
         
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
