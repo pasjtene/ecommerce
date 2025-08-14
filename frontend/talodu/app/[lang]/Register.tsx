@@ -18,6 +18,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 import { useAuth } from './contexts/AuthContextNext';
 import axios from 'axios';
 import VerificationEmailModal from './auth/register/VerificationEmailModal';
+import { toast } from 'react-toastify';
 
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
@@ -148,6 +149,7 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
         
         onClose();
         setShowVerificationModal(true);
+        toast.success('Verification email resent successfully!');
 
         //await login(email, password);
         //hideLogin();
