@@ -7,27 +7,20 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
 interface VerificationEmailModalProps {
-  show: boolean;
-  onClose: () => void;
+  //show: boolean;
+  //onClose: () => void;
   email: string;
   onResend: () => void;
 }
 
 const VerificationEmailModal: React.FC<VerificationEmailModalProps> = ({ 
-  show, 
-  onClose, 
+  //show, 
+  //onClose, 
   email,
   onResend 
 }) => {
   return (
-    <Modal
-      show={show}
-      onHide={onClose}
-      centered
-      backdropClassName="auth-backdrop"
-      contentClassName="auth-content"
-      dialogClassName="auth-dialog"
-    >
+    
       <div style={{
         position: 'relative',
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
@@ -38,7 +31,7 @@ const VerificationEmailModal: React.FC<VerificationEmailModalProps> = ({
       }}>
         <Button 
           variant="link" 
-          onClick={onClose}
+          //onClick={onClose}
           style={{
             position: 'absolute',
             top: '10px',
@@ -77,12 +70,12 @@ const VerificationEmailModal: React.FC<VerificationEmailModalProps> = ({
         <Button 
           variant="primary" 
           className="w-100 mt-3"
-          onClick={onClose}
+          //onClick={onClose}
         >
           Got It
         </Button>
       </div>
-    </Modal>
+   
   );
 };
 

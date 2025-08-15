@@ -147,7 +147,7 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
       if (response.data.user) {
         setRegisteredEmail(email);
         
-        onClose();
+        //onClose();
         setShowVerificationModal(true);
         toast.success('Verification email resent successfully!');
 
@@ -210,6 +210,8 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
     }
   };
 
+
+
   return (
     <>
     <Modal
@@ -220,6 +222,18 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
       contentClassName="auth-content"
       dialogClassName="auth-dialog"
     >
+       {/* Verification Email Modal */}
+     {showVerificationModal && (
+      <VerificationEmailModal
+        //show={showVerificationModal}
+        //onClose={() => setShowVerificationModal(false)}
+        email={registeredEmail}
+        onResend={handleResendVerification}
+      />
+     )}
+
+
+     {!showVerificationModal && (
       <div style={{
         position: 'relative',
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
@@ -398,14 +412,9 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
           </div>
         </Form>
       </div>
+       )}
     </Modal>
-     {/* Verification Email Modal */}
-      <VerificationEmailModal
-        show={showVerificationModal}
-        onClose={() => setShowVerificationModal(false)}
-        email={registeredEmail}
-        onResend={handleResendVerification}
-      />
+    
     </>
   );
 };
