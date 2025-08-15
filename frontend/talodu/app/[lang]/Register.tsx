@@ -17,7 +17,7 @@ import Modal from 'react-bootstrap/Modal';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import { useAuth } from './contexts/AuthContextNext';
 import axios from 'axios';
-import VerificationEmailModal from './auth/register/VerificationEmailModal';
+import VerificationEmailComponent from './auth/register/VerificationEmailComponent';
 import { toast } from 'react-toastify';
 
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
@@ -224,7 +224,7 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
     >
        {/* Verification Email Modal */}
      {showVerificationModal && (
-      <VerificationEmailModal
+      <VerificationEmailComponent
         //show={showVerificationModal}
         //onClose={() => setShowVerificationModal(false)}
         email={registeredEmail}
