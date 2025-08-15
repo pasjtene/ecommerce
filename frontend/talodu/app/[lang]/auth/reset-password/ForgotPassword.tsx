@@ -73,7 +73,11 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ show, onClose, onSwitch
   }
 
   return (
-    <Modal show={show} onHide={onClose} centered>
+    <div 
+    //show={show} 
+    //onHide={onClose} 
+    //centered
+    >
       <div style={{
         position: 'relative',
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
@@ -135,7 +139,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ show, onClose, onSwitch
           </Form>
         )}
       </div>
-    </Modal>
+    </div>
   );
 };
 

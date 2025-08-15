@@ -122,6 +122,17 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
       contentClassName="auth-content"
       dialogClassName="auth-dialog"
     >
+
+       {/* Verification Email Modal */}
+             {showForgotPassword && (
+              <ForgotPassword 
+            show={showForgotPassword}
+            onClose={() => setShowForgotPassword(false)}
+            onSwitchToLogin={() => setShowForgotPassword(false)}
+          />
+             )}
+
+{!showForgotPassword && (
       <div style={{
         position: 'relative',
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
@@ -130,6 +141,9 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
         border: 'none'
       }}>
+
+        
+
         <Button 
           variant="link" 
           onClick={onClose}
@@ -231,13 +245,12 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
             </Button>
           </div>
         </Form>
+        
       </div>
+      )}
     </Modal>
-    <ForgotPassword 
-            show={showForgotPassword}
-            onClose={() => setShowForgotPassword(false)}
-            onSwitchToLogin={() => setShowForgotPassword(false)}
-          />
+
+   
           </>
   );
 };
