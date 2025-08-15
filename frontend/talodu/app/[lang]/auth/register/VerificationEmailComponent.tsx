@@ -15,7 +15,7 @@ const VerificationEmailComponent: React.FC<VerificationEmailModalProps> = ({
   onResend 
 }) => {
   const [countdown, setCountdown] = useState(120); // 2 minutes in seconds
-  const [isResendDisabled, setIsResendDisabled] = useState(false);
+  const [isResendDisabled, setIsResendDisabled] = useState(true);
   const [hasResent, setHasResent] = useState(false);
 
   useEffect(() => {
@@ -80,7 +80,7 @@ const VerificationEmailComponent: React.FC<VerificationEmailModalProps> = ({
 
       <div className="text-center mb-4">
         {countdown > 0 ? (
-          <p>You can resend the email in {formatTime(countdown)}</p>
+          <p>You can click to resend the email in {formatTime(countdown)}</p>
         ) : (
           <p>Didn't receive the email?</p>
         )}
