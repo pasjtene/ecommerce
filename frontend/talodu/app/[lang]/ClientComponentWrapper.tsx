@@ -9,6 +9,7 @@ import React, { useState, useCallback } from 'react';
 import { CartProvider } from './contexts/CartContext';
 import CookieConsent from './components/CookieConsent';
 import { CurrencyProvider } from './contexts/CurrencyContext';
+import { ToastContainer } from "react-toastify";
 
 const Login = dynamic(() => import('./Login'), {
   ssr: false,
@@ -45,6 +46,7 @@ export default function ClientComponentWrapper({
         onRequireLogin={handleShowLogin} 
       >
         <HeaderNext />
+        <ToastContainer />
         <Login 
           show={showLogin} 
           onClose={() => setShowLogin(false)}

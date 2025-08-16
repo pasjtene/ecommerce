@@ -21,6 +21,8 @@ interface Dictionary {
     submit_button: string;
     back_to_login: string;
     success_message: string;
+    we_will_sent_link: string;
+    check_spam_folder: string;
   };
 }
 
@@ -29,7 +31,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ show, onClose, onSwitch
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const params = useParams();
-  const [t, setTranslation] = useState<any>(null);
+  const [transition, setTranslation] = useState<Dictionary | null>(null);
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8888';
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -49,7 +51,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ show, onClose, onSwitch
         throw new Error('Failed to send reset email');
       }
 
-      toast.success(t?.forgotPassword.success_message || 'Password reset email sent. Please check your inbox.');
+      toast.success(transition?.forgotPassword.success_message || 'Password reset email sent. Please check your inbox.');
       setSuccess(true);
     } catch (error) {
       console.error('Error:', error);
@@ -68,7 +70,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ show, onClose, onSwitch
     loadDictionary();
   }, [params.lang]);
 
-  if (!t) {
+  if (!transition) {
     return null;
   }
 
@@ -97,13 +99,13 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ show, onClose, onSwitch
           <FontAwesomeIcon icon={faTimes} />
         </Button>
 
-        <h4 className="mb-4 text-center">{t.forgotPassword.title || 'Forgot Password'} ?</h4>
-        <div className="mb-4 text-center">We will sent a link for you to resset your email</div>
-        <div className="mb-4 text-center">Please check your spam folder if you don't see the email in your mailbox</div>
+        <h4 className="mb-4 text-center">{transition.forgotPassword.title || 'Forgot Password'} ?</h4>
+        <div className="mb-4 text-center">{transition.forgotPassword.we_will_sent_link || 'We will sent a link for you to resset your email'}</div>
+        <div className="mb-4 text-center">{transition.forgotPassword.check_spam_folder || 'Please check your spam folder if you don\'t see the email in your mailbox'}</div>
         
         {success ? (
           <div className="alert alert-success">
-            {t.forgotPassword.success_message || 'Password reset email sent. Please check your inbox.'}
+            {transition.forgotPassword.success_message || 'Password reset email sent. Please check your inbox.'}
           </div>
         ) : (
           <Form onSubmit={handleSubmit}>
@@ -114,7 +116,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ show, onClose, onSwitch
                 </span>
                 <Form.Control
                   type="email"
-                  placeholder={t.forgotPassword.email_placeholder || 'Enter your email'}
+                  placeholder={transition.forgotPassword.email_placeholder || 'Enter your email'}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -128,12 +130,12 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ show, onClose, onSwitch
               className="w-100 mb-3"
               disabled={isLoading}
             >
-              {isLoading ? 'Sending...' : t.forgotPassword.submit_button || 'Reset Password'}
+              {isLoading ? 'Sending...' : transition.forgotPassword.submit_button || 'Reset Password'}
             </Button>
 
             <div className="text-center">
               <Button variant="link" onClick={onSwitchToLogin}>
-                {t.forgotPassword.back_to_login || 'Back to Login'}
+                {transition.forgotPassword.back_to_login || 'Back to Login'}
               </Button>
             </div>
           </Form>

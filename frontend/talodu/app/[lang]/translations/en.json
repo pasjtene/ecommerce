@@ -49,7 +49,9 @@
     "email_placeholder": "Enter your email",
     "submit_button": "Submit",
     "back_to_login": "Back to login",
-    "success_message": "success, a password reset link was sent to you. Please check you mailbox or spam folder."
+    "success_message": "success, a password reset link was sent to you. Please check you mailbox or spam folder.",
+    "we_will_sent_link": "We will sent a link to the provided email for you to reset your password",
+    "check_spam_folder": "Please check your spam folder if you don't see the email in your inbox"
   },
    "resetPassword": {
     "title": "Reset password",

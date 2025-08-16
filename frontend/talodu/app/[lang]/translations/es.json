@@ -44,11 +44,13 @@
     "show_password": "Mostrar contraseña"
   },
    "forgotPassword": {
-    "title": "Forgot password",
-    "email_placeholder": "Enter your email",
-    "submit_button": "Submit",
-    "back_to_login": "Back to login",
-    "success_message": "Your password has been resset"
+    "title": "Olvidé mi contraseña",
+    "email_placeholder": "Ingresa tu correo electrónico",
+    "submit_button": "Enviar",
+    "back_to_login": "Volver al inicio de sesión",
+    "success_message": "Éxito, se te ha enviado un enlace para restablecer tu contraseña. Por favor, revisa tu bandeja de entrada o carpeta de spam.",
+    "we_will_sent_link": "Enviaremos un enlace al correo electrónico proporcionado para que puedas restablecer tu contraseña",
+    "check_spam_folder": "Por favor, revisa tu carpeta de spam si no ves el correo en tu bandeja de entrada"
   },
   
    "resetPassword": {

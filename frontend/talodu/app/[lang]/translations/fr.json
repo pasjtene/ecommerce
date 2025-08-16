@@ -44,11 +44,13 @@
     "show_password": "Afficher le mot de passe"
   },
    "forgotPassword": {
-    "title": "Mot de passe oublié",
-    "email_placeholder": "Enter your email",
-    "submit_button": "Submit",
-    "back_to_login": "Back to login",
-    "success_message": "Your password has been resset"
+   "title": "Mot de passe oublié",
+    "email_placeholder": "Entrez votre email",
+    "submit_button": "Soumettre",
+    "back_to_login": "Retour à la connexion",
+    "success_message": "Succès, un lien de réinitialisation de mot de passe vous a été envoyé. Veuillez vérifier votre boîte de réception ou dossier spam.",
+    "we_will_sent_link": "Nous enverrons un lien à l'email fourni pour que vous puissiez réinitialiser votre mot de passe",
+    "check_spam_folder": "Veuillez vérifier votre dossier spam si vous ne voyez pas l'email dans votre boîte de réception"
   },
   
    "resetPassword": {
