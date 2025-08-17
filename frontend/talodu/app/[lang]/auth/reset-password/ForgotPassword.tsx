@@ -48,6 +48,13 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ show, onClose, onSwitch
         headers: {'Accept-Language': params.lang || 'en'}
       },);
 
+      if (!response.data) {
+        throw new Error('Failed to send reset email');
+      }
+
+      toast.success(transition?.forgotPassword.success_message || 'Password reset email sent. Please check your inbox.');
+      setSuccess(true);
+
       
     } catch (err) {
       toast.error('Failed to send reset email');
