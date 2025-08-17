@@ -19,7 +19,8 @@ import { useAuth } from './contexts/AuthContextNext';
 import axios from 'axios';
 import VerificationEmailComponent from './auth/register/VerificationEmailComponent';
 import { toast } from 'react-toastify';
-
+import LoadingSpinner from '../api/LoadingSpinner';
+import { useParams } from 'next/navigation';
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 interface RegisterProps {
@@ -28,7 +29,33 @@ interface RegisterProps {
   onSwitchToLogin: () => void;
 }
 
-// Password strength checker
+interface Dictionary {
+  register: {
+    title: string;
+    email_placeholder: string;
+    password_placeholder: string;
+    submit_button: string;
+    firstname_placeholder: string;
+    lastname_placeholder: string;
+    have_account: string;
+    success_message: string;
+    switch_to_login: string;
+    password_requirements: string;
+    strength_very_weak: string;
+    strength_weak: string;
+    strength_fair: string;
+    strength_good: string;
+    strength_strong: string;
+    strength_very_strong: string;
+    requirement_length: string;
+    requirement_uppercase: string;
+    requirement_lowercase: string;
+    requirement_number: string;
+    requirement_special: string;
+    email_exists_error: string;
+  };
+}
+
 const checkPasswordStrength = (password: string) => {
   let strength = 0;
   const requirements = {
@@ -61,7 +88,7 @@ const checkPasswordStrength = (password: string) => {
   }
 
   return {
-    strength: Math.min(strength, 5), // Max strength of 5
+    strength: Math.min(strength, 5),
     requirements
   };
 };
@@ -78,8 +105,9 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
   const [showPassword, setShowPassword] = React.useState(false);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState('');
+  const params = useParams();
+  const [translation, setTranslation] = useState<Dictionary | null>(null);
   
-  // Password strength state
   const [passwordStrength, setPasswordStrength] = useState({
     strength: 0,
     requirements: {
@@ -91,26 +119,32 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
     }
   });
 
-  // Update password strength on change
   useEffect(() => {
     setPasswordStrength(checkPasswordStrength(password));
   }, [password]);
 
-  // Pre-check if email is registered
+  useEffect(() => {
+    const loadDictionary = async () => {
+      const dict = await import(`./translations/${params.lang}.json`);
+      setTranslation(dict.default);
+    };
+    loadDictionary();
+  }, [params.lang]);
+
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
       if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         const isAvailable = await checkEmailAvailability(email);
         if (!isAvailable) {
-          setError('Email already registered');
-        } else if (error === 'Email already registered') {
+          setError(translation?.register.email_exists_error || 'Email already registered');
+        } else if (error === translation?.register.email_exists_error) {
           setError('');
         }
       }
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [email]);
+  }, [email, translation]);
 
   const checkEmailAvailability = async (email: string): Promise<boolean> => {
     try {
@@ -120,7 +154,7 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
       return !response.data.exists;
     } catch (err) {
       console.error('Error checking email:', err);
-      return true; // Assume available if check fails
+      return true;
     }
   };
 
@@ -128,7 +162,6 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
     e.preventDefault();
     setError('');
     
-    // Check password strength before submitting
     if (passwordStrength.strength < 3) {
       setError('Please choose a stronger password');
       return;
@@ -146,20 +179,14 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
 
       if (response.data.user) {
         setRegisteredEmail(email);
-        
-        //onClose();
         setShowVerificationModal(true);
-        toast.success('Verification email resent successfully!');
-
-        //await login(email, password);
-        //hideLogin();
-        //onClose();
+        toast.success(translation?.register.success_message || 'Registration success');
       }
     } catch (err) {
       console.error('Registration failed:', err);
       if (axios.isAxiosError(err)) {
         if (err.response?.data?.code === 'EMAIL_EXISTS') {
-          setError('This email is already registered. Please use a different email or login.');
+          setError(translation?.register.email_exists_error || 'Email already registered');
         } else {
           setError(err.response?.data?.error || 'Registration failed. Please try again.');
         }
@@ -173,31 +200,30 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
     }
   };
 
-    const handleResendVerification = async () => {
+  const handleResendVerification = async () => {
     try {
       await axios.post(`${API_BASE_URL}/auth/resend-verification`, {
         email: registeredEmail
       });
-      // You might want to show a toast notification here
+      toast.success(translation?.register.success_message || 'Verification email resent');
     } catch (err) {
       console.error('Failed to resend verification email:', err);
     }
   };
 
-  // Password strength name
   const getStrengthName = (strength: number): string => {
-  switch (strength) {
-    case 0: return 'Very Weak';
-    case 1: return 'Weak';
-    case 2: return 'Fair';
-    case 3: return 'Good';
-    case 4: return 'Strong';
-    case 5: return 'Very Strong';
-    default: return 'Weak';
-  }
-};
+    if (!translation) return 'Weak';
+    switch (strength) {
+      case 0: return translation.register.strength_very_weak;
+      case 1: return translation.register.strength_weak;
+      case 2: return translation.register.strength_fair;
+      case 3: return translation.register.strength_good;
+      case 4: return translation.register.strength_strong;
+      case 5: return translation.register.strength_very_strong;
+      default: return translation.register.strength_weak;
+    }
+  };
 
-  // Password strength colors
   const getStrengthColor = () => {
     switch (passwordStrength.strength) {
       case 0: return 'danger';
@@ -210,211 +236,207 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
     }
   };
 
-
+  if (loading || !translation) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <>
-    <Modal
-      show={show}
-      onHide={onClose}
-      centered
-      backdropClassName="auth-backdrop"
-      contentClassName="auth-content"
-      dialogClassName="auth-dialog"
-    >
-       {/* Verification Email Modal */}
-     {showVerificationModal && (
-      <VerificationEmailComponent
-        //show={showVerificationModal}
-        //onClose={() => setShowVerificationModal(false)}
-        email={registeredEmail}
-        onResend={handleResendVerification}
-      />
-     )}
-
-
-     {!showVerificationModal && (
-      <div style={{
-        position: 'relative',
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        borderRadius: '10px',
-        padding: '2rem',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
-        border: 'none'
-      }}>
-        <Button 
-          variant="link" 
-          onClick={onClose}
-          style={{
-            position: 'absolute',
-            top: '10px',
-            right: '10px',
-            color: '#333'
-          }}
-        >
-          <FontAwesomeIcon icon={faTimes} />
-        </Button>
-
-        <h4 className="mb-4 text-center">Create Your Account</h4>
-        
-        {error && (
-          <div className="alert alert-danger" role="alert">
-            {error}
-          </div>
+      <Modal
+        show={show}
+        onHide={onClose}
+        centered
+        backdropClassName="auth-backdrop"
+        contentClassName="auth-content"
+        dialogClassName="auth-dialog"
+      >
+        {showVerificationModal && (
+          <VerificationEmailComponent
+            email={registeredEmail}
+            onResend={handleResendVerification}
+          />
         )}
-        
-        <Form onSubmit={handleSubmit}>
-          <div className="row mb-3">
-            <div className="col-md-6">
-              <Form.Group>
-                <div className="input-group">
-                  <span className="input-group-text">
-                    <FontAwesomeIcon icon={faUser} />
-                  </span>
-                  <Form.Control
-                    type="text"
-                    placeholder="First Name"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    required
-                  />
-                </div>
-              </Form.Group>
-            </div>
-            <div className="col-md-6">
-              <Form.Group>
-                <div className="input-group">
-                  <span className="input-group-text">
-                    <FontAwesomeIcon icon={faUser} />
-                  </span>
-                  <Form.Control
-                    type="text"
-                    placeholder="Last Name"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    required
-                  />
-                </div>
-              </Form.Group>
-            </div>
-          </div>
 
-          <Form.Group className="mb-3">
-            <div className="input-group">
-              <span className="input-group-text">
-                <FontAwesomeIcon icon={faEnvelope} />
-              </span>
-              <Form.Control
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-          </Form.Group>
+        {!showVerificationModal && (
+          <div style={{
+            position: 'relative',
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            borderRadius: '10px',
+            padding: '2rem',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+            border: 'none'
+          }}>
+            <Button 
+              variant="link" 
+              onClick={onClose}
+              style={{
+                position: 'absolute',
+                top: '10px',
+                right: '10px',
+                color: '#333'
+              }}
+            >
+              <FontAwesomeIcon icon={faTimes} />
+            </Button>
 
-          <Form.Group className="mb-4">
-            <div className="input-group">
-              <span className="input-group-text">
-                <FontAwesomeIcon icon={faLock} />
-              </span>
-              <Form.Control
-                type={showPassword ? 'text' : 'password'}
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={8}
-              />
-              <span className="input-group-text text-success"
-                onMouseLeave={() => setShowPassword(false)} // In case cursor leaves while holding
-                onTouchStart={() => setShowPassword(true)}
-                onTouchEnd={() => setShowPassword(false)}
-                onMouseUp={()=>{setShowPassword(false)}}
-                onMouseDown={()=>{setShowPassword(true)}}>
-                  <FontAwesomeIcon icon={faEye} />
-                </span>
-            </div>
+            <h4 className="mb-4 text-center">{translation.register.title}</h4>
             
-            {/* Password Strength Meter */}
-            {password && (
-              <div className="mt-2">
-                <ProgressBar 
-                  now={passwordStrength.strength * 20} 
-                  variant={getStrengthColor()}
-                  className="mb-2"
-                />
-                <div className="password-requirements">
-                  <small>Password Requirements:</small>
-                  <small>
-                    <span className={`fw-bold text-${getStrengthColor()}`}>
-                      {getStrengthName(passwordStrength.strength)}
-                    </span> 
-                  </small>
-                  <ul className="list-unstyled">
-                    <li>
-                      <FontAwesomeIcon 
-                        icon={passwordStrength.requirements.length ? faCheck : faXmark} 
-                        className={passwordStrength.requirements.length ? "text-success" : "text-danger"} 
-                      /> At least 8 characters
-                    </li>
-                    <li>
-                      <FontAwesomeIcon 
-                        icon={passwordStrength.requirements.hasUpperCase ? faCheck : faXmark} 
-                        className={passwordStrength.requirements.hasUpperCase ? "text-success" : "text-danger"} 
-                      /> Uppercase letter
-                    </li>
-                    <li>
-                      <FontAwesomeIcon 
-                        icon={passwordStrength.requirements.hasLowerCase ? faCheck : faXmark} 
-                        className={passwordStrength.requirements.hasLowerCase ? "text-success" : "text-danger"} 
-                      /> Lowercase letter
-                    </li>
-                    <li>
-                      <FontAwesomeIcon 
-                        icon={passwordStrength.requirements.hasNumber ? faCheck : faXmark} 
-                        className={passwordStrength.requirements.hasNumber ? "text-success" : "text-danger"} 
-                      /> Number
-                    </li>
-                    <li>
-                      <FontAwesomeIcon 
-                        icon={passwordStrength.requirements.hasSpecialChar ? faCheck : faXmark} 
-                        className={passwordStrength.requirements.hasSpecialChar ? "text-success" : "text-danger"} 
-                      /> Special character
-                    </li>
-                  </ul>
-                </div>
+            {error && (
+              <div className="alert alert-danger" role="alert">
+                {error}
               </div>
             )}
-          </Form.Group>
+            
+            <Form onSubmit={handleSubmit}>
+              <div className="row mb-3">
+                <div className="col-md-6">
+                  <Form.Group>
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <FontAwesomeIcon icon={faUser} />
+                      </span>
+                      <Form.Control
+                        type="text"
+                        placeholder={translation.register.firstname_placeholder}
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </Form.Group>
+                </div>
+                <div className="col-md-6">
+                  <Form.Group>
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <FontAwesomeIcon icon={faUser} />
+                      </span>
+                      <Form.Control
+                        type="text"
+                        placeholder={translation.register.lastname_placeholder}
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </Form.Group>
+                </div>
+              </div>
 
-          <Button 
-            variant="primary" 
-            type="submit" 
-            className="w-100 mb-3"
-            disabled={loading || passwordStrength.strength < 3}
-          >
-            {loading ? 'Registering...' : 'Register'}
-          </Button>
+              <Form.Group className="mb-3">
+                <div className="input-group">
+                  <span className="input-group-text">
+                    <FontAwesomeIcon icon={faEnvelope} />
+                  </span>
+                  <Form.Control
+                    type="email"
+                    placeholder={translation.register.email_placeholder}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+              </Form.Group>
 
-          <div className="text-center">
-            <p className="mb-1">Already have an account?</p>
-            <Button 
-              variant="outline-secondary" 
-              onClick={onSwitchToLogin}
-              className="w-100"
-              disabled={loading}
-            >
-              <FontAwesomeIcon icon={faSignInAlt} className="me-2" />
-              Login
-            </Button>
+              <Form.Group className="mb-4">
+                <div className="input-group">
+                  <span className="input-group-text">
+                    <FontAwesomeIcon icon={faLock} />
+                  </span>
+                  <Form.Control
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder={translation.register.password_placeholder}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    minLength={8}
+                  />
+                  <span className="input-group-text text-success"
+                    onMouseLeave={() => setShowPassword(false)}
+                    onTouchStart={() => setShowPassword(true)}
+                    onTouchEnd={() => setShowPassword(false)}
+                    onMouseUp={()=>{setShowPassword(false)}}
+                    onMouseDown={()=>{setShowPassword(true)}}>
+                      <FontAwesomeIcon icon={faEye} />
+                    </span>
+                </div>
+                
+                {password && (
+                  <div className="mt-2">
+                    <ProgressBar 
+                      now={passwordStrength.strength * 20} 
+                      variant={getStrengthColor()}
+                      className="mb-2"
+                    />
+                    <div className="password-requirements">
+                      <small>{translation.register.password_requirements}</small>
+                      <small>
+                        <span className={`fw-bold text-${getStrengthColor()}`}>
+                          {getStrengthName(passwordStrength.strength)}
+                        </span> 
+                      </small>
+                      <ul className="list-unstyled">
+                        <li>
+                          <FontAwesomeIcon 
+                            icon={passwordStrength.requirements.length ? faCheck : faXmark} 
+                            className={passwordStrength.requirements.length ? "text-success" : "text-danger"} 
+                          /> {translation.register.requirement_length}
+                        </li>
+                        <li>
+                          <FontAwesomeIcon 
+                            icon={passwordStrength.requirements.hasUpperCase ? faCheck : faXmark} 
+                            className={passwordStrength.requirements.hasUpperCase ? "text-success" : "text-danger"} 
+                          /> {translation.register.requirement_uppercase}
+                        </li>
+                        <li>
+                          <FontAwesomeIcon 
+                            icon={passwordStrength.requirements.hasLowerCase ? faCheck : faXmark} 
+                            className={passwordStrength.requirements.hasLowerCase ? "text-success" : "text-danger"} 
+                          /> {translation.register.requirement_lowercase}
+                        </li>
+                        <li>
+                          <FontAwesomeIcon 
+                            icon={passwordStrength.requirements.hasNumber ? faCheck : faXmark} 
+                            className={passwordStrength.requirements.hasNumber ? "text-success" : "text-danger"} 
+                          /> {translation.register.requirement_number}
+                        </li>
+                        <li>
+                          <FontAwesomeIcon 
+                            icon={passwordStrength.requirements.hasSpecialChar ? faCheck : faXmark} 
+                            className={passwordStrength.requirements.hasSpecialChar ? "text-success" : "text-danger"} 
+                          /> {translation.register.requirement_special}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                )}
+              </Form.Group>
+
+              <Button 
+                variant="primary" 
+                type="submit" 
+                className="w-100 mb-3"
+                disabled={loading || passwordStrength.strength < 3}
+              >
+                {loading ? `${translation.register.submit_button}...` : translation.register.submit_button}
+              </Button>
+
+              <div className="text-center">
+                <p className="mb-1">{translation.register.have_account}</p>
+                <Button 
+                  variant="outline-secondary" 
+                  onClick={onSwitchToLogin}
+                  className="w-100"
+                  disabled={loading}
+                >
+                  <FontAwesomeIcon icon={faSignInAlt} className="me-2" />
+                  {translation.register.switch_to_login}
+                </Button>
+              </div>
+            </Form>
           </div>
-        </Form>
-      </div>
-       )}
-    </Modal>
-    
+        )}
+      </Modal>
     </>
   );
 };

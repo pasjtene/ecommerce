@@ -53,6 +53,32 @@
     "check_spam_folder": "Veuillez vérifier votre dossier spam si vous ne voyez pas l'email dans votre boîte de réception"
   },
   
+  "register": {
+    "title": "Créer mon compte",
+    "email_placeholder": "Email",
+    "password_placeholder": "Mot de passe",
+    "submit_button": "S'inscrire",
+    "firstname_placeholder": "Prénom",
+    "lastname_placeholder": "Nom",
+    "have_account": "Vous avez déjà un compte ?",
+    "success_message": "Inscription réussie. Un email vous a été envoyé. Veuillez vérifier votre email.",
+    "switch_to_login": "Se connecter",
+    "password_requirements": "Exigences du mot de passe :",
+    "strength_very_weak": "Très faible",
+    "strength_weak": "Faible",
+    "strength_fair": "Moyen",
+    "strength_good": "Bon",
+    "strength_strong": "Fort",
+    "strength_very_strong": "Très fort",
+    "requirement_length": "Au moins 8 caractères",
+    "requirement_uppercase": "Lettre majuscule",
+    "requirement_lowercase": "Lettre minuscule",
+    "requirement_number": "Chiffre",
+    "requirement_special": "Caractère spécial",
+    "email_exists_error": "Cet email est déjà enregistré. Veuillez utiliser un autre email ou vous connecter."
+  }
+,
+  
    "resetPassword": {
     "title": "Reset password",
     "new_password": "New Password",

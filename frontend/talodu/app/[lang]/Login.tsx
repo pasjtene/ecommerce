@@ -44,7 +44,7 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
   const [error, setError] = useState<{message: string, code?: string, resent?: boolean} | null>(null);
   const { login, hideLogin } = useAuth();
   const params = useParams();
-  const [t, setTranslation] = useState<Dictionary | null>(null);
+  const [translation, setTranslation] = useState<Dictionary | null>(null);
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8888';
   const [showForgotPassword, setShowForgotPassword] = useState(false);
 
@@ -62,12 +62,12 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
       console.error('Login failed:', error);
       if (error.response?.data?.code === 'EMAIL_NOT_VERIFIED') {
         setError({ 
-          message: t?.login.verification_required || 'Email not verified. Please check your inbox.', 
+          message: translation?.login.verification_required || 'Email not verified. Please check your inbox.', 
           code: 'EMAIL_NOT_VERIFIED' 
         });
       } else {
         setError({ 
-          message: t?.login.invalid_credentials || 'Invalid email or password' 
+          message: translation?.login.invalid_credentials || 'Invalid email or password' 
         });
       }
     }
@@ -89,7 +89,7 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
       
       toast.success('Verification email resent. Please check your inbox.');
       setError({ 
-        message: t?.login.verification_resent || 'Verification email resent. Please check your inbox.',
+        message: translation?.login.verification_resent || 'Verification email resent. Please check your inbox.',
         code: 'EMAIL_NOT_VERIFIED_RESENT',
         resent: true
       });
@@ -108,7 +108,7 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
     loadDictionary();
   }, [params.lang]);
 
-  if (!t) {
+  if (!translation) {
     return null; // or loading spinner
   }
 
@@ -157,7 +157,7 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
           <FontAwesomeIcon icon={faTimes} />
         </Button>
 
-        <h4 className="mb-4 text-center">{t.login.title}</h4>
+        <h4 className="mb-4 text-center">{translation.login.title}</h4>
         
         {/* Error message display */}
         {error && (
@@ -171,7 +171,7 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
                   className="p-0 text-danger" 
                   onClick={handleResendVerification}
                 >
-                  {t.login.resend_verification || "Resend verification email"}
+                  {translation.login.resend_verification || "Resend verification email"}
                 </Button>
               </div>
             )}
@@ -186,7 +186,7 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
               </span>
               <Form.Control
                 type="email"
-                placeholder={t.login.email_placeholder}
+                placeholder={translation.login.email_placeholder}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -201,7 +201,7 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
               </span>
               <Form.Control
                 type={showPassword ? 'text' : 'password'}
-                placeholder={t.login.password_placeholder}
+                placeholder={translation.login.password_placeholder}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -223,25 +223,25 @@ const Login: React.FC<LoginProps> = ({ show, onClose, onSwitchToRegister}) => {
             type="submit" 
             className="w-100 mb-3"
           >
-            {t.login.submit_button}
+            {translation.login.submit_button}
           </Button>
 
           <div className="text-center mb-3">
             
             <Button variant="link" size="sm" onClick={() => {setShowForgotPassword(true)}}>
-              {t.login.forgot_password}
+              {translation.login.forgot_password}
             </Button>
           </div>
 
           <div className="text-center">
-            <p className="mb-1">{t.login.no_account}</p>
+            <p className="mb-1">{translation.login.no_account}</p>
             <Button 
               variant="outline-primary" 
               onClick={onSwitchToRegister}
               className="w-100"
             >
               <FontAwesomeIcon icon={faUserPlus} className="me-2" />
-              {t.login.create_account}
+              {translation.login.create_account}
             </Button>
           </div>
         </Form>

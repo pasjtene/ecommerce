@@ -1,3 +1,4 @@
+
 {
   "header": {
     "search_placeholder": "Search products...",
@@ -44,6 +45,32 @@
     "success_message": "Successfully logged in",
     "show_password": "Show password"
   },
+    
+  "register": {
+    "title": "Create My Account",
+    "email_placeholder": "Email",
+    "password_placeholder": "Password",
+    "submit_button": "Register",
+    "firstname_placeholder": "First Name",
+    "lastname_placeholder": "Last Name",
+    "have_account": "Already have an account?",
+    "success_message": "Registration success. An email was sent to you. Please verify your email.",
+    "switch_to_login": "Switch to Login",
+    "password_requirements": "Password Requirements:",
+    "strength_very_weak": "Very Weak",
+    "strength_weak": "Weak",
+    "strength_fair": "Fair",
+    "strength_good": "Good",
+    "strength_strong": "Strong",
+    "strength_very_strong": "Very Strong",
+    "requirement_length": "At least 8 characters",
+    "requirement_uppercase": "Uppercase letter",
+    "requirement_lowercase": "Lowercase letter",
+    "requirement_number": "Number",
+    "requirement_special": "Special character",
+    "email_exists_error": "This email is already registered. Please use a different email or login."
+  }
+,
   "forgotPassword": {
     "title": "Forgot password",
     "email_placeholder": "Enter your email",

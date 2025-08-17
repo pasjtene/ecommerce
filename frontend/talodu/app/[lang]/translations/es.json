@@ -43,6 +43,7 @@
     "success_message": "Sesión iniciada correctamente",
     "show_password": "Mostrar contraseña"
   },
+
    "forgotPassword": {
     "title": "Olvidé mi contraseña",
     "email_placeholder": "Ingresa tu correo electrónico",
@@ -52,6 +53,32 @@
     "we_will_sent_link": "Enviaremos un enlace al correo electrónico proporcionado para que puedas restablecer tu contraseña",
     "check_spam_folder": "Por favor, revisa tu carpeta de spam si no ves el correo en tu bandeja de entrada"
   },
+  
+  "register": {
+    "title": "Crear mi cuenta",
+    "email_placeholder": "Correo electrónico",
+    "password_placeholder": "Contraseña",
+    "submit_button": "Registrarse",
+    "firstname_placeholder": "Nombre",
+    "lastname_placeholder": "Apellido",
+    "have_account": "¿Ya tienes una cuenta?",
+    "success_message": "Registro exitoso. Se te ha enviado un correo electrónico. Por favor verifica tu correo.",
+    "switch_to_login": "Iniciar sesión",
+    "password_requirements": "Requisitos de contraseña:",
+    "strength_very_weak": "Muy débil",
+    "strength_weak": "Débil",
+    "strength_fair": "Regular",
+    "strength_good": "Bueno",
+    "strength_strong": "Fuerte",
+    "strength_very_strong": "Muy fuerte",
+    "requirement_length": "Al menos 8 caracteres",
+    "requirement_uppercase": "Letra mayúscula",
+    "requirement_lowercase": "Letra minúscula",
+    "requirement_number": "Número",
+    "requirement_special": "Carácter especial",
+    "email_exists_error": "Este correo electrónico ya está registrado. Por favor usa un correo diferente o inicia sesión."
+  }
+,
   
    "resetPassword": {
     "title": "Reset password",
