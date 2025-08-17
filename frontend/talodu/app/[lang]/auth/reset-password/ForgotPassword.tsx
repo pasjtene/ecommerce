@@ -7,6 +7,7 @@ import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { toast } from 'react-toastify';
 import { useParams } from 'next/navigation';
+import axios from 'axios';
 
 interface ForgotPasswordProps {
   show: boolean;
@@ -34,7 +35,30 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ show, onClose, onSwitch
   const [transition, setTranslation] = useState<Dictionary | null>(null);
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8888';
 
+  
+  
+   
   const handleSubmit = async (e: React.FormEvent) => {
+   e.preventDefault();
+    setIsLoading(true);
+    
+    try {
+      const response = await axios.post(`${API_BASE_URL}/auth/forgot-password`, { email }, {
+        params: { lang: params.lang },
+        headers: {'Accept-Language': params.lang || 'en'}
+      },);
+
+      
+    } catch (err) {
+      toast.error('Failed to send reset email');
+    } finally {
+      setIsLoading(false);
+    }
+  
+}
+  
+  
+  const handleSubmit2 = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
@@ -42,6 +66,9 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ show, onClose, onSwitch
       const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
         method: 'POST',
         headers: {
+          'Content-Type': 'application/json',
+        },
+         params: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email }),
