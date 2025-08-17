@@ -585,7 +585,9 @@ func RegisterUser(db *gorm.DB) gin.HandlerFunc {
 			user.Email,
 		)
 
-		if err := SendVerificationEmail(user.Email, verificationLink); err != nil {
+		lang := getPreferredLanguage(c)
+
+		if err := SendVerificationEmail(user.Email, verificationLink, lang); err != nil {
 			log.Printf("Failed to send verification email: %v", err)
 			// Continue anyway, but log the error
 		}

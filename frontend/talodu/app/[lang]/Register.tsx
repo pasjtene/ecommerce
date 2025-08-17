@@ -149,8 +149,11 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
   const checkEmailAvailability = async (email: string): Promise<boolean> => {
     try {
       const response = await axios.get(`${API_BASE_URL}/auth/check-email`, {
-        params: { email }
-      });
+        params: { email },
+        headers: {'Accept-Language': params.lang || 'en'}
+      },
+      
+);
       return !response.data.exists;
     } catch (err) {
       console.error('Error checking email:', err);

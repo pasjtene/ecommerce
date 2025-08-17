@@ -17,7 +17,94 @@ import (
 	"gorm.io/gorm"
 )
 
-func SendVerificationEmail(to, verificationLink string) error {
+func getPreferredLanguage(c *gin.Context) string {
+	// Check Accept-Language header first
+	acceptLang := c.GetHeader("Accept-Language")
+	if acceptLang != "" {
+
+		return acceptLang
+
+	}
+
+	// Default to English
+	return "en"
+}
+
+// mail.go
+func SendVerificationEmail(to, verificationLink string, lang string) error {
+	log.Printf("Attempting to send verification email to: %s", to)
+	log.Printf("Verification link: %s", verificationLink)
+
+	from := os.Getenv("MAIL_FROM")
+	if from == "" {
+		from = "no-reply@" + getHostname()
+	}
+
+	var subject string
+	var messageBody string
+
+	switch lang {
+	case "fr":
+		subject = "Vérifiez votre adresse email"
+		messageBody = fmt.Sprintf(`<html>
+<body>
+    <h2>Bienvenue sur Talodu.com !</h2>
+    <p>Veuillez cliquer sur le lien ci-dessous pour vérifier votre adresse email :</p>
+    <p><a href="%s">%s</a></p>
+    <p>Ce lien expirera dans 24 heures.</p>
+</body>
+</html>`, verificationLink, verificationLink)
+	case "es":
+		subject = "Verifica tu dirección de correo electrónico"
+		messageBody = fmt.Sprintf(`<html>
+<body>
+    <h2>¡Bienvenido a Talodu.com!</h2>
+    <p>Por favor, haz clic en el siguiente enlace para verificar tu dirección de correo electrónico:</p>
+    <p><a href="%s">%s</a></p>
+    <p>Este enlace expirará en 24 horas.</p>
+</body>
+</html>`, verificationLink, verificationLink)
+	default: // English
+		subject = "Verify Your Email Address"
+		messageBody = fmt.Sprintf(`<html>
+<body>
+    <h2>Welcome to Talodu.com !</h2>
+    <p>Please click the link below to verify your email address:</p>
+    <p><a href="%s">%s</a></p>
+    <p>This link will expire in 24 hours.</p>
+</body>
+</html>`, verificationLink, verificationLink)
+	}
+
+	message := fmt.Sprintf(`From: %s
+To: %s
+Subject: %s
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+
+%s`, from, to, subject, messageBody)
+
+	cmd := exec.Command("/usr/sbin/sendmail", "-t", "-i")
+	cmd.Stdin = strings.NewReader(message)
+
+	// Retry mechanism remains the same
+	var err error
+	for i := 0; i < 3; i++ {
+		if err = cmd.Run(); err == nil {
+			return nil
+		}
+		time.Sleep(2 * time.Second)
+	}
+	if err := cmd.Run(); err != nil {
+		log.Printf("Sendmail error: %v", err)
+		return err
+	}
+
+	log.Printf("Email sent successfully to: %s", to)
+	return nil
+}
+
+func SendVerificationEmail2(to, verificationLink string) error {
 	// Hardcode the recipient email for testing.
 	log.Printf("Attempting to send verification email to: %s", to)
 	log.Printf("Verification link: %s", verificationLink)
@@ -106,7 +193,8 @@ func ResendVerificationEmail(db *gorm.DB) gin.HandlerFunc {
 		)
 
 		// Send verification email
-		err := SendVerificationEmail(user.Email, verificationLink)
+		lang := getPreferredLanguage(c)
+		err := SendVerificationEmail(user.Email, verificationLink, lang)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send verification email"})
 			return
