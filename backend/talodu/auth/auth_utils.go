@@ -578,12 +578,21 @@ func RegisterUser(db *gorm.DB) gin.HandlerFunc {
 		log.Printf("Sending verification email to: %v", input.Email)
 
 		// Send verification email
+		host_url := os.Getenv("HOST_URL")
+		if host_url == "" {
+			log.Printf("host URL not defined in environment variables")
+			host_url = "https://" + getHostname()
+		}
+
 		verificationLink := fmt.Sprintf(
-			"%s/verify-email?token=%s&email=%s",
-			os.Getenv("FRONTEND_URL"),
+			"%s/auth/verify-email?token=%s&email=%s",
+			//os.Getenv("FRONTEND_URL"),
+			host_url,
 			verifyToken,
 			user.Email,
 		)
+
+		//verificationLink = host_url + verificationLink
 
 		lang := getPreferredLanguage(c)
 

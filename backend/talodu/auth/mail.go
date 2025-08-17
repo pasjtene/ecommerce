@@ -37,7 +37,7 @@ func SendVerificationEmail(to, verificationLink string, lang string) error {
 	log.Printf("Verification link: %s", verificationLink)
 	log.Printf("The user selected language is: %s", lang)
 
-	verificationLink = "https://" + getHostname() + "/auth" + verificationLink
+	//verificationLink = "https://" + getHostname() + "/auth" + verificationLink
 
 	from := os.Getenv("MAIL_FROM")
 	if from == "" {
@@ -140,9 +140,16 @@ func ResendVerificationEmail(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
+		host_url := os.Getenv("HOST_URL")
+		if host_url == "" {
+			log.Printf("host URL not defined in environment variables")
+			host_url = "https://" + getHostname()
+		}
+
 		verificationLink := fmt.Sprintf(
-			"%s/verify-email?token=%s&email=%s",
-			os.Getenv("FRONTEND_URL"),
+			"%s/auth/verify-email?token=%s&email=%s",
+			//os.Getenv("FRONTEND_URL"),
+			host_url,
 			verificationToken,
 			user.Email,
 		)
@@ -176,7 +183,80 @@ func getHostname() string {
 	return hostname
 }
 
-func SendPasswordResetEmail(to, resetLink string) error {
+func SendPasswordResetEmail(to, resetLink string, lang string) error {
+	log.Printf("Attempting to send password reset email to: %s", to)
+	log.Printf("Reset link: %s", resetLink)
+
+	from := os.Getenv("MAIL_FROM")
+	if from == "" {
+		from = "no-reply@" + getHostname()
+	}
+
+	var subject string
+	var messageBody string
+
+	switch lang {
+	case "fr":
+		subject = "Demande de réinitialisation de mot de passe"
+		messageBody = fmt.Sprintf(`<html>
+<body>
+    <h2>Demande de réinitialisation de mot de passe</h2>
+    <p>Nous avons reçu une demande de réinitialisation de votre mot de passe. Cliquez sur le lien ci-dessous pour continuer :</p>
+    <p><a href="%s">%s</a></p>
+    <p>Ce lien expirera dans 1 heure. Si vous n'avez pas fait cette demande, veuillez ignorer cet email.</p>
+</body>
+</html>`, resetLink, resetLink)
+	case "es":
+		subject = "Solicitud de restablecimiento de contraseña"
+		messageBody = fmt.Sprintf(`<html>
+<body>
+    <h2>Solicitud de restablecimiento de contraseña</h2>
+    <p>Hemos recibido una solicitud para restablecer tu contraseña. Haz clic en el siguiente enlace para continuar:</p>
+    <p><a href="%s">%s</a></p>
+    <p>Este enlace expirará en 1 hora. Si no solicitaste esto, por favor ignora este correo.</p>
+</body>
+</html>`, resetLink, resetLink)
+	default: // English
+		subject = "Password Reset Request"
+		messageBody = fmt.Sprintf(`<html>
+<body>
+    <h2>Password Reset Request</h2>
+    <p>We received a request to reset your password. Click the link below to proceed:</p>
+    <p><a href="%s">%s</a></p>
+    <p>This link will expire in 1 hour. If you didn't request this, please ignore this email.</p>
+</body>
+</html>`, resetLink, resetLink)
+	}
+
+	message := fmt.Sprintf(`From: %s
+To: %s
+Subject: %s
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+
+%s`, from, to, subject, messageBody)
+
+	cmd := exec.Command("/usr/sbin/sendmail", "-t", "-i")
+	cmd.Stdin = strings.NewReader(message)
+
+	// Retry mechanism
+	var err error
+	for i := 0; i < 3; i++ {
+		if err = cmd.Run(); err == nil {
+			return nil
+		}
+		time.Sleep(2 * time.Second)
+	}
+	if err := cmd.Run(); err != nil {
+		log.Printf("Sendmail error for password reset: %v", err)
+		return err
+	}
+
+	log.Printf("Password reset email sent successfully to: %s", to)
+	return nil
+}
+
+func SendPasswordResetEmail2(to, resetLink string) error {
 	log.Printf("Attempting to send password reset email to: %s", to)
 	log.Printf("Reset link: %s", resetLink)
 
@@ -249,14 +329,23 @@ func InitiatePasswordReset(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
+		host_url := os.Getenv("HOST_URL")
+		if host_url == "" {
+			log.Printf("host URL not defined in environment variables")
+			host_url = "https://" + getHostname()
+		}
+
 		resetLink := fmt.Sprintf(
-			"%s/reset-password?token=%s&email=%s",
-			os.Getenv("FRONTEND_URL"),
+			"%s/auth/reset-password?token=%s&email=%s",
+			//os.Getenv("FRONTEND_URL"),
+			host_url,
 			resetToken,
 			user.Email,
 		)
 
-		err := SendPasswordResetEmail(user.Email, resetLink)
+		lang := getPreferredLanguage(c)
+
+		err := SendPasswordResetEmail(user.Email, resetLink, lang)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send password reset email"})
 			return
