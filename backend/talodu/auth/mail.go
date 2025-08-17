@@ -20,9 +20,10 @@ import (
 func getPreferredLanguage(c *gin.Context) string {
 	// Check Accept-Language header first
 	acceptLang := c.GetHeader("Accept-Language")
+	lang := strings.ToLower(strings.TrimSpace(c.Query("lang")))
 	if acceptLang != "" {
 
-		return acceptLang
+		return lang
 
 	}
 
@@ -34,6 +35,7 @@ func getPreferredLanguage(c *gin.Context) string {
 func SendVerificationEmail(to, verificationLink string, lang string) error {
 	log.Printf("Attempting to send verification email to: %s", to)
 	log.Printf("Verification link: %s", verificationLink)
+	log.Printf("The language is: %s", lang)
 
 	from := os.Getenv("MAIL_FROM")
 	if from == "" {
@@ -46,6 +48,7 @@ func SendVerificationEmail(to, verificationLink string, lang string) error {
 	switch lang {
 	case "fr":
 		subject = "Vérifiez votre adresse email"
+		log.Printf("We are in fr is 2: %s", lang)
 		messageBody = fmt.Sprintf(`<html>
 <body>
     <h2>Bienvenue sur Talodu.com !</h2>

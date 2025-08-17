@@ -150,6 +150,9 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
     try {
       const response = await axios.get(`${API_BASE_URL}/auth/check-email`, {
         params: { email },
+          
+        
+        
         headers: {'Accept-Language': params.lang || 'en'}
       },
       
@@ -178,7 +181,10 @@ const Register: React.FC<RegisterProps> = ({ show, onClose, onSwitchToLogin }) =
         email: email,
         password: password,
         roles: ['Visitor']
-      });
+      }, {
+        params: { lang: params.lang },
+        headers: {'Accept-Language': params.lang || 'en'}
+      },);
 
       if (response.data.user) {
         setRegisteredEmail(email);
