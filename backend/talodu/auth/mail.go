@@ -19,7 +19,7 @@ import (
 
 func getPreferredLanguage(c *gin.Context) string {
 	// Check Accept-Language header first
-	acceptLang := c.GetHeader("Accept-Language")
+	acceptLang := c.GetHeader("Accept-Language") // This shows en-US
 	lang := strings.ToLower(strings.TrimSpace(c.Query("lang")))
 	if acceptLang != "" {
 
@@ -35,7 +35,9 @@ func getPreferredLanguage(c *gin.Context) string {
 func SendVerificationEmail(to, verificationLink string, lang string) error {
 	log.Printf("Attempting to send verification email to: %s", to)
 	log.Printf("Verification link: %s", verificationLink)
-	log.Printf("The language is: %s", lang)
+	log.Printf("The user selected language is: %s", lang)
+
+	verificationLink = "https://" + getHostname() + "/auth" + verificationLink
 
 	from := os.Getenv("MAIL_FROM")
 	if from == "" {
@@ -48,7 +50,6 @@ func SendVerificationEmail(to, verificationLink string, lang string) error {
 	switch lang {
 	case "fr":
 		subject = "Vérifiez votre adresse email"
-		log.Printf("We are in fr is 2: %s", lang)
 		messageBody = fmt.Sprintf(`<html>
 <body>
     <h2>Bienvenue sur Talodu.com !</h2>
@@ -105,55 +106,6 @@ Content-Type: text/html; charset=UTF-8
 
 	log.Printf("Email sent successfully to: %s", to)
 	return nil
-}
-
-func SendVerificationEmail2(to, verificationLink string) error {
-	// Hardcode the recipient email for testing.
-	log.Printf("Attempting to send verification email to: %s", to)
-	log.Printf("Verification link: %s", verificationLink)
-
-	testRecipient := to
-	verificationLink = "https://" + getHostname() + "/auth" + verificationLink
-
-	from := os.Getenv("MAIL_FROM")
-	if from == "" {
-		from = "no-reply@" + getHostname()
-	}
-
-	message := fmt.Sprintf(`From: %s
-To: %s
-Subject: Verify Your Email Address
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-
-<html>
-<body>
-    <h2>Welcome to Talodu.com !</h2>
-    <p>Please click the link below to verify your email address:</p>
-    <p><a href="%s">%s</a></p>
-    <p>This link will expire in 24 hours.</p>
-</body>
-</html>`, from, testRecipient, verificationLink, verificationLink)
-
-	cmd := exec.Command("/usr/sbin/sendmail", "-t", "-i")
-	cmd.Stdin = strings.NewReader(message)
-
-	// Retry mechanism
-	var err error
-	for i := 0; i < 3; i++ {
-		if err = cmd.Run(); err == nil {
-			return nil
-		}
-		time.Sleep(2 * time.Second)
-	}
-	if err := cmd.Run(); err != nil {
-		log.Printf("Sendmail error: %v", err) // Add this line
-		return err
-	}
-
-	log.Printf("Email sent successfully to: %s", to)
-
-	return fmt.Errorf("failed to send email: %v", err)
 }
 
 func ResendVerificationEmail(db *gorm.DB) gin.HandlerFunc {
