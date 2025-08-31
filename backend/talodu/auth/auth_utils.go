@@ -62,6 +62,7 @@ func init() {
 	if secret == "" {
 		log.Fatal("FATAL: JWT_SECRET environment variable not set. Please set it before running the application.")
 	}
+
 	if super_user_pass == "" {
 		log.Fatal("FATAL: SUPER_USER_PASS environment variable not set. Please set it before running the application.")
 	}
@@ -295,13 +296,15 @@ func Login(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		// Check if user email is verified
-		if !user.IsVerified {
-			c.JSON(http.StatusForbidden, gin.H{"error": "Email not verified", "code": "EMAIL_NOT_VERIFIED"})
+		// Check if user email is verified exept for the superadmin
+		if !IsSuperAdmin(c) {
+			if !user.IsVerified {
+				c.JSON(http.StatusForbidden, gin.H{"error": "Email not verified", "code": "EMAIL_NOT_VERIFIED"})
 
-			log.Printf("User not verified: %s", user.Email)
+				log.Printf("User not verified: %s", user.Email)
 
-			return
+				return
+			}
 		}
 
 		if !CheckPassword(input.Password, user.Password) {
@@ -902,6 +905,26 @@ func IsAdminOrIsSuperAdmin(c *gin.Context) bool {
 
 	for _, role := range authUser.Roles {
 		if role == "SuperAdmin" || role == "Admin" {
+			return true
+		}
+	}
+
+	return false
+}
+
+func IsSuperAdmin(c *gin.Context) bool {
+	authUser, err := GetAuthUser(c)
+	if err != nil {
+		return false
+	}
+
+	// Check if authUser is not nil (since GetAuthUser returns a pointer)
+	if authUser == nil {
+		return false
+	}
+
+	for _, role := range authUser.Roles {
+		if role == "SuperAdmin" {
 			return true
 		}
 	}

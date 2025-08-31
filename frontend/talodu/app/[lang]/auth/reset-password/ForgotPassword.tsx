@@ -45,7 +45,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ show, onClose, onSwitch
     try {
       const response = await axios.post(`${API_BASE_URL}/auth/forgot-password`, { email }, {
         params: { lang: params.lang },
-        headers: {'Accept-Language': params.lang || 'en'}
+        headers: {'Accept-Language': params.lang || 'en-US'}
       },);
 
       if (!response.data) {
@@ -64,36 +64,6 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ show, onClose, onSwitch
   
 }
   
-  
-  const handleSubmit2 = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
-    try {
-      const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-         params: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to send reset email');
-      }
-
-      toast.success(transition?.forgotPassword.success_message || 'Password reset email sent. Please check your inbox.');
-      setSuccess(true);
-    } catch (error) {
-      console.error('Error:', error);
-      toast.error('Failed to send reset email');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   // Load dictionary
   useEffect(() => {
@@ -109,11 +79,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ show, onClose, onSwitch
   }
 
   return (
-    <div 
-    //show={show} 
-    //onHide={onClose} 
-    //centered
-    >
+    <div>
       <div style={{
         position: 'relative',
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
