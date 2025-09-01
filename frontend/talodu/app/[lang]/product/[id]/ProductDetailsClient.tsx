@@ -16,7 +16,6 @@ import dynamic from 'next/dynamic';
 import { useParams } from 'next/navigation';
 
 const DynamicProductImageGallery = dynamic(() => import('./ProductImageGallery'), { ssr: false });
-const ProductAboutsEditor = dynamic(() => import('./ProductAboutsEditor'), { ssr: false });
 const ProductAboutSection = dynamic(() => import('./ProductAboutSection'), { ssr: false });
 const ProductAboutTranslationsText = dynamic(() => import('./ProductAboutTranslationsText'), {
 	ssr: false,
@@ -275,16 +274,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 									</div>
 								)}
 
-								<div className='container mt-4'>
-									{isTranslating ? (
-										<ProductAboutsEditor
-											productId={currentProduct.ID}
-											initialDetails={currentProduct.abouts}
-										/>
-									) : (
-										<></>
-									)}
-								</div>
+								
 
 								<div className='container mt-4'>
 									{isTranslating ? (

@@ -9,6 +9,11 @@ import ProductAboutsEditor from './ProductAboutsEditor';
 import { Product } from '../../../types';
 import LoadingSpinner from '../../../../api/LoadingSpinner';
 
+import dynamic from 'next/dynamic';
+const ProductAboutTranslationsText = dynamic(() => import('./ProductAboutTranslationsText'), {
+	ssr: false,
+});
+
 export default function ProductTranslationPage() {
   const router = useRouter();
   const params = useParams();
@@ -69,6 +74,15 @@ export default function ProductTranslationPage() {
         productId={product.ID}
         initialDetails={product.abouts}
     />
+    	<div className='container mt-4'>
+									
+        <ProductAboutTranslationsText
+            productId={product.ID}
+            abouts={product.abouts}
+            languages={['en', 'fr', 'es']}
+        />
+									
+        </div>
     </div>
   );
 }
