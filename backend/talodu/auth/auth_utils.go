@@ -139,12 +139,13 @@ func SeedSuperAdmin(db *gorm.DB) {
 	// Create SuperAdmin user
 	hashedPassword, _ := HashPassword(SUPER_USER_PASS) // We must Use a strong default password
 	superAdmin := User{
-		Username:  "superadmin",
-		Email:     SUPER_USER_EMAIL,
-		FirstName: "System",
-		LastName:  "Administrator",
-		Password:  hashedPassword,
-		Roles:     []Role{superAdminRole},
+		Username:   "superadmin",
+		Email:      SUPER_USER_EMAIL,
+		FirstName:  "System",
+		LastName:   "Administrator",
+		Password:   hashedPassword,
+		Roles:      []Role{superAdminRole},
+		IsVerified: true, //The superadmin user will not need to verify his email
 	}
 	if err := db.Create(&superAdmin).Error; err != nil {
 		log.Fatal("Failed to seed SuperAdmin:", err)
@@ -297,14 +298,13 @@ func Login(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		// Check if user email is verified exept for the superadmin
-		if !IsSuperAdmin(c) {
-			if !user.IsVerified {
-				c.JSON(http.StatusForbidden, gin.H{"error": "Email not verified", "code": "EMAIL_NOT_VERIFIED"})
 
-				log.Printf("User not verified: %s", user.Email)
+		if !user.IsVerified {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Email not verified", "code": "EMAIL_NOT_VERIFIED"})
 
-				return
-			}
+			log.Printf("User not verified: %s", user.Email)
+
+			return
 		}
 
 		if !CheckPassword(input.Password, user.Password) {

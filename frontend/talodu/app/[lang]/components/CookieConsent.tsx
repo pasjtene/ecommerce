@@ -40,7 +40,7 @@ export default function CookieConsent() {
       // 48h = 172 800 000
 
       if (!consentGiven || 
-          (consentDate && Date.now() - parseInt(consentDate) > 172800000)) {
+          (consentDate && Date.now() - parseInt(consentDate) > 864000000)) { //10 days
         setVisible(true);
       }
     };
