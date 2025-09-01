@@ -80,7 +80,7 @@ export default function ProductTranslationPage() {
 									
         <ProductAboutTranslationsText
             productId={product.ID}
-            abouts={product.AboutsWithTranlations}
+            abouts={product.aboutst}
             languages={['en', 'fr', 'es']}
         />
 									

@@ -40,7 +40,7 @@ export interface User {
     translations: ProductTranslation[]
     abouts: ProductAbout[]
     aboutst: ProductAbout[]
-    AboutsWithTranlations: ProductAbout[]
+    //AboutsWithTranlations: ProductAbout[]
   }
 
   export interface ProductAbout {

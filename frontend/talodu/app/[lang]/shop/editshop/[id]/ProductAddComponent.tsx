@@ -27,7 +27,7 @@ const ProductAddComponent = ({ shop, onSave, onCancel }: ShopAddProps) => {
             translations: [],
             abouts: [],
             aboutst: [],
-            AboutsWithTranlations: []
+            //AboutsWithTranlations: []
           });
 
 
