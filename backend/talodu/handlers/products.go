@@ -255,6 +255,7 @@ func GetProduct(db *gorm.DB) gin.HandlerFunc {
 		var product models.Product
 		id := c.Param("id")
 		lang := strings.ToLower(strings.TrimSpace(c.Query("lang")))
+
 		log.Printf("Processing request for product ID: %s, language: %s", id, lang)
 
 		if err := db.Preload("Images").Preload("Translations").First(&product, id).Error; err != nil {

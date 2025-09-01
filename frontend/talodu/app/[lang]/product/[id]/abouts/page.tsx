@@ -33,6 +33,7 @@ export default function ProductTranslationPage() {
         const response = await axios.get(
           `${API_BASE_URL}/products/${params.id}`,
           {
+            params: { lang: params.lang },
             headers: {
               Authorization: `${token}`
             }
@@ -47,6 +48,7 @@ export default function ProductTranslationPage() {
         setLoading(false);
       }
     };
+
 
   useEffect(() => {
     if (!token) return; // Don't fetch until we have the token
