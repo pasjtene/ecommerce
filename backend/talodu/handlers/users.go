@@ -1,8 +1,11 @@
 package handlers
 
 import (
+	"math"
 	"net/http"
 	"strconv"
+	"strings"
+	"talodu/auth"
 	"talodu/models"
 
 	"github.com/gin-gonic/gin"
@@ -98,6 +101,81 @@ func UpdateUser(db *gorm.DB) gin.HandlerFunc {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "User updated successfully",
 			"user":    frontendUser,
+		})
+	}
+}
+
+func ListUsers(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var users []User
+
+		// Pagination
+		page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+		limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+		searchTerm := c.Query("search")
+		offset := (page - 1) * limit
+
+		// Base query
+		query := db.Preload("Roles")
+		// Add search conditions if search term exists
+		if searchTerm != "" {
+			searchPattern := "%" + strings.ToLower(searchTerm) + "%"
+			query = query.Where(
+				"LOWER(username) LIKE ? OR "+
+					"LOWER(email) LIKE ? OR "+
+					"LOWER(first_name) LIKE ? OR "+
+					"LOWER(last_name) LIKE ? OR "+
+					"EXISTS (SELECT 1 FROM roles JOIN user_roles ON roles.id = user_roles.role_id "+
+					"WHERE user_roles.user_id = users.id AND LOWER(roles.name) LIKE ?)",
+				searchPattern, searchPattern, searchPattern, searchPattern, searchPattern,
+			)
+		}
+
+		// Execute query with pagination
+		result := query.Offset(offset).Limit(limit).Find(&users)
+		if result.Error != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
+			return
+		}
+
+		// Total count (with same search conditions)
+		var totalCount int64
+		countQuery := db.Model(&User{})
+		if searchTerm != "" {
+			searchPattern := "%" + strings.ToLower(searchTerm) + "%"
+			countQuery = countQuery.Where(
+				"LOWER(username) LIKE ? OR "+
+					"LOWER(email) LIKE ? OR "+
+					"LOWER(first_name) LIKE ? OR "+
+					"LOWER(last_name) LIKE ? OR "+
+					"EXISTS (SELECT 1 FROM roles JOIN user_roles ON roles.id = user_roles.role_id "+
+					"WHERE user_roles.user_id = users.id AND LOWER(roles.name) LIKE ?)",
+				searchPattern, searchPattern, searchPattern, searchPattern, searchPattern,
+			)
+		}
+		countQuery.Count(&totalCount)
+
+		totalPages := int(math.Ceil(float64(totalCount) / float64(limit)))
+
+		// Format response (exclude passwords)
+		var userResponses []auth.UserResponse
+		for _, user := range users {
+			userResponses = append(userResponses, auth.UserResponse{
+				ID:        user.ID,
+				Username:  user.Username,
+				Email:     user.Email,
+				FirstName: user.FirstName,
+				LastName:  user.LastName,
+				Roles:     user.Roles,
+			})
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"users":      userResponses,
+			"page":       page,
+			"limit":      limit,
+			"totalItems": totalCount,
+			"totalPages": totalPages,
 		})
 	}
 }

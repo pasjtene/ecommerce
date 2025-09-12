@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -109,7 +108,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8
     if (!confirm('Are you sure you want to delete this user?')) return;
 
     try {
-      await api.delete(`/admin/users/${userId}`);
+      await axios.delete(`/admin/users/${userId}`);
       setUsers(users.filter(user => user.id !== userId));
       alert('User deleted successfully');
     } catch (err) {
