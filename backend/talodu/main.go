@@ -211,6 +211,8 @@ func main() {
 		users.GET("", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.ListUsers(s.DB))
 		users.POST("/logout", auth.AuthMiddleware("Admin"), auth.Logout(s.DB))
 		users.PUT("/:id", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.UpdateUser(s.DB))
+		users.GET(":id", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.GetUser(s.DB))
+		users.GET("/roles", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.GetRoles(s.DB))
 	}
 
 	authRoutes := r.Group("/auth")

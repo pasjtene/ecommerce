@@ -221,6 +221,24 @@ const HeaderNext = () => {
                                                 <FontAwesomeIcon icon={faCog} className="me-2" />
                                                  {t.header.settings}
                                             </div>
+
+
+                                              <div className="dropdown-divider my-1"></div>
+                                            
+                                            <div
+                                                className="dropdown-item py-2 px-3"
+                                                onClick={() => {
+                                                    router.push('/admin/global'); // <-- Use router.push
+                                                    setShowDropdown(false);
+                                                }}
+                                                style={{ cursor: 'pointer', fontSize: '0.9rem' }}
+                                            >
+                                                <FontAwesomeIcon icon={faCog} className="me-2" />
+                                                Global setting
+                                            </div>
+
+
+
                                             <div className="dropdown-divider my-1"></div>
                                             
                                             <div

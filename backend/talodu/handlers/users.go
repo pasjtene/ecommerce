@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"errors"
+	"fmt"
 	"math"
 	"net/http"
 	"strconv"
@@ -177,5 +179,72 @@ func ListUsers(db *gorm.DB) gin.HandlerFunc {
 			"totalItems": totalCount,
 			"totalPages": totalPages,
 		})
+	}
+}
+
+// GET - Get single user by ID /users/:id
+func GetUser(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Get user ID from URL
+		userID, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":   "Invalid user ID",
+				"details": "User ID must be a valid integer",
+			})
+			return
+		}
+
+		// Validate user ID
+		if userID <= 0 {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":   "Invalid user ID",
+				"details": "User ID must be a positive integer",
+			})
+			return
+		}
+
+		// Find user with roles preloaded
+		var user models.User
+		if err := db.Preload("Roles").First(&user, userID).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				c.JSON(http.StatusNotFound, gin.H{
+					"error":   "User not found",
+					"details": fmt.Sprintf("User with ID %d does not exist", userID),
+				})
+			} else {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"error":   "Database error",
+					"details": "Failed to retrieve user from database",
+				})
+			}
+			return
+		}
+
+		// Convert to frontend response format
+		frontendUser := user.ToFrontend()
+
+		c.JSON(http.StatusOK, gin.H{
+			"user":    frontendUser,
+			"message": "User retrieved successfully",
+		})
+	}
+}
+
+// GET - Get all available roles /users/roles
+func GetRoles(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var roles []models.Role
+
+		// Fetch all roles from the database
+		if err := db.Find(&roles).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "Failed to fetch roles",
+				"details": err.Error(),
+			})
+			return
+		}
+
+		c.JSON(http.StatusOK, roles)
 	}
 }
