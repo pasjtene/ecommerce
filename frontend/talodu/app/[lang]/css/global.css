@@ -13,4 +13,27 @@
     text-decoration: underline;
   }
 
+
+  /* Admin page CSS */
+.admin-container {
+  min-height: 100vh;
+}
+
+.sidebar {
+  transition: all 0.3s ease;
+}
+
+.sidebar-item {
+  transition: background-color 0.2s ease;
+}
+
+.sidebar-item:hover {
+  background-color: #f7fafc;
+}
+
+.sidebar-item.active {
+  background-color: #ebf8ff;
+  border-right: 2px solid #3182ce;
+}
+
  

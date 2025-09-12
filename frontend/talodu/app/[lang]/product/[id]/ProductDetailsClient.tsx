@@ -17,9 +17,7 @@ import { useParams } from 'next/navigation';
 
 const DynamicProductImageGallery = dynamic(() => import('./ProductImageGallery'), { ssr: false });
 const ProductAboutSection = dynamic(() => import('./ProductAboutSection'), { ssr: false });
-const ProductAboutTranslationsText = dynamic(() => import('./ProductAboutTranslationsText'), {
-	ssr: false,
-});
+
 
 interface Dictionary {
 	product: {
@@ -276,17 +274,7 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 
 								
 
-								<div className='container mt-4'>
-									{isTranslating ? (
-										<ProductAboutTranslationsText
-											productId={currentProduct.ID}
-											abouts={initialProduct.aboutst}
-											languages={['en', 'fr', 'es']}
-										/>
-									) : (
-										<></>
-									)}
-								</div>
+							
 							</div>
 						)}
 
