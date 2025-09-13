@@ -30,7 +30,7 @@ const Register = dynamic(() => import('../Register'), { ssr: false });
 
 
 const HeaderNext = () => {
-    const { user, logout: contextLogout } = useAuth();
+    const { user,hasAnyRole, logout: contextLogout } = useAuth();
     const { currency, currencyRate, currencySymbol, formatPrice, setCurrency, selectedCountry,
       setSelectedCountry, } = useCurrency();
     const router = useRouter();
@@ -223,9 +223,10 @@ const HeaderNext = () => {
                                             </div>
 
 
-                                              <div className="dropdown-divider my-1"></div>
-                                            
-                                            <div
+                                              {hasAnyRole(["Admin","SuperAdmin"]) && (
+                                                <div>
+                                                <div className="dropdown-divider my-1"></div>
+                                                <div
                                                 className="dropdown-item py-2 px-3"
                                                 onClick={() => {
                                                     router.push('/admin/global'); // <-- Use router.push
@@ -236,9 +237,10 @@ const HeaderNext = () => {
                                                 <FontAwesomeIcon icon={faCog} className="me-2" />
                                                 Global setting
                                             </div>
-
-
-
+                                            </div>
+                                              )}
+                                              
+                                            
                                             <div className="dropdown-divider my-1"></div>
                                             
                                             <div
