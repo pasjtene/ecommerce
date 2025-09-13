@@ -30,7 +30,7 @@ export default function EditRole() {
   const fetchRole = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/roles/${roleId}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { 'Authorization': `${token}` }
       });
       setRole(response.data.role || response.data);
     } catch (err) {

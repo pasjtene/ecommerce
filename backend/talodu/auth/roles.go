@@ -1,7 +1,9 @@
 package auth
 
 import (
+	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -10,6 +12,18 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
+
+func SetupRolesRoutes(r *gin.Engine, db *gorm.DB) {
+	roles := r.Group("/roles")
+	{
+		roles.GET("", AuthMiddleware("Admin", "SuperAdmin"), GetRoles(db))
+		roles.GET("/:id", AuthMiddleware("Admin", "SuperAdmin"), GetRole(db))
+		roles.POST("", AuthMiddleware("SuperAdmin"), CreateRole(db))
+		roles.PUT("/:id", AuthMiddleware("SuperAdmin"), UpdateRole(db))
+		roles.DELETE("/:id", AuthMiddleware("SuperAdmin"), DeleteRole(db))
+
+	}
+}
 
 // GET - Get all available roles /users/roles
 func GetRoles(db *gorm.DB) gin.HandlerFunc {
@@ -29,21 +43,34 @@ func GetRoles(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// GET - Get a role bu ID for updating
+// GET - Get a role by ID for updating
 func GetRole(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// Use "id" instead of "roleId" since that's what your route uses
 		roleID, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid role ID"})
 			return
 		}
+
 		var role models.Role
 		if err := db.First(&role, roleID).Error; err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Role not found"})
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				c.JSON(http.StatusNotFound, gin.H{"error": "Role not found"})
+			} else {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch role"})
+			}
 			return
 		}
 
-		c.JSON(http.StatusOK, role)
+		log.Printf("The role ID (integer): %d", roleID)
+
+		fmt.Println("The request role :", roleID)
+
+		c.JSON(http.StatusOK, gin.H{
+			"role":    role,
+			"message": "Role found successfully",
+		})
 	}
 }
 
@@ -161,23 +188,5 @@ func DeleteRole(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, gin.H{"message": "Role deleted successfully"})
-	}
-}
-
-func SetupRolesRoutes(r *gin.Engine, db *gorm.DB) {
-	rolesRoutes := r.Group("/roles")
-	rolesRoutes.Use(AuthMiddleware()) // all roles routes are authenticated
-	{
-
-		// Multiple image uploads
-		rolesRoutes.POST("/:productId/batch", func(c *gin.Context) {
-			//UploadProductImagesBatch(c, db)
-		})
-
-		// Get all images for a product
-		rolesRoutes.GET("/:roleId", func(c *gin.Context) {
-			AuthMiddleware()
-			GetRole(db)
-		})
 	}
 }
