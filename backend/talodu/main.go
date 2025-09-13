@@ -205,12 +205,13 @@ func main() {
 
 	r.Static("/uploads", "./uploads")
 
+	auth.SetupRolesRoutes(r, s.DB)
 	roles := r.Group("/roles")
 	{
-		roles.GET("", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.GetRoles(s.DB))
-		roles.POST("", auth.AuthMiddleware("SuperAdmin"), handlers.CreateRole(s.DB))
-		roles.PUT("/:id", auth.AuthMiddleware("SuperAdmin"), handlers.UpdateRole(s.DB))
-		roles.DELETE("/:id", auth.AuthMiddleware("SuperAdmin"), handlers.DeleteRole(s.DB))
+		roles.GET("", auth.AuthMiddleware("Admin", "SuperAdmin"), auth.GetRoles(s.DB))
+		roles.POST("", auth.AuthMiddleware("SuperAdmin"), auth.CreateRole(s.DB))
+		roles.PUT("/:id", auth.AuthMiddleware("SuperAdmin"), auth.UpdateRole(s.DB))
+		roles.DELETE("/:id", auth.AuthMiddleware("SuperAdmin"), auth.DeleteRole(s.DB))
 	}
 
 	users := r.Group("/users")
@@ -220,7 +221,7 @@ func main() {
 		users.POST("/logout", auth.AuthMiddleware("Admin"), auth.Logout(s.DB))
 		users.PUT("/:id", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.UpdateUser(s.DB))
 		users.GET(":id", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.GetUser(s.DB))
-		users.GET("/roles", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.GetRoles(s.DB))
+		users.GET("/roles", auth.AuthMiddleware("Admin", "SuperAdmin"), auth.GetRoles(s.DB))
 	}
 
 	authRoutes := r.Group("/auth")

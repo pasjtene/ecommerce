@@ -1,16 +1,16 @@
-package handlers
+package auth
 
 import (
 	"fmt"
 	"net/http"
 	"strconv"
+
 	"talodu/models"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-// GET - Get all roles
 // GET - Get all available roles /users/roles
 func GetRoles(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -26,6 +26,24 @@ func GetRoles(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, roles)
+	}
+}
+
+// GET - Get a role bu ID for updating
+func GetRole(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		roleID, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid role ID"})
+			return
+		}
+		var role models.Role
+		if err := db.First(&role, roleID).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Role not found"})
+			return
+		}
+
+		c.JSON(http.StatusOK, role)
 	}
 }
 
@@ -143,5 +161,23 @@ func DeleteRole(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, gin.H{"message": "Role deleted successfully"})
+	}
+}
+
+func SetupRolesRoutes(r *gin.Engine, db *gorm.DB) {
+	rolesRoutes := r.Group("/roles")
+	rolesRoutes.Use(AuthMiddleware()) // all roles routes are authenticated
+	{
+
+		// Multiple image uploads
+		rolesRoutes.POST("/:productId/batch", func(c *gin.Context) {
+			//UploadProductImagesBatch(c, db)
+		})
+
+		// Get all images for a product
+		rolesRoutes.GET("/:roleId", func(c *gin.Context) {
+			AuthMiddleware()
+			GetRole(db)
+		})
 	}
 }
