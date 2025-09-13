@@ -51,7 +51,8 @@ const { user, token, showLogin, onRequireLogin } = useAuth();
     totalItems: 0,
     totalPages: 0
   });
-  const [searchTerm, setSearchTerm] = useState('');
+
+const [searchTerm, setSearchTerm] = useState('');
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8888';
 
   const fetchUsers = async (page: number = 1, search: string = '') => {

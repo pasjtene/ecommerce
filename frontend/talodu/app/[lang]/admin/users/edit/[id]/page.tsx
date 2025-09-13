@@ -18,13 +18,13 @@ interface User {
 interface Role {
   ID: number;
   Name: string;
-  Description?: string;  // ← Changed to capital D
+  Description?: string;
 }
 
 interface AvailableRole {
-  ID: number;           // ← Changed to capital ID
-  Name: string;         // ← Changed to capital Name
-  Description?: string; // ← Changed to capital Description
+  ID: number;           
+  Name: string;   
+  Description?: string; 
 }
 
 interface UpdateUserRequest {

@@ -205,6 +205,14 @@ func main() {
 
 	r.Static("/uploads", "./uploads")
 
+	roles := r.Group("/roles")
+	{
+		roles.GET("", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.GetRoles(s.DB))
+		roles.POST("", auth.AuthMiddleware("SuperAdmin"), handlers.CreateRole(s.DB))
+		roles.PUT("/:id", auth.AuthMiddleware("SuperAdmin"), handlers.UpdateRole(s.DB))
+		roles.DELETE("/:id", auth.AuthMiddleware("SuperAdmin"), handlers.DeleteRole(s.DB))
+	}
+
 	users := r.Group("/users")
 	{
 		users.POST("", auth.AuthMiddleware("SuperAdmin"), auth.RegisterUser(s.DB)) // Only SuperAdmin

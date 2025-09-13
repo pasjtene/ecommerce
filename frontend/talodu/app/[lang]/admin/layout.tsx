@@ -15,6 +15,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const menuItems = [
     { href: '/admin/global', label: 'Global Settings', icon: '⚙️' },
     { href: '/admin/users', label: 'List Users', icon: '👥' },
+    { href: '/admin/roles', label: 'Manage Roles', icon: '🔐' }, 
     { href: '/admin/products', label: 'Products', icon: '📦' },
     { href: '/admin/orders', label: 'Orders', icon: '📋' },
     { href: '/admin/settings', label: 'Site Settings', icon: '🌐' },

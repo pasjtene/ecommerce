@@ -221,30 +221,12 @@ func GetUser(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		// Convert to frontend response format
+		// Convert to frontend response format.
 		frontendUser := user.ToFrontend()
 
 		c.JSON(http.StatusOK, gin.H{
 			"user":    frontendUser,
 			"message": "User retrieved successfully",
 		})
-	}
-}
-
-// GET - Get all available roles /users/roles
-func GetRoles(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		var roles []models.Role
-
-		// Fetch all roles from the database
-		if err := db.Find(&roles).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error":   "Failed to fetch roles",
-				"details": err.Error(),
-			})
-			return
-		}
-
-		c.JSON(http.StatusOK, roles)
 	}
 }

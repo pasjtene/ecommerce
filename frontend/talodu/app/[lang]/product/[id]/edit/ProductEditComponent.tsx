@@ -57,7 +57,7 @@ const ProductEditComponent = ({ product, onSave, onCancel }: ProductEditProps) =
   const [categories, setCategories] = useState<ProductCategory[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
-   const [token, setToken] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   
 
   useEffect(() => {
