@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"talodu/auth"
 	"talodu/models"
 
 	"github.com/google/uuid"
@@ -706,9 +707,11 @@ func SeedProducts(db *gorm.DB) {
 
 func SetupProductImageRoutes(r *gin.Engine, db *gorm.DB) {
 	productImageRoutes := r.Group("/images/product")
+	//productImageRoutes.Use(auth.AuthMiddleware())
 	{
 		// Single image upload
 		productImageRoutes.POST("/:productId", func(c *gin.Context) {
+			auth.AuthMiddleware()
 			UploadProductImage(c, db)
 		})
 
