@@ -51,6 +51,7 @@ export default function EditUser() {
   const [availableRoles, setAvailableRoles] = useState<AvailableRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [isUpdated, setIsUpdated] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -118,7 +119,8 @@ export default function EditUser() {
 
       if (response.status === 200) {
         alert('User updated successfully!');
-        router.push('/admin/users');
+        setIsUpdated(true)
+        //router.push('/admin/users');
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -171,7 +173,21 @@ export default function EditUser() {
   if (!user) {
     return (
       <div className="alert alert-danger" role="alert">
-        User not found
+        User not found. You must be authenticated to update user.
+        <button 
+          type="button" 
+          className="btn-close float-end" 
+          onClick={() => router.back()}
+          aria-label="Close"
+        ></button>
+      </div>
+    );
+  }
+
+   if (!isUpdated) {
+    return (
+      <div className="alert alert-success" role="alert">
+        User not found. You must be authenticated to update user.
         <button 
           type="button" 
           className="btn-close float-end" 
