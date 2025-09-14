@@ -274,7 +274,7 @@ export default function EditUser() {
                             checked={user.roles.some(r => r.ID === role.ID)}
                             onChange={(e) => handleRoleChange(role.ID, e.target.checked)}
                             disabled={(role.Name=="Admin" || role.Name=="SuperAdmin") && !hasAnyRole(["SuperAdmin"])} 
-                            title={!hasAnyRole(["SuperAdmin"])?  "Only SuperAdmin can assign this role" : "You can change role"}
+                            //title={!hasAnyRole(["SuperAdmin"])?  "Only SuperAdmin can assign this role" : "You can change role"}
            
                           />
                           <label className="form-check-label" htmlFor={`role-${role.ID}`}>
