@@ -34,6 +34,8 @@ func SetupUsersRoutes(r *gin.Engine, db *gorm.DB) {
 		users.PUT("/:id", auth.AuthMiddleware("Admin", "SuperAdmin"), UpdateUser(db)) //update user recorsd and roles
 		users.GET(":id", auth.AuthMiddleware("Admin", "SuperAdmin"), GetUser(db))
 		users.GET("/roles", auth.AuthMiddleware("Admin", "SuperAdmin"), auth.GetRoles(db))
+
+		users.PUT("/account/:id", auth.AuthMiddleware(), UpdateUserOwnData(db)) //update user recorsd and roles
 	}
 }
 
@@ -102,6 +104,74 @@ func UpdateUser(db *gorm.DB) gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update roles"})
 			return
 		}
+
+		// Save user changes
+		if err := tx.Save(&user).Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
+			return
+		}
+
+		// Commit transaction
+		if err := tx.Commit().Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Transaction failed"})
+			return
+		}
+
+		// Preload roles for response
+		if err := db.Preload("Roles").First(&user, user.ID).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load updated user"})
+			return
+		}
+
+		frontendUser := user.ToFrontend()
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": "User updated successfully",
+			"user":    frontendUser,
+		})
+	}
+}
+
+// PUT - Update /users/account/:id
+func UpdateUserOwnData(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		// Get user ID from URL
+		userID, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+			return
+		}
+
+		// Parse request body
+		var req models.UpdateUserRequest
+		if err := c.ShouldBindJSON(&req); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		// Start transaction
+		tx := db.Begin()
+		defer func() {
+			if r := recover(); r != nil {
+				tx.Rollback()
+			}
+		}()
+
+		// Find existing user
+		var user models.User
+		if err := tx.Preload("Roles").First(&user, userID).Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+			return
+		}
+
+		// Update basic user info
+		user.Username = req.Username
+		user.FirstName = req.FirstName
+		user.LastName = req.LastName
+		user.Email = req.Email
 
 		// Save user changes
 		if err := tx.Save(&user).Error; err != nil {

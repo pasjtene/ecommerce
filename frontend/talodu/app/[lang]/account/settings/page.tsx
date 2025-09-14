@@ -1,4 +1,4 @@
-//[lang]/admin/users/edit/id/page.tsx
+//[lang]/account/settings/page.tsx
 'use client';
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -110,15 +110,15 @@ export default function EditUser() {
         roles: updateduser.roles.map(role => role.ID)
       };
 
-      const response = await axios.put(API_BASE_URL +`/users/${user?.ID}`, updateData, {
+      const response = await axios.put(API_BASE_URL +`/users/account/${user?.ID}`, updateData, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `${token}`
         }
       });
 
       if (response.status === 200) {
-        alert('User updated successfully!');
-        router.push('/admin/users');
+        alert('Your data was updated successfully!');
+        //router.push('/admin/users');
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -260,11 +260,11 @@ export default function EditUser() {
 
               <div className="mb-4">
                 <label className="form-label">Roles *</label>
-                {availableRoles.length === 0 ? (
-                  <div className="text-muted">Loading roles...</div>
+                {user.Roles.length === 0 ? (
+                  <div className="text-muted">No roles...</div>
                 ) : (
                   <div className="row">
-                    {availableRoles.map((role) => (
+                    {user.Roles.map((role) => (
                       <div key={role.ID} className="col-md-6 mb-2">
                         <div className="form-check form-switch">
                           <input
@@ -273,7 +273,7 @@ export default function EditUser() {
                             id={`role-${role.ID}`}
                             checked={updateduser.roles.some(r => r.ID === role.ID)}
                             onChange={(e) => handleRoleChange(role.ID, e.target.checked)}
-                            disabled={(role.Name=="Admin" || role.Name=="SuperAdmin") && !hasAnyRole(["SuperAdmin"])} 
+                            disabled
                             //title={!hasAnyRole(["SuperAdmin"])?  "Only SuperAdmin can assign this role" : "You can change role"}
            
                           />
