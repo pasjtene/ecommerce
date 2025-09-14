@@ -205,8 +205,10 @@ func main() {
 
 	r.Static("/uploads", "./uploads")
 
-	auth.SetupRolesRoutes(r, s.DB) // roles route
+	auth.SetupRolesRoutes(r, s.DB)     // roles route
+	handlers.SetupUsersRoutes(r, s.DB) // users route
 
+	/**
 	users := r.Group("/users")
 	{
 		users.POST("", auth.AuthMiddleware("SuperAdmin"), auth.RegisterUser(s.DB)) // Only SuperAdmin
@@ -216,6 +218,7 @@ func main() {
 		users.GET(":id", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.GetUser(s.DB))
 		users.GET("/roles", auth.AuthMiddleware("Admin", "SuperAdmin"), auth.GetRoles(s.DB))
 	}
+	*/
 
 	authRoutes := r.Group("/auth")
 	{

@@ -25,6 +25,18 @@ type UserResponse struct {
 	Roles     []models.Role `json:"roles"`
 }
 
+func SetupUsersRoutes(r *gin.Engine, db *gorm.DB) {
+	users := r.Group("/users")
+	{
+		users.POST("", auth.AuthMiddleware("SuperAdmin"), auth.RegisterUser(db)) // Only SuperAdmin
+		users.GET("", auth.AuthMiddleware("Admin", "SuperAdmin"), ListUsers(db))
+		users.POST("/logout", auth.AuthMiddleware("Admin"), auth.Logout(db))
+		users.PUT("/:id", auth.AuthMiddleware("Admin", "SuperAdmin"), UpdateUser(db)) //update user recorsd and roles
+		users.GET(":id", auth.AuthMiddleware("Admin", "SuperAdmin"), GetUser(db))
+		users.GET("/roles", auth.AuthMiddleware("Admin", "SuperAdmin"), auth.GetRoles(db))
+	}
+}
+
 // PUT - Update /users/:id
 func UpdateUser(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {

@@ -41,7 +41,7 @@ interface ApiResponse {
 }
 
 export default function EditUser() {
-  const { token, showLogin, onRequireLogin } = useAuth();
+  const { token, hasAnyRole, showLogin, onRequireLogin } = useAuth();
   const params = useParams();
   const router = useRouter();
   const userId = params.id;
@@ -273,6 +273,9 @@ export default function EditUser() {
                             id={`role-${role.ID}`}
                             checked={user.roles.some(r => r.ID === role.ID)}
                             onChange={(e) => handleRoleChange(role.ID, e.target.checked)}
+                            disabled={(role.Name=="Admin" || role.Name=="SuperAdmin") && !hasAnyRole(["SuperAdmin"])} 
+                            title={!hasAnyRole(["SuperAdmin"])?  "Only SuperAdmin can assign this role" : "You can change role"}
+           
                           />
                           <label className="form-check-label" htmlFor={`role-${role.ID}`}>
                             {role.Name}
