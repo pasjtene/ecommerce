@@ -184,10 +184,12 @@ export default function EditUser() {
     );
   }
 
-   if (!isUpdated) {
-    return (
+   
+  return (
+    <div className="row justify-content-center">
+         {isUpdated&& (
       <div className="alert alert-success" role="alert">
-        User not found. You must be authenticated to update user.
+        User Updated successfully
         <button 
           type="button" 
           className="btn-close float-end" 
@@ -195,11 +197,8 @@ export default function EditUser() {
           aria-label="Close"
         ></button>
       </div>
-    );
+    )
   }
-
-  return (
-    <div className="row justify-content-center">
       <div className="col-lg-8">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h1 className="h2 mb-0">Edit User: {user.username}</h1>
