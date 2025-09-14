@@ -110,7 +110,7 @@ export default function EditUser() {
         roles: updateduser.roles.map(role => role.ID)
       };
 
-      const response = await axios.put(API_BASE_URL +`/users/${userId}`, updateData, {
+      const response = await axios.put(API_BASE_URL +`/users/${user?.ID}`, updateData, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
