@@ -112,7 +112,7 @@ export default function EditUser() {
 
       const response = await axios.put(API_BASE_URL +`/users/${userId}`, updateData, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `${token}`
         }
       });
 

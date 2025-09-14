@@ -51,6 +51,7 @@ export default function EditUser() {
   const [availableRoles, setAvailableRoles] = useState<AvailableRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -118,6 +119,7 @@ export default function EditUser() {
 
       if (response.status === 200) {
         alert('Your data was updated successfully!');
+        setIsEditing(false)
         //router.push('/admin/users');
       }
     } catch (err) {
@@ -189,9 +191,9 @@ export default function EditUser() {
           <h1 className="h2 mb-0">Edit User: {updateduser.username}</h1>
           <button
             className="btn btn-outline-secondary"
-            onClick={() => router.back()}
+            onClick={() => router.push("/")}
           >
-            ← Back to Users
+            ← Back to Home page
           </button>
         </div>
 
@@ -219,6 +221,7 @@ export default function EditUser() {
                     value={updateduser.username || ''}
                     onChange={(e) => setUser({ ...updateduser, username: e.target.value })}
                     required
+                    disabled={!isEditing}
                   />
                 </div>
 
@@ -230,6 +233,7 @@ export default function EditUser() {
                     value={updateduser.email || ''}
                     onChange={(e) => setUser({ ...updateduser, email: e.target.value })}
                     required
+                    disabled={!isEditing}
                   />
                 </div>
               </div>
@@ -243,6 +247,7 @@ export default function EditUser() {
                     value={updateduser.first_name || ''}
                     onChange={(e) => setUser({ ...updateduser, first_name: e.target.value })}
                     required
+                    disabled={!isEditing}
                   />
                 </div>
 
@@ -254,6 +259,7 @@ export default function EditUser() {
                     value={updateduser.last_name || ''}
                     onChange={(e) => setUser({ ...updateduser, last_name: e.target.value })}
                     required
+                    disabled={!isEditing}
                   />
                 </div>
               </div>
@@ -274,7 +280,7 @@ export default function EditUser() {
                             checked={updateduser.roles.some(r => r.ID === role.ID)}
                             onChange={(e) => handleRoleChange(role.ID, e.target.checked)}
                             disabled
-                            //title={!hasAnyRole(["SuperAdmin"])?  "Only SuperAdmin can assign this role" : "You can change role"}
+                            
            
                           />
                           <label className="form-check-label" htmlFor={`role-${role.ID}`}>
@@ -291,18 +297,30 @@ export default function EditUser() {
               </div>
 
               <div className="d-flex gap-2 justify-content-end">
+                {!isEditing ? (
                 <button
                   type="button"
                   className="btn btn-outline-secondary"
-                  onClick={() => router.back()}
+                  onClick={() => setIsEditing(true)}
+                  disabled={saving}
+                >
+                  Edit
+                </button>
+                ):(
+                    <button
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  onClick={() => setIsEditing(false)}
                   disabled={saving}
                 >
                   Cancel
                 </button>
+                )
+                }
                 <button
                   type="submit"
                   className="btn btn-primary"
-                  disabled={saving}
+                  disabled={saving || !isEditing}
                 >
                   {saving ? (
                     <>
@@ -310,7 +328,7 @@ export default function EditUser() {
                       Saving...
                     </>
                   ) : (
-                    'Update User'
+                    'Save change'
                   )}
                 </button>
               </div>
