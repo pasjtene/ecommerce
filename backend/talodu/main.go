@@ -208,17 +208,15 @@ func main() {
 	auth.SetupRolesRoutes(r, s.DB)     // roles route
 	handlers.SetupUsersRoutes(r, s.DB) // users route
 
-	/**
-	users := r.Group("/users")
-	{
-		users.POST("", auth.AuthMiddleware("SuperAdmin"), auth.RegisterUser(s.DB)) // Only SuperAdmin
-		users.GET("", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.ListUsers(s.DB))
-		users.POST("/logout", auth.AuthMiddleware("Admin"), auth.Logout(s.DB))
-		users.PUT("/:id", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.UpdateUser(s.DB))
-		users.GET(":id", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.GetUser(s.DB))
-		users.GET("/roles", auth.AuthMiddleware("Admin", "SuperAdmin"), auth.GetRoles(s.DB))
+	//whatsappService := auth.InitWhatsAppVerification(s.DB)
+	phoneVerificationService := auth.InitPhoneVerification(s.DB)
+
+	// Add phone verification routes
+	if phoneVerificationService != nil {
+		r.POST("/auth/send-whatsapp-verification", auth.SendWhatsAppVerificationHandler(s.DB, phoneVerificationService))
+		r.POST("/auth/send-sms-verification", auth.SendSMSVerificationHandler(s.DB, phoneVerificationService))
+		r.POST("/auth/verify-phone", auth.VerifyPhoneCodeHandler(s.DB, phoneVerificationService))
 	}
-	*/
 
 	authRoutes := r.Group("/auth")
 	{
@@ -231,6 +229,7 @@ func main() {
 		authRoutes.POST("/resend-verification", auth.ResendVerificationEmail(s.DB))
 		authRoutes.POST("/forgot-password", auth.InitiatePasswordReset(s.DB))
 		authRoutes.POST("/reset-password", auth.CompletePasswordReset(s.DB))
+
 	}
 
 	// Routes

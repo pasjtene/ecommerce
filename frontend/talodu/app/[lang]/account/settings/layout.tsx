@@ -16,6 +16,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { href: '/account/shops', label: 'My shops', icon: '⚙️' },
     { href: '/account/products', label: 'My Products', icon: '📦' },
     { href: '/account/orders', label: 'My Orders', icon: '📋' },
+    { href: '/account/settings/verify-phone', label: 'Verify My Account', icon: '📦'  },
     
     { href: '/account/help', label: 'Help', icon: '❓' },
   ];

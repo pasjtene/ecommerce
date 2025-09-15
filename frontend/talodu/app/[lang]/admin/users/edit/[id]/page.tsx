@@ -118,7 +118,7 @@ export default function EditUser() {
       });
 
       if (response.status === 200) {
-        alert('User updated successfully!');
+        //alert('User updated successfully!');
         setIsUpdated(true)
         //router.push('/admin/users');
       }
