@@ -17,6 +17,7 @@ type User struct {
 	gorm.Model
 	Username      string `gorm:"unique"`
 	Email         string `gorm:"unique"`
+	Phone         string // Add phone field
 	FirstName     string
 	LastName      string
 	Password      string    `json:"-"`
@@ -31,6 +32,16 @@ type User struct {
 	VerifyExpiry  time.Time // Token expiration time
 	ResetPwToken  string    `gorm:"size:255" json:"reset_token"`
 	ResetPwExpiry time.Time `json:"reset_expiry"`
+
+	// Phone verification fields
+	PhoneVerificationCode   string    `gorm:"size:6" json:"-"`
+	PhoneVerificationExpiry time.Time `json:"-"`
+	IsPhoneVerified         bool      `gorm:"default:false"`
+
+	// WhatsApp verification fields
+	WhatsAppVerificationCode   string    `gorm:"size:6" json:"-"`
+	WhatsAppVerificationExpiry time.Time `json:"-"`
+	IsWhatsAppVerified         bool      `gorm:"default:false"`
 }
 
 type FrontendUserResponse struct {

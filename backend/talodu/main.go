@@ -164,6 +164,20 @@ func main() {
 		c.JSON(http.StatusOK, categories)
 	})
 
+	// Initialize WhatsApp service
+	whatsappService := auth.InitWhatsAppService(s.DB)
+
+	// Add WhatsApp verification routes
+	if whatsappService != nil {
+		authRoutes := r.Group("/auth")
+		authRoutes.Use(auth.AuthMiddleware()) // Protect these routes
+		{
+			authRoutes.POST("/send-whatsapp-verification", auth.SendWhatsAppVerificationHandler(s.DB, whatsappService))
+			authRoutes.POST("/verify-whatsapp-code", auth.VerifyWhatsAppCodeHandler(s.DB, whatsappService))
+			authRoutes.POST("/resend-whatsapp-verification", auth.ResendWhatsAppVerificationHandler(s.DB, whatsappService))
+		}
+	}
+
 	//images routes
 	// https://talodu.com:8888/uploads/products/80/679d3551-7857-4b85-b648-cc84335e61a1.png
 
@@ -213,7 +227,7 @@ func main() {
 
 	// Add phone verification routes
 	if phoneVerificationService != nil {
-		r.POST("/auth/send-whatsapp-verification", auth.SendWhatsAppVerificationHandler(s.DB, phoneVerificationService))
+		r.POST("/auth/send-whatsapp-verification", auth.SendWhatsAppVerificationHandler1(s.DB, phoneVerificationService))
 		r.POST("/auth/send-sms-verification", auth.SendSMSVerificationHandler(s.DB, phoneVerificationService))
 		r.POST("/auth/verify-phone", auth.VerifyPhoneCodeHandler(s.DB, phoneVerificationService))
 	}

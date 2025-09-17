@@ -206,7 +206,7 @@ func isValidPhoneNumber(phone string) bool {
 }
 
 // Handler for sending WhatsApp verification code
-func SendWhatsAppVerificationHandler(db *gorm.DB, verificationService *PhoneVerificationService) gin.HandlerFunc {
+func SendWhatsAppVerificationHandler1(db *gorm.DB, verificationService *PhoneVerificationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req struct {
 			PhoneNumber string `json:"phoneNumber"`
