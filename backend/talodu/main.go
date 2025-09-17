@@ -227,7 +227,7 @@ func main() {
 
 	// Add phone verification routes
 	if phoneVerificationService != nil {
-		r.POST("/auth/send-whatsapp-verification", auth.SendWhatsAppVerificationHandler1(s.DB, phoneVerificationService))
+		r.POST("/auth/send-whatsapp-verification2", auth.SendWhatsAppVerificationHandler1(s.DB, phoneVerificationService))
 		r.POST("/auth/send-sms-verification", auth.SendSMSVerificationHandler(s.DB, phoneVerificationService))
 		r.POST("/auth/verify-phone", auth.VerifyPhoneCodeHandler(s.DB, phoneVerificationService))
 	}
