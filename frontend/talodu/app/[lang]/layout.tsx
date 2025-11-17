@@ -18,6 +18,12 @@ export default async function RootLayout({ children, params }: LayoutProps) {
 
   return (
     <html lang={resolvedParams.lang}>
+       <head>
+        <meta property="og:locale" content={resolvedParams.lang} />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image"/>
+        <meta name="twitter:site" content="@talodu" />
+      </head>
       <body>
         {/* This wrapper will contain all client components */}
         <ClientComponentWrapper>
