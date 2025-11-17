@@ -48,7 +48,7 @@ type ProductAbout struct {
 
 type Product struct {
 	gorm.Model
-	Name                  string               `json:"name"`
+	Name                  string               `json:"name" gorm:"not null"`
 	Description           string               `json:"description"`
 	Slug                  string               `gorm:"unique"`
 	Price                 float64              `json:"price"`
@@ -60,6 +60,15 @@ type Product struct {
 	Translations          []ProductTranslation `json:"translations" gorm:"foreignKey:ProductID"`
 	Abouts                []ProductAbout       `json:"abouts" gorm:"foreignKey:ProductID"`
 	AboutsWithTranlations []ProductAbout       `json:"aboutst" gorm:"foreignKey:ProductID"`
+	IsFeatured            bool                 `json:"isFeatured" gorm:"default:false"`
+	FeaturedOrder         int                  `json:"featuredOrder" gorm:"default:0"`
+}
+
+func (p *Product) BeforeCreate(tx *gorm.DB) (err error) {
+    if p.Name == "" {
+        return fmt.Errorf("product name cannot be empty")
+    }
+    return nil
 }
 
 // Generate slug after the record is created

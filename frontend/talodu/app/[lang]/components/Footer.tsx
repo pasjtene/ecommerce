@@ -217,7 +217,7 @@ export default function Footer() {
           <div className="row">
             <div className="col-md-6 text-center text-md-start">
               <p className="mb-0" style={{ color: 'rgba(255, 99, 71, 0.8)' }} 
-                dangerouslySetInnerHTML={{ __html: t.footer.copyright.replace('{year}', new Date().getFullYear().toString()) }} />
+                dangerouslySetInnerHTML={{ __html: t.footer.copyright.replace('{year}', new Date().getFullYear().toString()) }} /> Powered by - iShopPro - Version 4.4.2
             </div>
 
              {/* Country selector - now takes 4 columns */}

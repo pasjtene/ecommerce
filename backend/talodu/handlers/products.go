@@ -22,6 +22,162 @@ type Product = models.Product
 type ProductImage = models.ProductImage
 type ProductTranslation = models.ProductTranslation
 
+
+// GET /products/featured
+func GetFeaturedProducts(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var products []models.Product
+		lang := strings.ToLower(strings.TrimSpace(c.Query("lang")))
+		limit, _ := strconv.Atoi(c.DefaultQuery("limit", "8"))
+
+		query := db.
+			Preload("Images").
+			Preload("Translations").
+			Preload("Shop", func(db *gorm.DB) *gorm.DB {
+				return db.Select("id", "name")
+			}).
+			Where("is_featured = ?", true).
+			Where("deleted_at IS NULL").
+			Order("featured_order ASC, created_at DESC").
+			Limit(limit)
+
+		if err := query.Find(&products).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch featured products"})
+			return
+		}
+
+		// Apply translations if language is specified
+		if lang != "" {
+			for i := range products {
+				for _, t := range products[i].Translations {
+					if t.Language == lang {
+						products[i].Name = t.Name
+						products[i].Description = t.Description
+						break
+					}
+				}
+			}
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"products": products,
+			"count":    len(products),
+		})
+	}
+}
+
+// PUT /products/:id/featured - Toggle featured status
+func ToggleFeaturedProduct(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		productID := c.Param("id")
+		
+		var input struct {
+			IsFeatured    bool `json:"isFeatured"`
+			FeaturedOrder int  `json:"featuredOrder,omitempty"`
+		}
+
+		if err := c.ShouldBindJSON(&input); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		var product models.Product
+		if err := db.First(&product, productID).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
+			return
+		}
+
+		// Update featured status and order
+		updates := map[string]interface{}{
+			"is_featured": input.IsFeatured,
+		}
+		
+		if input.FeaturedOrder > 0 {
+			updates["featured_order"] = input.FeaturedOrder
+		}
+
+		if err := db.Model(&product).Updates(updates).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update featured status"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Featured status updated",
+			"product": gin.H{
+				"id":            product.ID,
+				"isFeatured":    input.IsFeatured,
+				"featuredOrder": input.FeaturedOrder,
+			},
+		})
+	}
+}
+
+// GET /products/:id/related
+func GetRelatedProducts(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		productID := c.Param("id")
+		lang := strings.ToLower(strings.TrimSpace(c.Query("lang")))
+		limit, _ := strconv.Atoi(c.DefaultQuery("limit", "8"))
+
+		// Get current product and its categories
+		var currentProduct models.Product
+		if err := db.Preload("Categories").First(&currentProduct, productID).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
+			return
+		}
+
+		// Extract category IDs
+		var categoryIDs []uint
+		for _, category := range currentProduct.Categories {
+			categoryIDs = append(categoryIDs, category.ID)
+		}
+
+		if len(categoryIDs) == 0 {
+			c.JSON(http.StatusOK, gin.H{"products": []models.Product{}})
+			return
+		}
+
+		// Find products that share the same categories, excluding current product
+		var relatedProducts []models.Product
+		query := db.
+			Preload("Images").
+			Preload("Translations").
+			Preload("Shop", func(db *gorm.DB) *gorm.DB {
+				return db.Select("id", "name")
+			}).
+			Joins("JOIN product_categories pc ON products.id = pc.product_id").
+			Where("pc.category_id IN (?)", categoryIDs).
+			Where("products.id != ?", productID).
+			Where("products.deleted_at IS NULL").
+			Group("products.id").
+			Order("COUNT(pc.category_id) DESC, products.created_at DESC").
+			Limit(limit)
+
+		if err := query.Find(&relatedProducts).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch related products"})
+			return
+		}
+
+		// Apply translations if language is specified
+		if lang != "" {
+			for i := range relatedProducts {
+				for _, t := range relatedProducts[i].Translations {
+					if t.Language == lang {
+						relatedProducts[i].Name = t.Name
+						relatedProducts[i].Description = t.Description
+						break
+					}
+				}
+			}
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"products": relatedProducts,
+			"count":    len(relatedProducts),
+		})
+	}
+}
+
 // GET /products?search=query&sort=price&page=1&limit=10
 func ListProducts(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -259,7 +415,7 @@ func GetProduct(db *gorm.DB) gin.HandlerFunc {
 
 		log.Printf("Processing request for product ID: %s, language: %s", id, lang)
 
-		if err := db.Preload("Images").Preload("Translations").First(&product, id).Error; err != nil {
+		if err := db.Preload("Images").Preload("Translations").Preload("Categories").First(&product, id).Error; err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
 			return
 		}

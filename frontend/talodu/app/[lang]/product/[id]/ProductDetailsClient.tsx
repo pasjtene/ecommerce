@@ -10,6 +10,10 @@ import LoadingSpinner from '../../../api/LoadingSpinner';
 import { useAuth, AuthProvider } from '../../contexts/AuthContextNext';
 import { useCart } from '../../contexts/CartContext';
 import { useCurrency } from '../../contexts/CurrencyContext';
+import RelatedProducts from './RelatedProducts';
+import { useRecentlyViewed } from '../../hooks/useRecentlyViewed';
+import RecentlyViewedProducts from './RecentlyViewedProducts';
+import FeaturedProducts from './FeaturedProducts';
 
 // Dynamic import for client-only components
 import dynamic from 'next/dynamic';
@@ -139,6 +143,21 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 			fetchImages();
 		}
 	}, [currentProduct, refresh]); // Depend on currentProduct.ID for image fetching
+
+	 	
+		const { addToRecentlyViewed } = useRecentlyViewed();
+
+		// Add current product to recently viewed when component mounts
+		 useEffect(() => {
+			if (initialProduct && initialProduct.ID) {
+			// Use setTimeout to avoid state updates during render
+			const timer = setTimeout(() => {
+				addToRecentlyViewed(initialProduct);
+			}, 0);
+			
+			return () => clearTimeout(timer);
+			}
+		}, [initialProduct?.ID]);
 
 	// Toggle product selection
 	const toggleEnableEdit = () => {
@@ -367,27 +386,38 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 					</div>
 				</>
 
-				<div
-					className='card h-100 mt-4 '
-					style={{
-						border: 'none',
-						cursor: 'pointer',
-						boxShadow: '0 0 20px rgba(13, 89, 219, 0.2)',
-						transition: 'box-shadow 0.3s ease',
-						padding: '7px',
-					}}>
-					<div className='mt-4 mb-4 row ms-md-2 p-1 g-1'>
-						<div className='col-12 ms-2 ms-md-2 col-md-3 text-center ps-md-2'>
-							Copyright © 2025 - iShopPro - Version 4.4.2
-						</div>
-						<div className='col-12 col-md-4 text-start text-md-end pe-md-2'>
-							Talodu - Your online super market
-						</div>
-						<div className='col-12 col-md-4 text-start text-md-end pe-md-1'>
-							Talodu - Votre supermarché en Ligne
-						</div>
+				
+
+				{/* Featured Products Section - You can place this wherever you want */}
+					<div className="row mt-5">
+					<div className="col-12">
+						<FeaturedProducts 
+						currentProductId={initialProduct.ID.toString()}
+						maxItems={8}
+						title="Featured Products You'll Love"
+						/>
 					</div>
-				</div>
+					</div>
+				
+				{/* Add Related Products Section */}
+					<div className="row mt-5">
+					<div className="col-12">
+						<RelatedProducts currentProductId={initialProduct.ID.toString()} />
+					</div>
+					</div>
+
+					 {/* Recently Viewed Products Section */}
+					 
+						<div className="row mt-5">
+						<div className="col-12">
+							<RecentlyViewedProducts 
+							currentProductId={initialProduct.ID.toString()}
+							maxItems={8}
+							/>
+						</div>
+						</div>
+
+				
 			</div>
 		</>
 	);
