@@ -55,7 +55,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
   }, [params.lang, maxItems]);
 
   const handleProductClick = (product: Product) => {
-    router.push(`/${params.lang}/product/${product.ID}`);
+    router.push(`/${params.lang}/product/${product.Slug}`);
   };
 
   const handleAddToCart = (product: Product, e: React.MouseEvent) => {

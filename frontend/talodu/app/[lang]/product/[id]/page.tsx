@@ -2,7 +2,6 @@
 import React from 'react';
 import { Metadata } from 'next';
 import axios from 'axios';
-//import { Product } from '../../../src/pages/presentation/auth/types';
 import { Product, Shop } from '../../types';
 import ProductDetailsClient from './ProductDetailsClient';
 
@@ -55,7 +54,7 @@ try {
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
   const resolvedParams = await params;
-  const SITE_NAME = "https://talodu.com";
+  const SITE_NAME = "https://talodu.com/";
   const product = await getProduct(resolvedParams.id, resolvedParams.lang);
   
   return {
@@ -69,7 +68,7 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
         siteName: 'Talodu.com',
         images: product.images?.[0]?.url ? [{
           //url: SITE_NAME+product.images[0].url,
-          url: `https://talodu.com${product.images[0].url}`,
+          url: `https://talodu.com/api${product.images[0].url}`,
           alt: product.images[0].altText || product.name,
         }] : [],
       },
@@ -86,8 +85,6 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
 export default async function Page({ params }: { params: Promise<PageParams> }) {
   const resolvedParams = await params;
   const product = await getProduct(resolvedParams.id, resolvedParams.lang);
-  //const { lang, id } = params;
-  //const product = await getProduct(id, lang);
   const shop = await getShop(resolvedParams.id);
 
   if (!product || !shop) {

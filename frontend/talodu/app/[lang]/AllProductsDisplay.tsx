@@ -156,7 +156,8 @@ const AllProductsDisplay  = () => {
     router.push(url);
        
       };
-      const handleImageClick = (productSlug: string, productId: number) => {
+  
+  const handleImageClick = (productSlug: string, productId: number) => {
     const url =   `/product/${productSlug}`;
     router.push(url);
    };
