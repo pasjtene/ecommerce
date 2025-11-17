@@ -177,6 +177,29 @@ const ProductDetailsClient = ({ initialProduct, shop }: ProductDetailsClientProp
 		}
 	};
 
+	useEffect(() => {
+  // Update meta tags client-side as a fallback
+  if (currentProduct && currentProduct.images && currentProduct.images.length > 0) {
+    const imageUrl = `https://talodu.com${currentProduct.images[0].url}`;
+    
+    // Update or create meta tags
+    const updateMetaTag = (property: string, content: string) => {
+      let meta = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement;
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute('property', property);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    };
+
+    updateMetaTag('og:image', imageUrl);
+    updateMetaTag('twitter:image', imageUrl);
+    updateMetaTag('og:title', currentProduct.name);
+    updateMetaTag('og:description', currentProduct.description || `Buy ${currentProduct.name} on Talodu.com`);
+  }
+}, [currentProduct]);
+
 	if (!t) return <LoadingSpinner />;
 
 	// This component assumes it receives a valid `initialProduct`.
