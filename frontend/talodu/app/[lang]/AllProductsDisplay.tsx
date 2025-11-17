@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useCurrency } from './contexts/CurrencyContext';
 
 import { useSearchParams } from 'next/navigation';
+import FeaturedProducts from './product/[id]/FeaturedProducts';
 
 interface Dictionary {
 	product: {
@@ -168,7 +169,17 @@ const AllProductsDisplay  = () => {
 
   return (
     <div className="container mt-4 py-4">
-      <h2 className="mb-4"> {allImages.length} images</h2>
+      
+      {/* Featured Products Section - You can place this wherever you want */}
+					<div className="row mt-5">
+					<div className="col-12">
+						<FeaturedProducts 
+						currentProductId={"1"}
+						maxItems={8}
+						title="Featured Products You'll Love"
+						/>
+					</div>
+					</div>
      
     {/** Products */}
     <div className='m-4'>All products</div>

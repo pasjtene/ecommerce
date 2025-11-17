@@ -101,7 +101,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
 
   return (
     <div className="mt-8">
-      <h3 className="text-xl font-bold mb-4">{title}</h3>
+      <h3 className="text-xl font-bold mb-4"> {featuredProducts.length} {title} </h3>
       
       <div className="row g-3">
         {featuredProducts.map((product) => (
