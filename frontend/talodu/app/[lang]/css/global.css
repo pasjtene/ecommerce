@@ -36,4 +36,27 @@
   border-right: 2px solid #3182ce;
 }
 
+/* Featured products */
+
+.featured-product {
+  border: 2px solid #ffc107 !important;
+}
+
+.featured-product .badge.bg-warning {
+  font-size: 0.7rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.product-card {
+  transition: all 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
+}
+
+.featured-product:hover {
+  box-shadow: 0 4px 20px rgba(255, 193, 7, 0.3) !important;
+}
+
  

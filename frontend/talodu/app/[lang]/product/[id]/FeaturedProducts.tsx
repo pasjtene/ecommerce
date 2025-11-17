@@ -137,8 +137,12 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                   <img
                     src={API_BASE_URL + product.images[0].url}
                     alt={product.name}
-                    className="card-img-top h-100"
-                    style={{ objectFit: 'cover' }}
+                    className="card-img-top h-160 "
+
+                    style={{ 
+                        objectFit: 'cover',
+                        }}
+                
                   />
                 ) : (
                   <div 
