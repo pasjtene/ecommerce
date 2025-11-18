@@ -1,4 +1,5 @@
-// app/[lang]/admin/products/page.tsx
+//app/[lang]/admin/products/page.tsx
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -15,7 +16,6 @@ interface Product {
   slug: string;
   isFeatured: boolean;
   featuredOrder: number;
-  isVisible: boolean; // We Added this field
   shop: {
     ID: number;
     name: string;
@@ -66,7 +66,6 @@ export default function ProductsList() {
   });
   const [searchTerm, setSearchTerm] = useState('');
   const [updatingFeatured, setUpdatingFeatured] = useState<number | null>(null);
-  const [updatingVisibility, setUpdatingVisibility] = useState<number | null>(null);
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8888';
 
@@ -154,43 +153,6 @@ export default function ProductsList() {
       }
     } finally {
       setUpdatingFeatured(null);
-    }
-  };
-
-  const handleToggleVisibility = async (product: Product) => {
-    try {
-      setUpdatingVisibility(product.ID);
-      const newVisibilityStatus = !product.isVisible;
-      
-      const response = await axios.put(
-        `${API_BASE_URL}/products/${product.ID}/visibility`,
-        {
-          isVisible: newVisibilityStatus
-        },
-        {
-          headers: {
-            Authorization: `${token}`,
-          },
-        }
-      );
-
-      // Update local state
-      setProducts(prev => prev.map(p => 
-        p.ID === product.ID 
-          ? { ...p, isVisible: newVisibilityStatus }
-          : p
-      ));
-
-      // Show success message
-      alert(`Product ${newVisibilityStatus ? 'made visible' : 'hidden'}`);
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.error || err.message || 'Failed to update visibility');
-      } else {
-        setError('Failed to update visibility');
-      }
-    } finally {
-      setUpdatingVisibility(null);
     }
   };
 
@@ -340,7 +302,6 @@ export default function ProductsList() {
                       <th>Price</th>
                       <th>Stock</th>
                       <th>Shop</th>
-                      <th>Visibility</th>
                       <th>Featured</th>
                       <th>Featured Order</th>
                       <th>Actions</th>
@@ -348,12 +309,12 @@ export default function ProductsList() {
                   </thead>
                   <tbody>
                     {products.map((product) => (
-                      <tr key={product.ID} className={!product.isVisible ? 'table-secondary' : ''}>
+                      <tr key={product.ID}>
                         <td>{product.ID}</td>
                         <td>
                           {product.images && product.images.length > 0 ? (
                             <img
-                              src={API_BASE_URL + product.images[0].url}
+                              src={API_BASE_URL+ product.images[0].url}
                               alt={product.name}
                               style={{ width: '50px', height: '50px', objectFit: 'cover' }}
                               className="rounded"
@@ -369,9 +330,6 @@ export default function ProductsList() {
                         </td>
                         <td>
                           <strong>{product.name}</strong>
-                          {!product.isVisible && (
-                            <span className="badge bg-warning ms-2">Hidden</span>
-                          )}
                           <br />
                           <small className="text-muted text-truncate" style={{ maxWidth: '200px' }}>
                             {product.description?.substring(0, 50)}...
@@ -384,24 +342,6 @@ export default function ProductsList() {
                           </span>
                         </td>
                         <td>{product.shop?.name}</td>
-                        <td>
-                          <button
-                            className={`btn btn-sm ${
-                              product.isVisible ? 'btn-success' : 'btn-outline-secondary'
-                            }`}
-                            disabled={updatingVisibility === product.ID}
-                            onClick={() => handleToggleVisibility(product)}
-                            title={product.isVisible ? 'Hide product' : 'Make product visible'}
-                          >
-                            {updatingVisibility === product.ID ? (
-                              <span className="spinner-border spinner-border-sm" />
-                            ) : product.isVisible ? (
-                              'Visible'
-                            ) : (
-                              'Hidden'
-                            )}
-                          </button>
-                        </td>
                         <td>
                           {product.isFeatured ? (
                             <span className="badge bg-warning text-dark">Featured</span>

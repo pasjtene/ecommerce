@@ -103,7 +103,7 @@ func main() {
 	products := r.Group("/products")
 	{
 		products.GET("", handlers.ListProducts(s.DB))
-		products.GET("/admin", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.ListProducts(s.DB))
+		products.GET("/admin", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.ListProductsAdmin(s.DB))
 		products.POST("", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.CreateProduct(s.DB))
 		products.DELETE(":id", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.DeleteProduct(s.DB))
 		products.DELETE("/delete/batch", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.DeleteProductBatch(s.DB))
@@ -117,6 +117,8 @@ func main() {
 
 		products.GET("/featured", handlers.GetFeaturedProducts(s.DB))
 		products.PUT("/:id/featured", handlers.ToggleFeaturedProduct(s.DB))
+
+		products.PUT("/:id/visibility", handlers.ToggleProductVisibility(s.DB)) // Toggle visibilit
 		
 		products.GET("/abouts/:productId", handlers.GetProductAbouts(s.DB))
 		products.PUT(":id", auth.AuthMiddleware(), handlers.UpdateProduct(s.DB)) // Update

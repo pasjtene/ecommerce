@@ -37,6 +37,7 @@ func GetFeaturedProducts(db *gorm.DB) gin.HandlerFunc {
 				return db.Select("id", "name")
 			}).
 			Where("is_featured = ?", true).
+			Where("is_visible = ?", true). 
 			Where("deleted_at IS NULL").
 			Order("featured_order ASC, created_at DESC").
 			Limit(limit)
@@ -148,6 +149,7 @@ func GetRelatedProducts(db *gorm.DB) gin.HandlerFunc {
 			Joins("JOIN product_categories pc ON products.id = pc.product_id").
 			Where("pc.category_id IN (?)", categoryIDs).
 			Where("products.id != ?", productID).
+			Where("products.is_visible = ?", true).
 			Where("products.deleted_at IS NULL").
 			Group("products.id").
 			Order("COUNT(pc.category_id) DESC, products.created_at DESC").
@@ -180,6 +182,103 @@ func GetRelatedProducts(db *gorm.DB) gin.HandlerFunc {
 
 // GET /products?search=query&sort=price&page=1&limit=10
 func ListProducts(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var _ = models.Product{}
+		var products []models.Product
+		lang := strings.ToLower(strings.TrimSpace(c.Query("lang")))
+
+		//query := db.Model(&models.Product{})
+		query := db.Model(&models.Product{}).Preload("Translations").Preload("Images").Preload("Shop", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "name") // Only load specific shop fields
+											 
+		}).Where("is_visible = ?", true) // Only show visible products
+
+		if search := c.Query("search"); search != "" {
+			search = strings.TrimSpace(search)
+
+			if len(search) < 5 {
+				// Use trigram-optimized ILIKE for short searches
+				query = query.Where(
+					"name ILIKE ? OR description ILIKE ?",
+					"%"+search+"%", "%"+search+"%",
+				)
+			} else {
+				// Use FTS with OR logic for longer queries
+				//index is added to db for fts to work
+				//CREATE EXTENSION IF NOT EXISTS pg_trgm;
+				//CREATE INDEX idx_products_name_trgm ON products USING gin(name gin_trgm_ops);
+				//CREATE INDEX idx_products_description_trgm ON products USING gin(description gin_trgm_ops);
+				//terms := strings.Join(strings.Fields(search), " | ") // Changed from " & " to " | "
+				terms := strings.Join(strings.Fields(search), " & ") // Changed from " & " to " | "
+				query = query.Where(
+					"to_tsvector('french', coalesce(name,'') || ' ' || coalesce(description,'')) @@ to_tsquery('french', ?)",
+					terms,
+				)
+			}
+		}
+
+		// Minimum price (e.g., ?min_price=50)
+		if minPrice := c.Query("min_price"); minPrice != "" {
+			query = query.Where("price >= ?", minPrice)
+		}
+		// Maximum price (e.g., ?max_price=500)
+		if maxPrice := c.Query("max_price"); maxPrice != "" {
+			query = query.Where("price <= ?", maxPrice)
+		}
+
+		// Get TOTAL COUNT (before pagination)
+		var totalCount int64
+		query.Count(&totalCount) // Critical: Count before .Offset()
+
+		// 2. Sorting (e.g., ?sort=price or ?sort=-price for DESC)
+		if sort := c.Query("sort"); sort != "" {
+			if sort[0] == '-' {
+				query = query.Order(sort[1:] + " DESC")
+			} else {
+				query = query.Order(sort)
+			}
+		} else {
+			//query = query.Order("id") // Default sort
+			query = query.Order("created_at DESC")
+		}
+
+		//  Pagination
+		page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+		limit, _ := strconv.Atoi(c.DefaultQuery("limit", "5"))
+		offset := (page - 1) * limit
+
+		// Execute query
+		query.Offset(offset).Limit(limit).Find(&products)
+
+		// Apply translations to each product if language is specified
+		if lang != "" {
+			for i := range products {
+				for _, t := range products[i].Translations {
+					if t.Language == lang {
+						products[i].Name = t.Name
+						products[i].Description = t.Description
+						break
+					}
+				}
+			}
+		}
+
+		//  Calculate total pages
+		totalPages := int(math.Ceil(float64(totalCount) / float64(limit)))
+
+		// Return response
+		c.JSON(http.StatusOK, gin.H{
+			"products":   products,
+			"page":       page,
+			"limit":      limit,
+			"totalItems": totalCount,
+			"totalPages": totalPages,
+		})
+	}
+}
+
+// Same as list products, but NOT VISIBLE PRODUCTS ARE DISPLAYED
+func ListProductsAdmin(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var _ = models.Product{}
 		var products []models.Product
@@ -274,6 +373,42 @@ func ListProducts(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// PUT /products/:id/visibility - Toggle product visibility
+func ToggleProductVisibility(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		productID := c.Param("id")
+		
+		var input struct {
+			IsVisible bool `json:"isVisible"`
+		}
+
+		if err := c.ShouldBindJSON(&input); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		var product models.Product
+		if err := db.First(&product, productID).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
+			return
+		}
+
+		// Update visibility
+		if err := db.Model(&product).Update("is_visible", input.IsVisible).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update visibility"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Visibility updated",
+			"product": gin.H{
+				"id":        product.ID,
+				"isVisible": input.IsVisible,
+			},
+		})
+	}
+}
+
 // GET /shops/:id/products
 func GetShopProducts(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -291,6 +426,7 @@ func GetShopProducts(db *gorm.DB) gin.HandlerFunc {
 			Preload("Images").
 			Preload("Categories").
 			Where("shop_id = ?", shopID).
+			Where("is_visible = ?", true).
 			Find(&products)
 
 			// 1. Search (by name)

@@ -62,6 +62,7 @@ type Product struct {
 	AboutsWithTranlations []ProductAbout       `json:"aboutst" gorm:"foreignKey:ProductID"`
 	IsFeatured            bool                 `json:"isFeatured" gorm:"default:false"`
 	FeaturedOrder         int                  `json:"featuredOrder" gorm:"default:0"`
+	IsVisible             bool                 `json:"isVisible" gorm:"default:true"`
 }
 
 func (p *Product) BeforeCreate(tx *gorm.DB) (err error) {
