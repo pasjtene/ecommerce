@@ -1,10 +1,10 @@
-// app/[lang]/admin/products/edit/[id]/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import axios from 'axios';
 import { useAuth } from '../../../../contexts/AuthContextNext';
+import Link from 'next/link';
 
 interface Product {
   ID: number;
@@ -15,12 +15,14 @@ interface Product {
   slug: string;
   isFeatured: boolean;
   featuredOrder: number;
+  isVisible: boolean;
   shopID: number;
   shop: {
     ID: number;
     name: string;
   };
   categories: Category[];
+  images: ProductImage[];
 }
 
 interface Category {
@@ -31,6 +33,15 @@ interface Category {
 interface Shop {
   ID: number;
   name: string;
+}
+
+interface ProductImage {
+  ID: number;
+  url: string;
+  alt_text?: string;
+  is_primary: boolean;
+  is_visible: boolean;
+  created_at?: string;
 }
 
 export default function EditProduct() {
@@ -45,6 +56,7 @@ export default function EditProduct() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [imageActionLoading, setImageActionLoading] = useState<number | null>(null);
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8888';
 
@@ -99,6 +111,108 @@ export default function EditProduct() {
     }
   };
 
+  // Image Management Functions
+  const handleSetPrimary = async (imageId: number) => {
+    try {
+      setImageActionLoading(imageId);
+      await axios.put(
+        `${API_BASE_URL}/products/images/${imageId}/primary`,
+        {},
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+        }
+      );
+
+      // Update local state - set all images to non-primary, then set the selected one as primary
+      setProduct(prev => prev ? {
+        ...prev,
+        images: prev.images.map(img => ({
+          ...img,
+          is_primary: img.ID === imageId
+        }))
+      } : null);
+
+      alert('Primary image updated successfully');
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error || err.message || 'Failed to set primary image');
+      } else {
+        setError('Failed to set primary image');
+      }
+    } finally {
+      setImageActionLoading(null);
+    }
+  };
+
+  const handleToggleVisibility = async (imageId: number) => {
+    try {
+      setImageActionLoading(imageId);
+      const response = await axios.put(
+        `${API_BASE_URL}/products/images/${imageId}/visibility`,
+        {},
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+        }
+      );
+
+      // Update local state
+      setProduct(prev => prev ? {
+        ...prev,
+        images: prev.images.map(img => 
+          img.ID === imageId 
+            ? { ...img, is_visible: response.data.image.isVisible }
+            : img
+        )
+      } : null);
+
+      alert('Image visibility updated');
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error || err.message || 'Failed to update image visibility');
+      } else {
+        setError('Failed to update image visibility');
+      }
+    } finally {
+      setImageActionLoading(null);
+    }
+  };
+
+  const handleDeleteImage = async (imageId: number) => {
+    if (!confirm('Are you sure you want to delete this image? This action cannot be undone.')) return;
+
+    try {
+      setImageActionLoading(imageId);
+      await axios.delete(
+        `${API_BASE_URL}/images/product/${imageId}`,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+        }
+      );
+
+      // Update local state - remove the deleted image
+      setProduct(prev => prev ? {
+        ...prev,
+        images: prev.images.filter(img => img.ID !== imageId)
+      } : null);
+
+      alert('Image deleted successfully');
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error || err.message || 'Failed to delete image');
+      } else {
+        setError('Failed to delete image');
+      }
+    } finally {
+      setImageActionLoading(null);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!product) return;
@@ -108,16 +222,12 @@ export default function EditProduct() {
       await axios.put(
         `${API_BASE_URL}/products/${productId}`,
         {
-          ID: product.ID,
           name: product.name,
           description: product.description,
           price: product.price,
           stock: product.stock,
-          //shop_id: product.shopID,
-          ShopID: product.shopID,
+          shop_id: product.shopID,
           categories: product.categories,
-          shop: product.shop,
-          
         },
         {
           headers: {
@@ -200,11 +310,12 @@ export default function EditProduct() {
         </div>
       )}
 
-      <div className="card">
-        <div className="card-body">
-          <form onSubmit={handleSubmit}>
-            <div className="row">
-              <div className="col-md-6">
+      <div className="row">
+        {/* Left Column - Product Details */}
+        <div className="col-md-6">
+          <div className="card">
+            <div className="card-body">
+              <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <label htmlFor="name" className="form-label">Product Name</label>
                   <input
@@ -275,9 +386,7 @@ export default function EditProduct() {
                     ))}
                   </select>
                 </div>
-              </div>
 
-              <div className="col-md-6">
                 <div className="mb-3">
                   <label className="form-label">Categories</label>
                   <div className="border rounded p-3" style={{ maxHeight: '200px', overflowY: 'auto' }}>
@@ -328,33 +437,168 @@ export default function EditProduct() {
                     </div>
                   </div>
                 )}
-              </div>
-            </div>
 
-            <div className="d-flex gap-2">
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={saving}
-              >
-                {saving ? (
-                  <>
-                    <span className="spinner-border spinner-border-sm me-2" />
-                    Saving...
-                  </>
-                ) : (
-                  'Update Product'
-                )}
-              </button>
-              <button
-                type="button"
-                className="btn btn-outline-secondary"
-                onClick={() => router.push('/admin/products')}
-              >
-                Cancel
-              </button>
+                <div className="mb-3">
+                  <div className="form-check form-switch">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={product.isVisible}
+                      onChange={(e) => setProduct({ ...product, isVisible: e.target.checked })}
+                      id="isVisible"
+                    />
+                    <label className="form-check-label" htmlFor="isVisible">
+                      Product Visible to Customers
+                    </label>
+                  </div>
+                </div>
+
+                <div className="d-flex gap-2">
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={saving}
+                  >
+                    {saving ? (
+                      <>
+                        <span className="spinner-border spinner-border-sm me-2" />
+                        Saving...
+                      </>
+                    ) : (
+                      'Update Product'
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    onClick={() => router.push('/admin/products')}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
             </div>
-          </form>
+          </div>
+        </div>
+
+        {/* Right Column - Image Management */}
+        <div className="col-md-6">
+          <div className="card">
+            <div className="card-header">
+              <h5 className="card-title mb-0">Product Images</h5>
+              <small className="text-muted">Manage product images and set primary display image</small>
+            </div>
+            <div className="card-body">
+              {product.images.length === 0 ? (
+                <div className="text-center py-4">
+                  <p className="text-muted">No images uploaded yet</p>
+                  <Link 
+                    href={`/admin/products/${productId}/images`}
+                    className="btn btn-primary"
+                  >
+                    Upload Images
+                  </Link>
+                </div>
+              ) : (
+                <div className="row g-3">
+                  {product.images.map((image) => (
+                    <div key={image.ID} className="col-md-6">
+                      <div className={`card ${!image.is_visible ? 'opacity-50' : ''}`}>
+                        <div className="position-relative">
+                          <img
+                            src={API_BASE_URL + image.url}
+                            alt={image.alt_text || product.name}
+                            className="card-img-top"
+                            style={{ height: '150px', objectFit: 'cover' }}
+                          />
+                          {image.is_primary && (
+                            <div className="position-absolute top-0 start-0 m-2">
+                              <span className="badge bg-primary">Primary</span>
+                            </div>
+                          )}
+                          {!image.is_visible && (
+                            <div className="position-absolute top-0 end-0 m-2">
+                              <span className="badge bg-secondary">Hidden</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="card-body p-2">
+                          <div className="btn-group w-100" role="group">
+                            {!image.is_primary && (
+                              <button
+                                className="btn btn-sm btn-outline-primary"
+                                disabled={imageActionLoading === image.ID}
+                                onClick={() => handleSetPrimary(image.ID)}
+                                title="Set as primary"
+                              >
+                                {imageActionLoading === image.ID ? (
+                                  <span className="spinner-border spinner-border-sm" />
+                                ) : (
+                                  '★'
+                                )}
+                              </button>
+                            )}
+                            <button
+                              className={`btn btn-sm ${
+                                image.is_visible ? 'btn-success' : 'btn-outline-secondary'
+                              }`}
+                              disabled={imageActionLoading === image.ID}
+                              onClick={() => handleToggleVisibility(image.ID)}
+                              title={image.is_visible ? 'Hide image' : 'Show image'}
+                            >
+                              {imageActionLoading === image.ID ? (
+                                <span className="spinner-border spinner-border-sm" />
+                              ) : image.is_visible ? (
+                                '👁️'
+                              ) : (
+                                '👁️‍🗨️'
+                              )}
+                            </button>
+                            <button
+                              className="btn btn-sm btn-outline-danger"
+                              disabled={imageActionLoading === image.ID}
+                              onClick={() => handleDeleteImage(image.ID)}
+                              title="Delete image"
+                            >
+                              {imageActionLoading === image.ID ? (
+                                <span className="spinner-border spinner-border-sm" />
+                              ) : (
+                                '🗑️'
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {product.images.length > 0 && (
+                <div className="mt-3">
+                  <Link 
+                    href={`/admin/products/${productId}/images`}
+                    className="btn btn-outline-primary w-100"
+                  >
+                    Upload More Images
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Image Upload Instructions */}
+          <div className="card mt-3">
+            <div className="card-body">
+              <h6>Image Guidelines</h6>
+              <ul className="small text-muted mb-0">
+                <li>Primary image will be used as the main display image</li>
+                <li>Hidden images won't be shown to customers</li>
+                <li>Only one image can be set as primary at a time</li>
+                <li>Recommended size: 800x800 pixels or larger</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>

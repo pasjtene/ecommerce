@@ -79,6 +79,8 @@ export interface User {
     name?: string;
     price?: number;
     sku?: string;
+    is_primary: boolean;
+    is_visible: boolean;
   }
 
   export interface ProductCategory {

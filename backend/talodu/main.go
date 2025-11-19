@@ -107,10 +107,15 @@ func main() {
 		products.POST("", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.CreateProduct(s.DB))
 		products.DELETE(":id", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.DeleteProduct(s.DB))
 		products.DELETE("/delete/batch", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.DeleteProductBatch(s.DB))
-		products.DELETE("/images/delete/batch", auth.AuthMiddleware(), handlers.DeleteProductImagesBatch(s.DB))
+		
 		products.POST("/translate/:id", auth.AuthMiddleware(), handlers.CreateProductTranslation(s.DB))
 		products.POST("/abouts/:id", auth.AuthMiddleware(), handlers.CreateProductAbout(s.DB))
 		products.PUT("/abouts/order/:id", auth.AuthMiddleware(), handlers.UpdateProductAboutOrder(s.DB))
+
+		products.DELETE("/images/delete/batch", auth.AuthMiddleware(), handlers.DeleteProductImagesBatch(s.DB))
+		products.PUT("/images/:imageId/primary", auth.AuthMiddleware(), handlers.SetPrimaryImage(s.DB))
+		products.PUT("/images/:imageId/visibility", auth.AuthMiddleware(), handlers.ToggleImageVisibility(s.DB))
+		products.DELETE("/images/:imageId", auth.AuthMiddleware(), handlers.DeleteProductImage(s.DB))
 
 		products.GET(":id", handlers.GetProduct(s.DB)) // Get single product
 		products.GET(":id/related", handlers.GetRelatedProducts(s.DB)) // Get related product

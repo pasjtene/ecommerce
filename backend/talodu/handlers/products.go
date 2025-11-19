@@ -22,7 +22,6 @@ type Product = models.Product
 type ProductImage = models.ProductImage
 type ProductTranslation = models.ProductTranslation
 
-
 // GET /products/featured
 func GetFeaturedProducts(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -37,7 +36,7 @@ func GetFeaturedProducts(db *gorm.DB) gin.HandlerFunc {
 				return db.Select("id", "name")
 			}).
 			Where("is_featured = ?", true).
-			Where("is_visible = ?", true). 
+			Where("is_visible = ?", true).
 			Where("deleted_at IS NULL").
 			Order("featured_order ASC, created_at DESC").
 			Limit(limit)
@@ -71,7 +70,7 @@ func GetFeaturedProducts(db *gorm.DB) gin.HandlerFunc {
 func ToggleFeaturedProduct(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		productID := c.Param("id")
-		
+
 		var input struct {
 			IsFeatured    bool `json:"isFeatured"`
 			FeaturedOrder int  `json:"featuredOrder,omitempty"`
@@ -92,7 +91,7 @@ func ToggleFeaturedProduct(db *gorm.DB) gin.HandlerFunc {
 		updates := map[string]interface{}{
 			"is_featured": input.IsFeatured,
 		}
-		
+
 		if input.FeaturedOrder > 0 {
 			updates["featured_order"] = input.FeaturedOrder
 		}
@@ -188,10 +187,13 @@ func ListProducts(db *gorm.DB) gin.HandlerFunc {
 		lang := strings.ToLower(strings.TrimSpace(c.Query("lang")))
 
 		//query := db.Model(&models.Product{})
-		query := db.Model(&models.Product{}).Preload("Translations").Preload("Images").Preload("Shop", func(db *gorm.DB) *gorm.DB {
-			return db.Select("id", "name") // Only load specific shop fields
-											 
-		}).Where("is_visible = ?", true) // Only show visible products
+		query := db.Model(&models.Product{}).
+			Preload("Translations").
+			Preload("Images", "is_visible = ?", true). // Only visible images).
+			Preload("Shop", func(db *gorm.DB) *gorm.DB {
+				return db.Select("id", "name") // Only load specific shop fields
+
+			}).Where("is_visible = ?", true) // Only show visible products
 
 		if search := c.Query("search"); search != "" {
 			search = strings.TrimSpace(search)
@@ -377,7 +379,7 @@ func ListProductsAdmin(db *gorm.DB) gin.HandlerFunc {
 func ToggleProductVisibility(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		productID := c.Param("id")
-		
+
 		var input struct {
 			IsVisible bool `json:"isVisible"`
 		}
@@ -551,7 +553,109 @@ func GetProduct(db *gorm.DB) gin.HandlerFunc {
 
 		log.Printf("Processing request for product ID: %s, language: %s", id, lang)
 
-		if err := db.Preload("Images").Preload("Translations").Preload("Categories").First(&product, id).Error; err != nil {
+		if err := db.Preload("Images", func(db *gorm.DB) *gorm.DB {
+			return db.Order("is_primary DESC, created_at ASC") //.Where("is_visible = ?", true)
+		}).Preload("Translations").Preload("Categories").First(&product, id).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
+			return
+		}
+
+		// Apply translation if available
+		if lang != "" {
+			for _, t := range product.Translations {
+				if t.Language == lang {
+					product.Name = t.Name
+					product.Description = t.Description
+					break
+				}
+			}
+		} else {
+			log.Printf("No language for for product ID: %s, language: %s", id, lang)
+		}
+
+		// Fetch and return the fully updated product
+		var shop models.Shop
+		if err := db.Preload("Owner").Preload("Employees").
+			First(&shop, product.ShopID).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch updated shop"})
+			return
+		}
+		product.Shop = shop
+		db.Save(&product)
+
+		// get product abouts with translations
+		var abouts []models.ProductAbout
+
+		if err := db.Preload("Translations").Where("product_id = ?", id).Order("item_order").Find(&abouts).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch abouts"})
+			return
+		}
+
+		//product.Abouts = abouts
+
+		// Convert to response format with translations
+		aboutResponses := make([]models.ProductAboutResponse, len(abouts))
+
+		for i, about := range abouts {
+			aboutText := "Not translated" // Default empty if no translation found
+
+			if lang != "" {
+				// Find translation for this language
+				var translation models.ProductAboutTranslation
+				if err := db.Where("product_about_id = ? AND language = ?", about.ID, lang).
+					First(&translation).Error; err == nil {
+					aboutText = translation.AboutText
+				} else {
+					aboutText = about.AboutText
+				}
+			}
+			aboutResponses[i] = models.ProductAboutResponse{
+				ID:        about.ID,
+				ProductID: about.ProductID,
+				ItemOrder: about.ItemOrder,
+				AboutText: aboutText,
+				CreatedAt: about.CreatedAt,
+				UpdatedAt: about.UpdatedAt,
+			}
+
+		}
+
+		translatedAbouts := make([]models.ProductAbout, len(abouts))
+
+		for i, a2 := range aboutResponses {
+			translatedAbouts[i] = models.ProductAbout{
+				ID:        a2.ID,
+				ItemOrder: a2.ItemOrder,
+				AboutText: a2.AboutText,
+				CreatedAt: a2.CreatedAt,
+				UpdatedAt: a2.UpdatedAt,
+				//Translations: abouts.translations,
+			}
+		}
+
+		//product.AboutsT = aboutResponses
+		product.Abouts = translatedAbouts
+		product.AboutsWithTranlations = abouts
+
+		c.JSON(http.StatusOK, gin.H{
+			"product": product,
+			"shop":    shop,
+			//"abouts":  aboutResponses,
+		})
+	}
+}
+
+func GetAdminProduct(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var product models.Product
+		id := c.Param("id")
+		lang := strings.ToLower(strings.TrimSpace(c.Query("lang")))
+
+		log.Printf("Processing request for product ID: %s, language: %s", id, lang)
+
+		if err := db.Preload("Images", func(db *gorm.DB) *gorm.DB {
+			return db.Order("is_primary DESC, created_at ASC")
+		}).Preload("Translations").Preload("Categories").First(&product, id).Error; err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
 			return
 		}
@@ -1126,7 +1230,7 @@ func GetProductImages(c *gin.Context, db *gorm.DB) {
 	productID := c.Param("productId")
 	var images []ProductImage
 
-	if err := db.Where("product_id = ?", productID).Find(&images).Error; err != nil {
+	if err := db.Where("product_id = ? AND is_visible = ?", productID, true).Find(&images).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch images"})
 		return
 	}
