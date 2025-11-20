@@ -107,7 +107,7 @@ func main() {
 		products.POST("", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.CreateProduct(s.DB))
 		products.DELETE(":id", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.DeleteProduct(s.DB))
 		products.DELETE("/delete/batch", auth.AuthMiddleware("Admin", "SuperAdmin"), handlers.DeleteProductBatch(s.DB))
-		
+
 		products.POST("/translate/:id", auth.AuthMiddleware(), handlers.CreateProductTranslation(s.DB))
 		products.POST("/abouts/:id", auth.AuthMiddleware(), handlers.CreateProductAbout(s.DB))
 		products.PUT("/abouts/order/:id", auth.AuthMiddleware(), handlers.UpdateProductAboutOrder(s.DB))
@@ -117,14 +117,14 @@ func main() {
 		products.PUT("/images/:imageId/visibility", auth.AuthMiddleware(), handlers.ToggleImageVisibility(s.DB))
 		products.DELETE("/images/:imageId", auth.AuthMiddleware(), handlers.DeleteProductImage(s.DB))
 
-		products.GET(":id", handlers.GetProduct(s.DB)) // Get single product
+		products.GET(":id", handlers.GetAdminProduct(s.DB))            // Get single product for admin
 		products.GET(":id/related", handlers.GetRelatedProducts(s.DB)) // Get related product
 
 		products.GET("/featured", handlers.GetFeaturedProducts(s.DB))
 		products.PUT("/:id/featured", handlers.ToggleFeaturedProduct(s.DB))
 
 		products.PUT("/:id/visibility", handlers.ToggleProductVisibility(s.DB)) // Toggle visibilit
-		
+
 		products.GET("/abouts/:productId", handlers.GetProductAbouts(s.DB))
 		products.PUT(":id", auth.AuthMiddleware(), handlers.UpdateProduct(s.DB)) // Update
 		// Add translation to an about entry
