@@ -16,6 +16,12 @@ import Card, {
 import Input from '../../../../../../src/components/bootstrap/forms/Input';
 import Button from '../../../../../../src/components/bootstrap/Button';
 
+import ConfirmDelete from './ConfirmDeleteImages';
+import ErrorModal from '../../../../utils/ErrorModal';
+
+//import { Product, Shop, ProductCategory, ProductImage, AppError } from '../../../../types'
+import {  AppError, Shop } from '../../../../types'
+
 interface Product {
   ID: number;
   name: string;
@@ -27,10 +33,7 @@ interface Product {
   featuredOrder: number;
   isVisible: boolean;
   shopID: number;
-  shop: {
-    ID: number;
-    name: string;
-  };
+  shop: Shop
   categories: Category[];
   images: ProductImage[];
 }
@@ -40,10 +43,7 @@ interface Category {
   name: string;
 }
 
-interface Shop {
-  ID: number;
-  name: string;
-}
+
 
 interface ProductImage {
   ID: number;
@@ -75,7 +75,7 @@ export default function EditProduct() {
     const [images, setImages] = useState<ProductImage[]>(product?.images || []);
     const [uploading, setUploading] = useState(false);
     const [progress, setProgress] = useState(0);
-    //const [apiError, setApiError] = useState<AppError>();
+    const [apiError, setApiError] = useState<AppError>();
     const [showErrorModal, setShowErrorModal] = useState(false);
 
 
@@ -141,6 +141,29 @@ export default function EditProduct() {
   };
 
   // Image Management Functions
+  const handleDeleteError = (error: AppError) => {
+          setApiError(error);
+          setShowErrorModal(true);
+        };
+      
+        const handleDeleteImages = async (imageIds: string[]) => {
+          try {
+            setImages((prev) => prev.filter((i) => !imageIds.includes(i.ID.toString())));
+            setSelectedImages([]);
+
+            setProduct(prev => prev ? {
+        ...prev,
+        images: prev.images.filter((i) => !imageIds.map(Number).includes(i.ID))
+      } : null);
+
+
+
+          } catch (error) {
+            // toast.error('Failed to delete products');
+          }
+        };
+
+
   const handleSetPrimary = async (imageId: number) => {
     try {
       setImageActionLoading(imageId);
@@ -153,6 +176,8 @@ export default function EditProduct() {
           },
         }
       );
+
+       
 
       // Update local state - set all images to non-primary, then set the selected one as primary
       setProduct(prev => prev ? {
@@ -212,6 +237,12 @@ export default function EditProduct() {
     } finally {
       setImageActionLoading(null);
     }
+  };
+
+   const toggleImageSelection = (imageId: string) => {
+    setSelectedImages((prev) =>
+      prev.includes(imageId) ? prev.filter((id) => id !== imageId) : [...prev, imageId],
+    );
   };
 
   const handleUpload = async () => {
@@ -643,7 +674,12 @@ export default function EditProduct() {
                             <button
                               className="btn btn-sm btn-outline-danger"
                               disabled={imageActionLoading === image.ID}
-                              onClick={() => handleDeleteImage(image.ID)}
+                              //onClick={() => handleDeleteImage(image.ID)}
+                              onClick={() => {
+                                    setShowConfirmModal(true);
+                                    //e.stopPropagation();
+                                    toggleImageSelection(image.ID.toString());
+                                    }}
                               title="Delete image"
                             >
                               {imageActionLoading === image.ID ? (
@@ -735,6 +771,27 @@ export default function EditProduct() {
               </ul>
             </div>
           </div>
+
+               <div>
+        <ConfirmDelete
+          shop={product.shop}
+          show={showConfirmModal}
+          onClose={() => setShowConfirmModal(false)}
+          onError={handleDeleteError}
+          imageIds={selectedImages}
+          onImagesDeleted={handleDeleteImages}
+        />
+
+        <ErrorModal
+          show={showErrorModal}
+          onClose={() => setShowErrorModal(false)}
+          error={apiError}
+        />
+      </div>
+
+
+
+
         </div>
       </div>
     </div>

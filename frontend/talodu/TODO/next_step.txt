@@ -1,1 +1,8 @@
 - make product image primary
+
+- Delete image from admin
+- Create site global settings to - Show all images, - show feaured products, show recently viewed,... etc
+
+- create ishoppro domain
+
+- move on with flutter app
