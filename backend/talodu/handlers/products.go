@@ -554,7 +554,8 @@ func GetAdminProduct(db *gorm.DB) gin.HandlerFunc {
 		log.Printf("Processing request for product ID: %s, language: %s", id, lang)
 
 		if err := db.Preload("Images", func(db *gorm.DB) *gorm.DB {
-			return db.Order("is_primary DESC, created_at ASC")
+			return db.Select("id", "created_at", "updated_at", "deleted_at", "product_id", "url", "alt_text", "is_primary", "is_visible").
+				Order("is_primary DESC, created_at ASC")
 		}).Preload("Translations").Preload("Categories").First(&product, id).Error; err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
 			return

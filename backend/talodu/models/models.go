@@ -112,7 +112,7 @@ type ProductImage struct {
 	URL       string `json:"url" gorm:"size:500"`
 	AltText   string `json:"alt_text" gorm:"size:100"`
 	IsPrimary bool   `json:"is_primary" gorm:"default:false"`
-	IsVisible bool   `json:"is_visible" gorm:"default:true"`
+	IsVisible bool   `json:"is_visible"`
 }
 
 type Shop struct {

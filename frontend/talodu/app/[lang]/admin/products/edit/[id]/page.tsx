@@ -3,8 +3,18 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import { useAuth } from '../../../../contexts/AuthContextNext';
 import Link from 'next/link';
+import Card, {
+	CardBody,
+	CardHeader,
+	CardLabel,
+	CardSubTitle,
+	CardTitle,
+} from '../../../../../../src/components/bootstrap/Card';
+import Input from '../../../../../../src/components/bootstrap/forms/Input';
+import Button from '../../../../../../src/components/bootstrap/Button';
 
 interface Product {
   ID: number;
@@ -55,8 +65,20 @@ export default function EditProduct() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [addImage, setAddImage] = useState(false);
   const [error, setError] = useState('');
   const [imageActionLoading, setImageActionLoading] = useState<number | null>(null);
+
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [files, setFiles] = useState<File[]>([]);
+    const [images, setImages] = useState<ProductImage[]>(product?.images || []);
+    const [uploading, setUploading] = useState(false);
+    const [progress, setProgress] = useState(0);
+    //const [apiError, setApiError] = useState<AppError>();
+    const [showErrorModal, setShowErrorModal] = useState(false);
+
+
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8888';
 
@@ -74,6 +96,7 @@ export default function EditProduct() {
         },
       });
       setProduct(response.data.product);
+      setImages(response.data.product.images);
     } catch (err) {
       if (axios.isAxiosError(err)) {
         setError(err.response?.data?.error || err.message || 'Failed to fetch product');
@@ -97,6 +120,12 @@ export default function EditProduct() {
       console.error('Failed to fetch shops:', err);
     }
   };
+
+   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files) {
+        setFiles(Array.from(e.target.files));
+      }
+    };
 
   const fetchCategories = async () => {
     try {
@@ -134,6 +163,8 @@ export default function EditProduct() {
         }))
       } : null);
 
+      //setImages(product?.images|| images);
+
       alert('Primary image updated successfully');
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -169,6 +200,8 @@ export default function EditProduct() {
         )
       } : null);
 
+      //setImages(product?.images|| images);
+
       alert('Image visibility updated');
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -178,6 +211,59 @@ export default function EditProduct() {
       }
     } finally {
       setImageActionLoading(null);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (files.length === 0 || !product?.ID) return;
+
+    setUploading(true);
+    const formData = new FormData();
+
+    files.forEach((file) => {
+      formData.append('images', file);
+    });
+
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
+      const response = await axios.post(
+        `${API_URL}/images/product/${product?.ID}/batch`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.total) {
+              const percentCompleted = Math.round(
+                (progressEvent.loaded * 100) / progressEvent.total,
+              );
+              setProgress(percentCompleted);
+            }
+          },
+        },
+      );
+
+      toast.success('Images uploaded successfully!');
+      setImages((prevImages) => [...prevImages, ...response.data.images]);
+
+       // Update local state
+      setProduct(prev => prev ? {
+        ...prev,
+        images: [...prev.images, ...response.data.images]
+      } : null);
+
+
+
+      setFiles([]);
+    } catch (error) {
+      console.error('Upload failed:', error);
+      if (axios.isAxiosError(error)) {
+        toast.error(`Upload failed: ${error.response?.data?.error || error.message}`);
+      }
+    } finally {
+      setUploading(false);
+      setProgress(0);
     }
   };
 
@@ -485,11 +571,11 @@ export default function EditProduct() {
         <div className="col-md-6">
           <div className="card">
             <div className="card-header">
-              <h5 className="card-title mb-0">Product Images</h5>
+              <h5 className="card-title mb-0">Product Images {product.images.length}</h5>
               <small className="text-muted">Manage product images and set primary display image</small>
             </div>
             <div className="card-body">
-              {product.images.length === 0 ? (
+              {images.length === 0 ? (
                 <div className="text-center py-4">
                   <p className="text-muted">No images uploaded yet</p>
                   <Link 
@@ -576,14 +662,64 @@ export default function EditProduct() {
 
               {product.images.length > 0 && (
                 <div className="mt-3">
-                  <Link 
+                  <Button 
                     href={`/admin/products/${productId}/images`}
                     className="btn btn-outline-primary w-100"
+                    onClick={()=> setAddImage(!addImage)}
                   >
                     Upload More Images
-                  </Link>
+                  </Button>
                 </div>
               )}
+
+               {addImage && (
+               <div className='mt-4'>
+            <Card>
+              <CardHeader>
+                <CardLabel>
+                  <CardTitle>Add Product Image</CardTitle>
+                </CardLabel>
+              </CardHeader>
+              <CardBody>
+                <div className='row'>
+                  <div className='mt-2'>
+                    <div className='row g-4'>
+                      <div className='col-12'>
+                        <Input
+                          type='file'
+                          autoComplete='photo'
+                          onChange={handleFileChange}
+                          multiple
+                          accept='image/*'
+                        />
+                      </div>
+
+                      <button
+                        onClick={handleUpload}
+                        disabled={uploading || files.length === 0}>
+                        {uploading ? `Uploading... ${progress}%` : 'Upload'}
+                      </button>
+                      {files.length > 0 && (
+                        <div>
+                          <p>Selected files:</p>
+                          <ul>
+                            {files.map((file, index) => (
+                              <li key={index}>{file.name}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+          </div>
+               )}
+
+
+
+
             </div>
           </div>
 
