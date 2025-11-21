@@ -30,7 +30,7 @@ func GetFeaturedProducts(db *gorm.DB) gin.HandlerFunc {
 		limit, _ := strconv.Atoi(c.DefaultQuery("limit", "8"))
 
 		query := db.
-			Preload("Images").
+			Preload("Images", "is_visible = ?", true).
 			Preload("Translations").
 			Preload("Shop", func(db *gorm.DB) *gorm.DB {
 				return db.Select("id", "name")
