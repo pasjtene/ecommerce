@@ -1,8 +1,16 @@
 - make product image primary
 
 - Delete image from admin
+- Delete image by shop owner admin
+
 - Create site global settings to - Show all images, - show feaured products, show recently viewed,... etc
+
 
 - create ishoppro domain
 
 - move on with flutter app
+
+- Create shop images (Carroussel images when viewing a shop)
+- Create site images (Carroussel images when viewing main home page)
+- upload videos
+- enable / disable video

@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"talodu/handlers"
+	"talodu/settings"
 	s "talodu/settings"
 
 	//_ "talodu/handlers"
@@ -49,7 +50,14 @@ func main() {
 		&models.ProductImage{},
 		&models.ProductTranslation{},
 		&models.ProductAbout{},
+		&settings.GlobalSettings{},
 	)
+
+	if err := s.DB.AutoMigrate(&settings.GlobalSettings{}); err != nil {
+		//log.Fatal("Failed to migrate GlobalSettings:", err)
+		log.Println("Failed to migrate GlobalSettings:", err)
+
+	}
 
 	// Seed initial data
 	//handlers.SeedProducts(s.DB)
@@ -98,6 +106,10 @@ func main() {
 	r.POST("/login", auth.Login(s.DB))
 	r.POST("/logout", auth.AuthMiddleware(), auth.Logout(s.DB))
 	r.POST("/refresh", auth.RefreshToken(s.DB))
+
+	r.GET("/admin/settings", settings.GetGlobalSettings(s.DB))
+	r.POST("/admin/settings", settings.UpdateGlobalSettings(s.DB))
+	r.GET("/settings", settings.GetPublicSettings(s.DB)) // Public endpoint for frontend
 
 	// Protected routes
 	products := r.Group("/products")
