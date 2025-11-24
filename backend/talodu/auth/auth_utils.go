@@ -773,53 +773,11 @@ func CreateUser(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func AuthMiddleware2(requiredRoles ...string) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		tokenString := c.GetHeader("Authorization")
-		if tokenString == "" {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized Authentication required"})
-			return
-		}
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			return []byte(JWT_SECRET), nil
-		})
-		if err != nil || !token.Valid {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
-			return
-		}
-
-		claims := token.Claims.(jwt.MapClaims)
-		userRoles := claims["roles"].([]interface{}) // Extract roles from JWT
-
-		// Check if user has at least one required role
-		if len(requiredRoles) > 0 {
-			hasPermission := false
-			for _, requiredRole := range requiredRoles {
-				for _, userRole := range userRoles {
-					if userRole.(string) == requiredRole {
-						hasPermission = true
-						break
-					}
-				}
-			}
-			if !hasPermission {
-				c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Insufficient permissions"})
-				return
-			}
-		}
-		c.Set("userID", claims["user_id"])
-		c.Set("user_id", claims["user_id"]) //Logout func checks for this
-		c.Set("username", claims["username"])
-		c.Set("roles", userRoles)
-		c.Next()
-	}
-}
-
 func AuthMiddleware(requiredRoles ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := c.GetHeader("Authorization")
 		if tokenString == "" {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization header required"})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Please login to continue"})
 			return
 		}
 
@@ -873,7 +831,6 @@ func AuthMiddleware(requiredRoles ...string) gin.HandlerFunc {
 		// Set context values
 		c.Set("userID", claims["user_id"])
 		c.Set("user_id", claims["user_id"])
-		//c.Set("userID", userID)
 		c.Set("username", claims["username"].(string))
 		c.Set("roles", roles)
 		c.Next()

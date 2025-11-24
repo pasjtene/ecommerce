@@ -10,6 +10,21 @@ import (
 	"gorm.io/gorm"
 )
 
+type SiteImage struct {
+	gorm.Model
+	URL       string `json:"url" gorm:"size:500"`
+	AltText   string `json:"altText" gorm:"size:100"`
+	IsVisible bool   `json:"isVisible" gorm:"default:true"`
+	IsPrimary bool   `json:"isPrimary" gorm:"default:false"`
+}
+
+type SiteLogo struct {
+	gorm.Model
+	URL       string `json:"url" gorm:"size:500"`
+	AltText   string `json:"altText" gorm:"size:100"`
+	IsPrimary bool   `json:"isPrimary" gorm:"default:false"`
+}
+
 type DisplaySettings struct {
 	ShowFeaturedProducts  bool   `json:"showFeaturedProducts"`
 	ShowRecentlyViewed    bool   `json:"showRecentlyViewed"`
@@ -31,15 +46,6 @@ type GlobalSettings struct {
 	CreatedAt          time.Time      `json:"createdAt"`
 	UpdatedAt          time.Time      `json:"updatedAt"`
 	DeletedAt          gorm.DeletedAt `json:"deletedAt" gorm:"index"`
-}
-
-type GlobalSettings1 struct {
-	SiteName           string          `json:"siteName"`
-	SiteDescription    string          `json:"siteDescription"`
-	MaintenanceMode    bool            `json:"maintenanceMode"`
-	Currency           string          `json:"currency"`
-	EmailNotifications bool            `json:"emailNotifications"`
-	DisplaySettings    DisplaySettings `json:"displaySettings"`
 }
 
 // GET /api/admin/settings
@@ -92,7 +98,6 @@ func UpdateGlobalSettings(db *gorm.DB) gin.HandlerFunc {
 			}
 		}()
 
-		//var existingSettings models.GlobalSettings
 		var existingSettings GlobalSettings
 
 		if err := tx.First(&existingSettings).Error; err != nil {
@@ -154,9 +159,7 @@ func UpdateGlobalSettings(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		// Return updated settings
-		//var updatedSettings models.GlobalSettings
 		var updatedSettings GlobalSettings
-
 		if err := db.First(&updatedSettings).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch updated settings"})
 			return
@@ -186,7 +189,6 @@ func GetPublicSettings(db *gorm.DB) gin.HandlerFunc {
 				"siteDescription": defaultSettings.SiteDescription,
 				"maintenanceMode": defaultSettings.MaintenanceMode,
 				"currency":        defaultSettings.Currency,
-				//"displaySettings": defaultSettings.DisplaySettings,
 				"displaySettings": displaySettings,
 			})
 			return
@@ -200,9 +202,248 @@ func GetPublicSettings(db *gorm.DB) gin.HandlerFunc {
 			"siteDescription": settings.SiteDescription,
 			"maintenanceMode": settings.MaintenanceMode,
 			"currency":        settings.Currency,
-			//"displaySettings": settings.DisplaySettings,
 			"displaySettings": displaySettings,
 		})
+	}
+}
+
+// Site Images Management
+// GET /api/admin/site-images
+func GetSiteImages(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var images []SiteImage
+		if err := db.Find(&images).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch site images"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"images": images})
+	}
+}
+
+// POST /api/admin/site-images
+func UploadSiteImages(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		form, err := c.MultipartForm()
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to parse form"})
+			return
+		}
+
+		files := form.File["images"]
+		if len(files) == 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "No files uploaded"})
+			return
+		}
+
+		var uploadedImages []SiteImage
+
+		for _, file := range files {
+			// Generate unique filename
+			filename := file.Filename
+			// In production, you'd want to generate a unique name and save the file
+			// For now, we'll just store the filename as the URL
+			filePath := "/uploads/site/images/" + filename
+
+			// Save the file (you'll need to implement this based on your file storage)
+			if err := c.SaveUploadedFile(file, "."+filePath); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save file"})
+				return
+			}
+
+			image := SiteImage{
+				URL:       filePath,
+				AltText:   filename,
+				IsVisible: true,
+				IsPrimary: false,
+			}
+
+			if err := db.Create(&image).Error; err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create image record"})
+				return
+			}
+
+			uploadedImages = append(uploadedImages, image)
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Images uploaded successfully",
+			"images":  uploadedImages,
+		})
+	}
+}
+
+// PUT /api/admin/site-images/:id/visibility
+func ToggleSiteImageVisibility(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		imageID := c.Param("id")
+
+		var image SiteImage
+		if err := db.First(&image, imageID).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Image not found"})
+			return
+		}
+
+		image.IsVisible = !image.IsVisible
+
+		if err := db.Save(&image).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update image visibility"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Image visibility updated",
+			"image":   image,
+		})
+	}
+}
+
+// DELETE /api/admin/site-images/:id
+func DeleteSiteImage(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		imageID := c.Param("id")
+
+		var image SiteImage
+		if err := db.First(&image, imageID).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Image not found"})
+			return
+		}
+
+		if err := db.Delete(&image).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete image"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "Image deleted successfully"})
+	}
+}
+
+// Site Logos Management
+// GET /api/admin/site-logos
+func GetSiteLogos(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var logos []SiteLogo
+		if err := db.Find(&logos).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch site logos"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"logos": logos})
+	}
+}
+
+// POST /api/admin/site-logos
+func UploadSiteLogos(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		form, err := c.MultipartForm()
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to parse form"})
+			return
+		}
+
+		files := form.File["logos"]
+		if len(files) == 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "No files uploaded"})
+			return
+		}
+
+		var uploadedLogos []SiteLogo
+
+		for _, file := range files {
+			// Generate unique filename
+			filename := file.Filename
+			filePath := "/uploads/site/logos/" + filename
+
+			// Save the file
+			if err := c.SaveUploadedFile(file, "."+filePath); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save file"})
+				return
+			}
+
+			logo := SiteLogo{
+				URL:       filePath,
+				AltText:   filename,
+				IsPrimary: false,
+			}
+
+			if err := db.Create(&logo).Error; err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create logo record"})
+				return
+			}
+
+			uploadedLogos = append(uploadedLogos, logo)
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Logos uploaded successfully",
+			"logos":   uploadedLogos,
+		})
+	}
+}
+
+// PUT /api/admin/site-logos/:id/primary
+func SetPrimaryLogo(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		logoID := c.Param("id")
+
+		// Start transaction
+		tx := db.Begin()
+		defer func() {
+			if r := recover(); r != nil {
+				tx.Rollback()
+			}
+		}()
+
+		// Set all logos to non-primary
+		if err := tx.Model(&SiteLogo{}).Where("1 = 1").Update("is_primary", false).Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update logos"})
+			return
+		}
+
+		// Set the selected logo as primary
+		var logo SiteLogo
+		if err := tx.First(&logo, logoID).Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusNotFound, gin.H{"error": "Logo not found"})
+			return
+		}
+
+		logo.IsPrimary = true
+		if err := tx.Save(&logo).Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to set primary logo"})
+			return
+		}
+
+		if err := tx.Commit().Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to commit transaction"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Primary logo set successfully",
+			"logo":    logo,
+		})
+	}
+}
+
+// DELETE /api/admin/site-logos/:id
+func DeleteSiteLogo(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		logoID := c.Param("id")
+
+		var logo SiteLogo
+		if err := db.First(&logo, logoID).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Logo not found"})
+			return
+		}
+
+		if err := db.Delete(&logo).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete logo"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "Logo deleted successfully"})
 	}
 }
 

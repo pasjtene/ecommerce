@@ -51,6 +51,8 @@ func main() {
 		&models.ProductTranslation{},
 		&models.ProductAbout{},
 		&settings.GlobalSettings{},
+		&settings.SiteImage{},
+		&settings.SiteLogo{},
 	)
 
 	if err := s.DB.AutoMigrate(&settings.GlobalSettings{}); err != nil {
@@ -107,9 +109,27 @@ func main() {
 	r.POST("/logout", auth.AuthMiddleware(), auth.Logout(s.DB))
 	r.POST("/refresh", auth.RefreshToken(s.DB))
 
-	r.GET("/admin/settings", settings.GetGlobalSettings(s.DB))
-	r.POST("/admin/settings", settings.UpdateGlobalSettings(s.DB))
 	r.GET("/settings", settings.GetPublicSettings(s.DB)) // Public endpoint for frontend
+
+	// In your routes setup
+	admin := r.Group("/admin")
+	admin.Use(auth.AuthMiddleware()) // Your auth middleware
+	{
+		admin.GET("/settings", settings.GetGlobalSettings(s.DB))
+		admin.POST("/settings", settings.UpdateGlobalSettings(s.DB))
+
+		// Site images routes
+		admin.GET("/site-images", settings.GetSiteImages(s.DB))
+		admin.POST("/site-images", settings.UploadSiteImages(s.DB))
+		admin.PUT("/site-images/:id/visibility", settings.ToggleSiteImageVisibility(s.DB))
+		admin.DELETE("/site-images/:id", settings.DeleteSiteImage(s.DB))
+
+		// Site logos routes
+		admin.GET("/site-logos", settings.GetSiteLogos(s.DB))
+		admin.POST("/site-logos", settings.UploadSiteLogos(s.DB))
+		admin.PUT("/site-logos/:id/primary", settings.SetPrimaryLogo(s.DB))
+		admin.DELETE("/site-logos/:id", settings.DeleteSiteLogo(s.DB))
+	}
 
 	// Protected routes
 	products := r.Group("/products")

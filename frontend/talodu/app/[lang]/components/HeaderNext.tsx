@@ -28,7 +28,6 @@ const Login = dynamic(() => import('../Login'), { ssr: false });
 const Register = dynamic(() => import('../Register'), { ssr: false });
 
 
-
 const HeaderNext = () => {
     const { user,hasAnyRole, logout: contextLogout } = useAuth();
     const { currency, currencyRate, currencySymbol, formatPrice, setCurrency, selectedCountry,

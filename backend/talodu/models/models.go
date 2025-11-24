@@ -115,6 +115,13 @@ type ProductImage struct {
 	IsVisible bool   `json:"is_visible"`
 }
 
+type SiteImage struct {
+	gorm.Model
+	URL       string `json:"url" gorm:"size:500"`
+	AltText   string `json:"alt_text" gorm:"size:100"`
+	IsVisible bool   `json:"is_visible"`
+}
+
 type Shop struct {
 	gorm.Model
 	Name        string    `json:"name" gorm:"unique"`

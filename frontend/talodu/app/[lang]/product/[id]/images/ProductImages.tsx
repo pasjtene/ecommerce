@@ -10,6 +10,7 @@ import LoadingSpinner from '../../../../api/LoadingSpinner';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../../contexts/AuthContextNext';
 import ConfirmDelete from '../ConfirmDeleteImages';
+import ErrorModal from '../../../utils/ErrorModal';
 import Card, {
 	CardBody,
 	CardHeader,
@@ -18,7 +19,7 @@ import Card, {
 	CardTitle,
 } from '../../../../../src/components/bootstrap/Card';
 import Input from '../../../../../src/components/bootstrap/forms/Input';
-import ErrorModal from '../../../utils/ErrorModal';
+
 import 'styled-jsx/style';
 
 interface ProductImageProps {
@@ -82,6 +83,15 @@ const ProductImages = ({ product }: ProductImageProps) => {
     setShowErrorModal(true);
   };
 
+  const handleDeleteImages = async (imageIds: string[]) => {
+    try {
+      setImages((prev) => prev.filter((i) => !imageIds.includes(i.ID)));
+      setSelectedImages([]);
+    } catch (error) {
+      // toast.error('Failed to delete products');
+    }
+  };
+
   const handleImageClick = (index: number) => {
     setImageModal({
       show: true,
@@ -132,14 +142,7 @@ const ProductImages = ({ product }: ProductImageProps) => {
     loadDictionary();
   }, [params.lang]);
 
-  const handleDeleteImages = async (imageIds: string[]) => {
-    try {
-      setImages((prev) => prev.filter((i) => !imageIds.includes(i.ID)));
-      setSelectedImages([]);
-    } catch (error) {
-      // toast.error('Failed to delete products');
-    }
-  };
+  
 
   const handleUpload = async () => {
     if (files.length === 0 || !product?.ID) return;
