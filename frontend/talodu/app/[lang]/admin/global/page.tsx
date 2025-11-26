@@ -47,6 +47,8 @@ interface SiteLogo {
   updatedAt: string;
 }
 
+
+
 export default function GlobalSettings() {
   const { token } = useAuth();
   const [settings, setSettings] = useState<GlobalSettings>({
@@ -64,6 +66,10 @@ export default function GlobalSettings() {
       featuredProductsTitle: "Featured Products You'll Love",
       featuredProductsCount: 8,
       recentlyViewedCount: 8,
+      carouselTransition: 'fade',
+      carouselTransitionDuration: 600,
+      carouselInterval: 5000
+
     }
   });
 
