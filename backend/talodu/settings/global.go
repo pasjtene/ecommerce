@@ -27,6 +27,7 @@ type SiteLogo struct {
 
 type DisplaySettings struct {
 	ShowFeaturedProducts  bool   `json:"showFeaturedProducts"`
+	ShowCarousel          bool   `json:"showCarousel"` // To show images carousel
 	ShowRecentlyViewed    bool   `json:"showRecentlyViewed"`
 	ShowAllProducts       bool   `json:"showAllProducts"`
 	ShowAllImages         bool   `json:"showAllImages"`
@@ -204,6 +205,17 @@ func GetPublicSettings(db *gorm.DB) gin.HandlerFunc {
 			"currency":        settings.Currency,
 			"displaySettings": displaySettings,
 		})
+	}
+}
+
+func GetVisibleSiteImages(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var images []SiteImage
+		if err := db.Where("is_visible = ?", true).Find(&images).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch visible site images: " + err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"images": images})
 	}
 }
 
@@ -451,6 +463,7 @@ func DeleteSiteLogo(db *gorm.DB) gin.HandlerFunc {
 func createDefaultSettings() GlobalSettings {
 	defaultDisplaySettings := DisplaySettings{
 		ShowFeaturedProducts:  true,
+		ShowCarousel:          true, // to show images carousel
 		ShowRecentlyViewed:    true,
 		ShowAllProducts:       true,
 		ShowAllImages:         false,

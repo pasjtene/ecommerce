@@ -11,6 +11,10 @@ interface DisplaySettings {
   featuredProductsTitle: string;
   featuredProductsCount: number;
   recentlyViewedCount: number;
+  showCarousel: boolean;
+  carouselTransition: 'fade' | 'slide' | 'zoom' | 'flip';
+  carouselInterval: number;
+  carouselTransitionDuration: number;
 }
 
 export interface GlobalSettings {
@@ -29,12 +33,16 @@ export const useSettings = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+
+
   useEffect(() => {
     const fetchSettings = async () => {
       try {
         setLoading(true);
         const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8888';
-        const response = await fetch(`${API_BASE_URL}/admin/settings`);
+        //const response = await fetch(`${API_BASE_URL}/admin/settings`);
+        const response = await fetch(`${API_BASE_URL}/display/settings`);
+        
         
         if (response.ok) {
           const data = await response.json();

@@ -110,13 +110,16 @@ func main() {
 	r.POST("/refresh", auth.RefreshToken(s.DB))
 
 	r.GET("/settings", settings.GetPublicSettings(s.DB)) // Public endpoint for frontend
+	r.GET("/site-images/visible", settings.GetVisibleSiteImages(s.DB))
+	r.GET("/display/settings", settings.GetGlobalSettings(s.DB))
 
 	// In your routes setup
 	admin := r.Group("/admin")
 	admin.Use(auth.AuthMiddleware()) // Your auth middleware
 	{
-		admin.GET("/settings", settings.GetGlobalSettings(s.DB))
+
 		admin.POST("/settings", settings.UpdateGlobalSettings(s.DB))
+		admin.GET("/settings", settings.GetGlobalSettings(s.DB))
 
 		// Site images routes
 		admin.GET("/site-images", settings.GetSiteImages(s.DB))

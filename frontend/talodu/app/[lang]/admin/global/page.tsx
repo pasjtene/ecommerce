@@ -13,6 +13,10 @@ interface DisplaySettings {
   featuredProductsTitle: string;
   featuredProductsCount: number;
   recentlyViewedCount: number;
+  showCarousel: boolean;
+  carouselTransition: 'fade' | 'slide' | 'zoom' | 'flip';
+  carouselInterval: number;
+  carouselTransitionDuration: number;
 }
 
 interface GlobalSettings {
@@ -53,6 +57,7 @@ export default function GlobalSettings() {
     emailNotifications: true,
     displaySettings: {
       showFeaturedProducts: true,
+      showCarousel: true,
       showRecentlyViewed: true,
       showAllProducts: true,
       showAllImages: false,
@@ -632,6 +637,28 @@ export default function GlobalSettings() {
           </div>
           <div className="card-body">
             <div className="row">
+            {/* Add Carousel Toggle */}
+              <div className="col-md-6 mb-3">
+                <div className="form-check form-switch">
+                  <input
+                    type="checkbox"
+                    id="showCarousel"
+                    name="showCarousel"
+                    checked={settings.displaySettings.showCarousel}
+                    onChange={handleDisplaySettingChange}
+                    className="form-check-input"
+                    disabled={loading}
+                  />
+                  <label htmlFor="showCarousel" className="form-check-label fw-medium">
+                    Show Site Images Carousel
+                  </label>
+                </div>
+                <small className="form-text text-muted">
+                  Display a rotating carousel of site images at the top of the products page
+                </small>
+              </div>
+
+
               <div className="col-md-6 mb-3">
                 <div className="form-check form-switch">
                   <input

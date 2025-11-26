@@ -1,0 +1,278 @@
+.carouselContainer {
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  background: #000;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.carousel {
+  max-height: 500px;
+  overflow: hidden;
+  position: relative;
+}
+
+.carouselInner {
+  height: 500px;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.carouselItem {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(0);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.carouselItem.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+/* Fade Transition */
+.carouselItem.fade {
+  opacity: 0;
+  transform: scale(1);
+}
+
+.carouselItem.fade.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Slide Transition */
+.carouselItem.slide.next {
+  transform: translateX(100%);
+  opacity: 1;
+}
+
+.carouselItem.slide.prev {
+  transform: translateX(-100%);
+  opacity: 1;
+}
+
+.carouselItem.slide.next.active,
+.carouselItem.slide.prev.active {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* Zoom Transition */
+.carouselItem.zoom {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.carouselItem.zoom.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Flip Transition */
+.carouselItem.flip {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.carouselItem.flip.next {
+  transform: rotateY(90deg);
+  opacity: 1;
+}
+
+.carouselItem.flip.prev {
+  transform: rotateY(-90deg);
+  opacity: 1;
+}
+
+.carouselItem.flip.next.active,
+.carouselItem.flip.prev.active {
+  transform: rotateY(0deg);
+  opacity: 1;
+}
+
+.carouselImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Progress Bar */
+.carouselProgress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.3);
+  z-index: 10;
+}
+
+.progressBar {
+  height: 100%;
+  background: linear-gradient(90deg, #4f46e5, #7c3aed);
+  width: 0%;
+  animation: progress linear forwards;
+}
+
+@keyframes progress {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+/* Controls */
+.carouselControl {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  opacity: 0.8;
+}
+
+.carouselControl:hover:not(:disabled) {
+  background: white;
+  opacity: 1;
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.carouselControl:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.carouselControl.prev {
+  left: 20px;
+}
+
+.carouselControl.next {
+  right: 20px;
+}
+
+.controlIcon {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  line-height: 1;
+}
+
+/* Indicators */
+.carouselIndicators {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 10px;
+}
+
+.indicator {
+  width: 12px;
+  height: 12px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.indicator:hover:not(.disabled) {
+  background: rgba(0, 0, 0, 0.4);
+  transform: scale(1.2);
+}
+
+.indicator.active {
+  background: #4f46e5;
+  transform: scale(1.3);
+}
+
+.indicator.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Captions */
+.carouselCaption {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  width: 80%;
+  z-index: 5;
+}
+
+.captionContent {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  padding: 15px 25px;
+  border-radius: 25px;
+  color: white;
+  animation: fadeInUp 0.6s ease;
+}
+
+.captionContent h5 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .carouselControl {
+    width: 40px;
+    height: 40px;
+  }
+
+  .controlIcon {
+    font-size: 20px;
+  }
+
+  .carouselControl.prev {
+    left: 10px;
+  }
+
+  .carouselControl.next {
+    right: 10px;
+  }
+
+  .captionContent {
+    padding: 10px 20px;
+  }
+
+  .captionContent h5 {
+    font-size: 1rem;
+  }
+}

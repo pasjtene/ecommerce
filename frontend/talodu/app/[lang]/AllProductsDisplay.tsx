@@ -1,6 +1,5 @@
 //app/[lang]/AllProductsDisplay.tsx
 
-// app/[lang]/AllProductsDisplay.tsx
 import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { Product } from './types';
@@ -10,6 +9,9 @@ import { useSearchParams } from 'next/navigation';
 import FeaturedProducts from './product/[id]/FeaturedProducts';
 import RecentlyViewedProducts from './product/[id]/RecentlyViewedProducts';
 import { useSettings } from './hooks/useSettings';
+import { useSiteImages } from './hooks/useSiteImages';
+import SiteImagesCarousel from './components/SiteImagesCarousel';
+
 
 interface Dictionary {
   product: {
@@ -52,6 +54,9 @@ const AllProductsDisplay = () => {
   
   // Use the settings hook
   const { settings, loading: settingsLoading } = useSettings();
+ 
+  // Use the site images hook
+  const { siteImages, loading: siteImagesLoading } = useSiteImages();
 
   const [pagination, setPagination] = useState({
     page: 1,
@@ -172,11 +177,32 @@ const AllProductsDisplay = () => {
     showAllImages: false,
     featuredProductsTitle: "Featured Products You'll Love",
     featuredProductsCount: settings?.displaySettings.featuredProductsCount || 8,
-    recentlyViewedCount: settings?.displaySettings.recentlyViewedCount || 8
+    recentlyViewedCount: settings?.displaySettings.recentlyViewedCount || 8,
+    showCarousel: true,
+    transitionDuration: settings?.displaySettings.carouselTransition || 'fade'
   };
 
   return (
     <div className="container mt-4 py-4">
+
+    {/* Site Images Carousel - Conditionally rendered */}
+      {displaySettings.showCarousel && siteImages.length > 0 && (
+  <div className="row">
+    <div className="col-12">
+     
+      <SiteImagesCarousel 
+        images={siteImages}
+        autoPlay={true}
+        interval={settings?.displaySettings.carouselInterval || 5000}
+        showIndicators={true}
+        showControls={true}
+        transitionDuration={settings?.displaySettings.carouselTransitionDuration || 600}
+        transitionType={settings?.displaySettings.carouselTransition || 'fade'}
+      />
+    </div>
+  </div>
+)}
+
       {/* Featured Products Section - Conditionally rendered */}
       {displaySettings.showFeaturedProducts && (
         <div className="row mt-5">
