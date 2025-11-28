@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 
-interface DisplaySettings {
+interface DisplaySettings1 {
   showFeaturedProducts: boolean;
   showRecentlyViewed: boolean;
   showAllProducts: boolean;
@@ -15,6 +15,23 @@ interface DisplaySettings {
   carouselTransition: 'fade' | 'slide' | 'zoom' | 'flip';
   carouselInterval: number;
   carouselTransitionDuration: number;
+}
+
+interface DisplaySettings {
+  showFeaturedProducts: boolean;
+  showRecentlyViewed: boolean;
+  showAllProducts: boolean;
+  showAllImages: boolean;
+  showCarousel: boolean;
+  carouselAutoPlay: boolean;
+  carouselInterval: number;
+  carouselShowIndicators: boolean;
+  carouselShowControls: boolean;
+  carouselTransitionType: 'fade' | 'slide' | 'zoom' | 'flip';
+  carouselTransitionDuration: number;
+  featuredProductsTitle: string;
+  featuredProductsCount: number;
+  recentlyViewedCount: number;
 }
 
 export interface GlobalSettings {

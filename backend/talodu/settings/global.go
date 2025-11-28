@@ -25,7 +25,7 @@ type SiteLogo struct {
 	IsPrimary bool   `json:"isPrimary" gorm:"default:false"`
 }
 
-type DisplaySettings struct {
+type DisplaySettings1 struct {
 	ShowFeaturedProducts  bool   `json:"showFeaturedProducts"`
 	ShowCarousel          bool   `json:"showCarousel"` // To show images carousel
 	ShowRecentlyViewed    bool   `json:"showRecentlyViewed"`
@@ -34,6 +34,23 @@ type DisplaySettings struct {
 	FeaturedProductsTitle string `json:"featuredProductsTitle"`
 	FeaturedProductsCount int    `json:"featuredProductsCount"`
 	RecentlyViewedCount   int    `json:"recentlyViewedCount"`
+}
+
+type DisplaySettings struct {
+	ShowFeaturedProducts       bool   `json:"showFeaturedProducts"`
+	ShowRecentlyViewed         bool   `json:"showRecentlyViewed"`
+	ShowAllProducts            bool   `json:"showAllProducts"`
+	ShowAllImages              bool   `json:"showAllImages"`
+	ShowCarousel               bool   `json:"showCarousel"` // To show images carousel
+	CarouselAutoPlay           bool   `json:"carouselAutoPlay"`
+	CarouselInterval           int    `json:"carouselInterval"`
+	CarouselShowIndicators     bool   `json:"carouselShowIndicators"`
+	CarouselShowControls       bool   `json:"carouselShowControls"`
+	CarouselTransitionType     string `json:"carouselTransitionType"`
+	CarouselTransitionDuration int    `json:"carouselTransitionDuration"`
+	FeaturedProductsTitle      string `json:"featuredProductsTitle"`
+	FeaturedProductsCount      int    `json:"featuredProductsCount"`
+	RecentlyViewedCount        int    `json:"recentlyViewedCount"`
 }
 
 type GlobalSettings struct {
@@ -462,14 +479,21 @@ func DeleteSiteLogo(db *gorm.DB) gin.HandlerFunc {
 // Helper function to create default settings
 func createDefaultSettings() GlobalSettings {
 	defaultDisplaySettings := DisplaySettings{
-		ShowFeaturedProducts:  true,
-		ShowCarousel:          true, // to show images carousel
-		ShowRecentlyViewed:    true,
-		ShowAllProducts:       true,
-		ShowAllImages:         false,
-		FeaturedProductsTitle: "Featured Products You'll Love",
-		FeaturedProductsCount: 8,
-		RecentlyViewedCount:   8,
+		ShowFeaturedProducts: true,
+
+		ShowRecentlyViewed:         true,
+		ShowAllProducts:            true,
+		ShowAllImages:              false,
+		FeaturedProductsTitle:      "Featured Products You'll Love",
+		FeaturedProductsCount:      8,
+		RecentlyViewedCount:        8,
+		ShowCarousel:               true, // to show images carousel
+		CarouselAutoPlay:           true,
+		CarouselInterval:           5000,
+		CarouselShowIndicators:     true,
+		CarouselShowControls:       true,
+		CarouselTransitionType:     "fade",
+		CarouselTransitionDuration: 600,
 	}
 
 	displaySettingsJSON, _ := json.Marshal(defaultDisplaySettings)

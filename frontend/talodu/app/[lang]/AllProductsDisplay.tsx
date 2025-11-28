@@ -179,7 +179,7 @@ const AllProductsDisplay = () => {
     featuredProductsCount: settings?.displaySettings.featuredProductsCount || 8,
     recentlyViewedCount: settings?.displaySettings.recentlyViewedCount || 8,
     showCarousel: true,
-    transitionDuration: settings?.displaySettings.carouselTransition || 'fade'
+    transitionDuration: settings?.displaySettings.carouselTransitionType || 'fade'
   };
 
   return (
@@ -192,12 +192,12 @@ const AllProductsDisplay = () => {
      
       <SiteImagesCarousel 
         images={siteImages}
-        autoPlay={true}
-        interval={settings?.displaySettings.carouselInterval || 5000}
-        showIndicators={true}
-        showControls={true}
-        transitionDuration={settings?.displaySettings.carouselTransitionDuration || 600}
-        transitionType={settings?.displaySettings.carouselTransition || 'fade'}
+        autoPlay={settings?.displaySettings.carouselAutoPlay}
+        interval={settings?.displaySettings.carouselInterval}
+        showIndicators={settings?.displaySettings.carouselShowIndicators}
+        showControls={settings?.displaySettings.carouselShowControls}
+        transitionDuration={settings?.displaySettings.carouselTransitionDuration}
+        transitionType={settings?.displaySettings.carouselTransitionType}
       />
     </div>
   </div>
